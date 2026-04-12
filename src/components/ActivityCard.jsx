@@ -1,12 +1,13 @@
-import { useState } from 'react';
-import { CAT_BADGE, CAT_LABEL } from '../data/styles.js';
+import { useLang } from '../contexts/LangContext.jsx';
+import { CAT_BADGE } from '../data/styles.js';
 
 export default function ActivityCard({ act, onAddSat, onAddSun, addedSat, addedSun, wxCat }) {
+  const { t } = useLang();
   const isSourced    = act.eventType === 'sourced';
   const weatherMatch = act.weather.includes('any') || act.weather.includes(wxCat);
 
   const catBadge = isSourced ? CAT_BADGE.sourced : (CAT_BADGE[act.cat] || 'bg-stone-100 text-stone-600');
-  const catLabel = isSourced ? '📰 This Weekend' : CAT_LABEL[act.cat];
+  const catLabel = isSourced ? t('card.thisWeekend') : t(`catLabels.${act.cat}`);
 
   return (
     <div className={`bg-white rounded-xl border flex flex-col card-hover ${isSourced ? 'border-violet-200 ring-1 ring-violet-100' : 'border-stone-200'}`}>
@@ -20,20 +21,20 @@ export default function ActivityCard({ act, onAddSat, onAddSun, addedSat, addedS
       )}
 
       <div className="px-4 pt-3 pb-2">
-        {/* top row: badges + add buttons */}
+        {/* badges + add buttons */}
         <div className="flex items-start justify-between gap-2 mb-2">
           <div className="flex items-center gap-1.5 flex-wrap">
             {!isSourced && (
               <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${catBadge}`}>{catLabel}</span>
             )}
             {!isSourced && !weatherMatch && (
-              <span className="text-[10px] font-semibold px-1.5 py-0.5 rounded bg-red-50 text-red-500 border border-red-200">Not ideal today</span>
+              <span className="text-[10px] font-semibold px-1.5 py-0.5 rounded bg-red-50 text-red-500 border border-red-200">{t('card.notIdeal')}</span>
             )}
             {!isSourced && weatherMatch && (
-              <span className="text-[10px] font-semibold px-1.5 py-0.5 rounded bg-green-50 text-green-600 border border-green-200">✓ Good fit</span>
+              <span className="text-[10px] font-semibold px-1.5 py-0.5 rounded bg-green-50 text-green-600 border border-green-200">{t('card.goodFit')}</span>
             )}
             <span className={`text-[10px] font-semibold px-1.5 py-0.5 rounded border ${act.location === 'day-trip' ? 'bg-sky-50 text-sky-600 border-sky-200' : 'bg-stone-50 text-stone-500 border-stone-200'}`}>
-              {act.location === 'day-trip' ? '🚗 Day trip' : '🏙️ In Munich'}
+              {act.location === 'day-trip' ? t('card.dayTrip') : t('card.inMunich')}
             </span>
           </div>
           <div className="flex gap-1 flex-shrink-0">
@@ -84,11 +85,10 @@ export default function ActivityCard({ act, onAddSat, onAddSun, addedSat, addedS
         )}
       </div>
 
-      {/* link */}
       {act.url && (
         <div className="px-4 pb-3 mt-auto">
           <a href={act.url} target="_blank" rel="noopener noreferrer" className="text-[10px] text-amber-600 hover:underline font-semibold">
-            → Open website
+            {t('card.openWebsite')}
           </a>
         </div>
       )}

@@ -6,6 +6,7 @@ export const TYPE_DOT = {
   outdoors: 'bg-green-400',
   seasonal: 'bg-sky-400',
   personal: 'bg-blue-500',
+  plan:     'bg-amber-400',
 };
 
 export const TYPE_PILL = {
@@ -16,6 +17,7 @@ export const TYPE_PILL = {
   outdoors: 'bg-green-50 border-green-200 text-green-700',
   seasonal: 'bg-sky-50 border-sky-200 text-sky-700',
   personal: 'bg-blue-50 border-blue-200 text-blue-700',
+  plan:     'bg-amber-50 border-amber-200 text-amber-800',
 };
 
 export const CAT_BADGE = {
@@ -26,14 +28,4 @@ export const CAT_BADGE = {
   seasonal: 'bg-orange-100 text-orange-700',
   sticky:   'bg-rose-100 text-rose-700',
   sourced:  'bg-violet-100 text-violet-700',
-};
-
-export const CAT_LABEL = {
-  outdoor:  'Outdoor',
-  indoor:   'Indoor',
-  theater:  'Theater',
-  food:     'Food',
-  seasonal: 'Annual',
-  sticky:   '⭐ Fav',
-  sourced:  'This Weekend',
 };

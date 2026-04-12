@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { LangProvider } from './contexts/LangContext.jsx';
 import Header from './components/Header.jsx';
 import BottomNav from './components/BottomNav.jsx';
 import PlanTab from './components/tabs/PlanTab.jsx';
@@ -8,12 +9,12 @@ import SourcesTab from './components/tabs/SourcesTab.jsx';
 import { useWeather } from './hooks/useWeather.js';
 import { useLocalStorage } from './hooks/useLocalStorage.js';
 
-export default function App() {
+function AppInner() {
   const [tab, setTab] = useState('plan');
   const { weather, loading: wxLoading, error: wxError } = useWeather();
-  const [weekendPlan,       setWeekendPlan]       = useState({ sat: [], sun: [] });
-  const [userEvents,        setUserEvents]        = useLocalStorage('wochenende_events', []);
-  const [stickyActivities,  setStickyActivities]  = useLocalStorage('wochenende_stickies', []);
+  const [weekendPlan,      setWeekendPlan]      = useState({ sat: [], sun: [] });
+  const [userEvents,       setUserEvents]       = useLocalStorage('wochenende_events', []);
+  const [stickyActivities, setStickyActivities] = useLocalStorage('wochenende_stickies', []);
 
   const planCount = (weekendPlan.sat || []).length + (weekendPlan.sun || []).length;
 
@@ -29,6 +30,7 @@ export default function App() {
             wxError={wxError}
             weekendPlan={weekendPlan}
             setWeekendPlan={setWeekendPlan}
+            userEvents={userEvents}
             onGoExplorer={() => setTab('explorer')}
           />
         )}
@@ -45,6 +47,7 @@ export default function App() {
           <CalendarTab
             userEvents={userEvents}
             setUserEvents={setUserEvents}
+            weekendPlan={weekendPlan}
           />
         )}
         {tab === 'sources' && <SourcesTab />}
@@ -52,5 +55,13 @@ export default function App() {
 
       <BottomNav tab={tab} setTab={setTab} planCount={planCount} />
     </div>
+  );
+}
+
+export default function App() {
+  return (
+    <LangProvider>
+      <AppInner />
+    </LangProvider>
   );
 }

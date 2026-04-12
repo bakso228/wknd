@@ -3,10 +3,8 @@ import { ANNUAL } from '../data/annual.js';
 export function getWeekend() {
   const today = new Date();
   const day = today.getDay();
-  // Sun(0)→ back 1 to show sat+sun of current weekend
-  // Sat(6)→ stay today
-  // Mon–Fri → forward to coming Saturday
-  const daysToSat = day === 6 ? 0 : day === 0 ? -1 : 6 - day;
+  // On Sunday go forward 6 days to next Saturday, not back 1 day
+  const daysToSat = day === 6 ? 0 : day === 0 ? 6 : 6 - day;
   const sat = new Date(today);
   sat.setDate(today.getDate() + daysToSat);
   sat.setHours(0, 0, 0, 0);
@@ -15,12 +13,16 @@ export function getWeekend() {
   return { sat, sun };
 }
 
-export function fmtLong(d) {
-  return d.toLocaleDateString('de-DE', { weekday: 'long', day: 'numeric', month: 'long' });
+export function fmtLong(d, lang = 'de') {
+  return d.toLocaleDateString(lang === 'de' ? 'de-DE' : 'en-US', {
+    weekday: 'long', day: 'numeric', month: 'long',
+  });
 }
 
-export function fmtShort(d) {
-  return d.toLocaleDateString('de-DE', { day: 'numeric', month: 'short' });
+export function fmtShort(d, lang = 'de') {
+  return d.toLocaleDateString(lang === 'de' ? 'de-DE' : 'en-US', {
+    day: 'numeric', month: 'short',
+  });
 }
 
 export function daysInMonth(y, m) {
@@ -50,4 +52,19 @@ export function dayEvents(y, m, d, uEv) {
     .map(e => ({ ...e, source: 'user' }));
 
   return [...annual, ...personal];
+}
+
+// Synthesise plan items for a specific date from weekendPlan
+export function planEventsForDate(dateStr, weekendPlan, dayKey) {
+  return (weekendPlan[dayKey] || []).map(act => ({
+    id:        'plan_' + act._key,
+    name:      act.name,
+    emoji:     act.emoji,
+    type:      'plan',
+    source:    'plan',
+    date:      dateStr,
+    startDate: dateStr,
+    endDate:   dateStr,
+    _actKey:   act._key,
+  }));
 }

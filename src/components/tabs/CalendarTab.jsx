@@ -1,15 +1,17 @@
 import { useState, useMemo } from 'react';
 import AddEventModal from '../AddEventModal.jsx';
-import { MO, DOW } from '../../data/annual.js';
+import { useLang } from '../../contexts/LangContext.jsx';
 import { TYPE_DOT, TYPE_PILL } from '../../data/styles.js';
-import { daysInMonth, firstDow, dayEvents, fmtLong, fmtShort } from '../../utils/date.js';
+import { daysInMonth, firstDow, dayEvents, fmtLong, fmtShort, getWeekend, planEventsForDate } from '../../utils/date.js';
 
-export default function CalendarTab({ userEvents, setUserEvents }) {
+export default function CalendarTab({ userEvents, setUserEvents, weekendPlan }) {
+  const { t, lang } = useLang();
   const today = new Date();
-  const [year,           setYear]           = useState(today.getFullYear());
-  const [month,          setMonth]          = useState(today.getMonth());
-  const [sel,            setSel]            = useState(null);
-  const [showAdd,        setShowAdd]        = useState(false);
+  const [year,            setYear]            = useState(today.getFullYear());
+  const [month,           setMonth]           = useState(today.getMonth());
+  const [sel,             setSel]             = useState(null);
+  const [showAdd,         setShowAdd]         = useState(false);
+  const [editEvent,       setEditEvent]       = useState(null);
   const [showAllUpcoming, setShowAllUpcoming] = useState(false);
 
   const dim  = daysInMonth(year, month);
@@ -18,11 +20,40 @@ export default function CalendarTab({ userEvents, setUserEvents }) {
   const prevMo = () => { if (month === 0) { setMonth(11); setYear(y => y - 1); } else setMonth(m => m - 1); };
   const nextMo = () => { if (month === 11) { setMonth(0); setYear(y => y + 1); } else setMonth(m => m + 1); };
 
+  // Month/day labels via Intl
+  const locale   = lang === 'de' ? 'de-DE' : 'en-US';
+  const MO_LABELS = useMemo(() => [...Array(12)].map((_, i) =>
+    new Date(2000, i, 1).toLocaleDateString(locale, { month: 'long' })
+  ), [locale]);
+  const DOW_LABELS = useMemo(() => [...Array(7)].map((_, i) =>
+    new Date(2000, 0, 3 + i).toLocaleDateString(locale, { weekday: 'short' })
+  ), [locale]);
+
+  // Weekend plan items as calendar events
+  const { sat, sun } = getWeekend();
+  const satStr = sat.toISOString().split('T')[0];
+  const sunStr = sun.toISOString().split('T')[0];
+  const planSat = useMemo(() => planEventsForDate(satStr, weekendPlan, 'sat'), [weekendPlan, satStr]);
+  const planSun = useMemo(() => planEventsForDate(sunStr, weekendPlan, 'sun'), [weekendPlan, sunStr]);
+
+  // All events for a given day (annual + user + plan)
+  const getAllDayEvents = (y, m, d) => {
+    const base = dayEvents(y, m, d, userEvents);
+    const dateStr = new Date(y, m, d).toISOString().split('T')[0];
+    const plan = dateStr === satStr ? planSat : dateStr === sunStr ? planSun : [];
+    return [...base, ...plan];
+  };
+
   const selDate = sel ? new Date(year, month, sel) : null;
-  const selEvs  = sel ? dayEvents(year, month, sel, userEvents) : [];
+  const selEvs  = sel ? getAllDayEvents(year, month, sel) : [];
 
   const addEvent = ev => {
-    setUserEvents([...userEvents, ev]);
+    if (editEvent) {
+      setUserEvents(userEvents.map(e => e.id === ev.id ? ev : e));
+      setEditEvent(null);
+    } else {
+      setUserEvents([...userEvents, ev]);
+    }
     setShowAdd(false);
     setSel(null);
   };
@@ -34,19 +65,19 @@ export default function CalendarTab({ userEvents, setUserEvents }) {
     for (let i = 0; i < 180; i++) {
       const d = new Date(today);
       d.setDate(today.getDate() + i);
-      const evs = dayEvents(d.getFullYear(), d.getMonth(), d.getDate(), userEvents);
+      const evs = getAllDayEvents(d.getFullYear(), d.getMonth(), d.getDate());
       if (evs.length > 0) list.push({ date: new Date(d), evs });
     }
     return list;
-  }, [userEvents]);
+  }, [userEvents, weekendPlan]);
 
-  // Deduplicate multi-day events — show only on start date
+  // Deduplicate multi-day events
   const upcomingDeduped = useMemo(() =>
     upcoming
       .map(({ date, evs }) => ({
         date,
         evs: evs.filter(ev => {
-          if (ev.source === 'annual') return true;
+          if (ev.source === 'annual' || ev.source === 'plan') return true;
           const startStr = ev.startDate || ev.date;
           const thisStr  = date.toISOString().split('T')[0];
           if (startStr !== thisStr && ev.endDate && ev.endDate > ev.startDate) return false;
@@ -57,38 +88,35 @@ export default function CalendarTab({ userEvents, setUserEvents }) {
     [upcoming]
   );
 
-  // Default: only rows that have at least one user event; filter to show only user events in each row
+  // Default: only user + plan events; toggle to include annual
   const upcomingFiltered = useMemo(() => {
     if (showAllUpcoming) return upcomingDeduped;
     return upcomingDeduped
-      .map(({ date, evs }) => ({ date, evs: evs.filter(ev => ev.source === 'user') }))
+      .map(({ date, evs }) => ({ date, evs: evs.filter(ev => ev.source === 'user' || ev.source === 'plan') }))
       .filter(({ evs }) => evs.length > 0);
   }, [upcomingDeduped, showAllUpcoming]);
 
   return (
     <div className="fade-in space-y-5">
       <div>
-        <h2 className="text-lg font-bold text-stone-800">Familienkalender</h2>
-        <p className="text-xs text-stone-400 mt-0.5">Munich events + your family dates</p>
+        <h2 className="text-lg font-bold text-stone-800">{t('calendar.title')}</h2>
+        <p className="text-xs text-stone-400 mt-0.5">{t('calendar.subtitle')}</p>
       </div>
 
       {/* Calendar grid */}
       <div className="bg-white rounded-2xl border border-stone-200 overflow-hidden">
-        {/* month nav */}
         <div className="flex items-center justify-between px-5 py-4 border-b border-stone-50">
           <button onClick={prevMo} className="w-10 h-10 flex items-center justify-center rounded-full hover:bg-stone-100 text-stone-500 text-xl font-bold">‹</button>
-          <div className="font-bold text-stone-800">{MO[month]} {year}</div>
+          <div className="font-bold text-stone-800">{MO_LABELS[month]} {year}</div>
           <button onClick={nextMo} className="w-10 h-10 flex items-center justify-center rounded-full hover:bg-stone-100 text-stone-500 text-xl font-bold">›</button>
         </div>
 
-        {/* day-of-week headers */}
         <div className="grid grid-cols-7 border-b border-stone-50">
-          {DOW.map(d => (
+          {DOW_LABELS.map(d => (
             <div key={d} className="text-center text-[10px] font-bold text-stone-300 py-2">{d}</div>
           ))}
         </div>
 
-        {/* day cells */}
         <div className="grid grid-cols-7">
           {Array.from({ length: fdow }).map((_, i) => (
             <div key={'e' + i} className="min-h-[44px] border-r border-b border-stone-50" />
@@ -97,24 +125,12 @@ export default function CalendarTab({ userEvents, setUserEvents }) {
             const day     = i + 1;
             const isToday = today.getFullYear() === year && today.getMonth() === month && today.getDate() === day;
             const isSel   = sel === day;
-            const evs     = dayEvents(year, month, day, userEvents);
+            const evs     = getAllDayEvents(year, month, day);
             const col     = (fdow + i) % 7;
             return (
-              <div
-                key={day}
-                onClick={() => setSel(day === sel ? null : day)}
-                className={`min-h-[44px] p-1 border-b cursor-pointer transition-colors select-none ${col < 6 ? 'border-r' : ''} border-stone-50 ${
-                  isSel    ? 'bg-amber-50' :
-                  col >= 5 ? 'bg-orange-50/30 active:bg-amber-50/50' :
-                             'active:bg-stone-50'
-                }`}
-              >
-                <div className={`text-xs font-semibold w-7 h-7 flex items-center justify-center rounded-full mx-auto ${
-                  isToday ? 'bg-amber-400 text-white' :
-                  isSel   ? 'text-amber-600' :
-                  col >= 5 ? 'text-orange-500' :
-                             'text-stone-600'
-                }`}>
+              <div key={day} onClick={() => setSel(day === sel ? null : day)}
+                className={`min-h-[44px] p-1 border-b cursor-pointer transition-colors select-none ${col < 6 ? 'border-r' : ''} border-stone-50 ${isSel ? 'bg-amber-50' : col >= 5 ? 'bg-orange-50/30 active:bg-amber-50/50' : 'active:bg-stone-50'}`}>
+                <div className={`text-xs font-semibold w-7 h-7 flex items-center justify-center rounded-full mx-auto ${isToday ? 'bg-amber-400 text-white' : isSel ? 'text-amber-600' : col >= 5 ? 'text-orange-500' : 'text-stone-600'}`}>
                   {day}
                 </div>
                 <div className="flex justify-center flex-wrap gap-0.5 mt-0.5">
@@ -128,34 +144,32 @@ export default function CalendarTab({ userEvents, setUserEvents }) {
         </div>
       </div>
 
-      {/* selected day panel */}
+      {/* Selected day panel */}
       {selDate && (
         <div className="bg-amber-50 border border-amber-200 rounded-2xl p-4">
           <div className="flex justify-between items-center">
-            <div className="font-semibold text-stone-800 text-sm">{fmtLong(selDate)}</div>
-            <button
-              onClick={() => setShowAdd(true)}
-              className="bg-amber-400 hover:bg-amber-500 text-white text-xs font-bold px-3 py-2 rounded-full min-h-[36px]"
-            >
-              + Termin
+            <div className="font-semibold text-stone-800 text-sm">{fmtLong(selDate, lang)}</div>
+            <button onClick={() => setShowAdd(true)} className="bg-amber-400 hover:bg-amber-500 text-white text-xs font-bold px-3 py-2 rounded-full min-h-[36px]">
+              {t('calendar.addShort')}
             </button>
           </div>
           {selEvs.length > 0 && (
             <div className="mt-3 space-y-1.5">
               {selEvs.map((ev, i) => (
-                <div
-                  key={i}
-                  className={`flex items-center justify-between rounded-xl px-3 py-2.5 text-sm ${TYPE_PILL[ev.type] || 'bg-white border border-stone-200 text-stone-700'}`}
-                >
+                <div key={i} className={`flex items-center justify-between rounded-xl px-3 py-2.5 text-sm ${TYPE_PILL[ev.type] || 'bg-white border border-stone-200 text-stone-700'}`}>
                   <div className="flex items-center gap-2">
                     <span>{ev.e || ev.emoji}</span>
                     <div>
                       <div className="font-semibold">{ev.name}</div>
-                      {ev.notes && <div className="text-xs opacity-60">{ev.notes}</div>}
+                      {ev.source === 'plan'   && <div className="text-xs opacity-60">🗓 {t('calendar.planItem')}</div>}
+                      {ev.notes               && <div className="text-xs opacity-60">{ev.notes}</div>}
                     </div>
                   </div>
                   {ev.source === 'user' && (
-                    <button onClick={() => delEvent(ev.id)} className="opacity-40 hover:opacity-80 ml-2 text-sm w-8 h-8 flex items-center justify-center">✕</button>
+                    <div className="flex items-center gap-1 ml-2">
+                      <button onClick={() => { setEditEvent(ev); setShowAdd(true); }} className="opacity-40 hover:opacity-80 text-xs w-8 h-8 flex items-center justify-center">✏️</button>
+                      <button onClick={() => delEvent(ev.id)} className="opacity-40 hover:opacity-80 text-sm w-8 h-8 flex items-center justify-center">✕</button>
+                    </div>
                   )}
                 </div>
               ))}
@@ -165,31 +179,29 @@ export default function CalendarTab({ userEvents, setUserEvents }) {
       )}
 
       {showAdd && selDate && (
-        <AddEventModal date={selDate} onSave={addEvent} onClose={() => setShowAdd(false)} />
+        <AddEventModal
+          date={selDate}
+          onSave={addEvent}
+          onClose={() => { setShowAdd(false); setEditEvent(null); }}
+          initialEvent={editEvent}
+        />
       )}
 
-      {/* upcoming events */}
+      {/* Upcoming list */}
       <div>
         <div className="flex items-center justify-between mb-3">
           <div className="flex items-center gap-2">
-            <div className="text-xs font-bold text-stone-400 uppercase tracking-wide">Demnächst</div>
+            <div className="text-xs font-bold text-stone-400 uppercase tracking-wide">{t('calendar.upcoming')}</div>
             <button
               onClick={() => setShowAllUpcoming(v => !v)}
-              className={`text-[10px] font-semibold px-2 py-1 rounded-full border transition-colors ${
-                showAllUpcoming
-                  ? 'bg-stone-700 text-white border-stone-700'
-                  : 'bg-white text-stone-500 border-stone-200'
-              }`}
+              className={`text-[10px] font-semibold px-2 py-1 rounded-full border transition-colors ${showAllUpcoming ? 'bg-stone-700 text-white border-stone-700' : 'bg-white text-stone-500 border-stone-200'}`}
             >
-              {showAllUpcoming ? 'Alle' : 'Meine Termine'}
+              {showAllUpcoming ? t('calendar.all') : t('calendar.myEvents')}
             </button>
           </div>
           {!selDate && (
-            <button
-              onClick={() => { setSel(today.getDate()); }}
-              className="text-xs text-amber-600 font-semibold min-h-[36px] px-2"
-            >
-              + Termin hinzufügen
+            <button onClick={() => setSel(today.getDate())} className="text-xs text-amber-600 font-semibold min-h-[36px] px-2">
+              {t('calendar.addEvent')}
             </button>
           )}
         </div>
@@ -197,25 +209,20 @@ export default function CalendarTab({ userEvents, setUserEvents }) {
         {upcomingFiltered.length === 0 ? (
           <div className="bg-white rounded-2xl border border-stone-100 p-8 text-center text-stone-400">
             <div className="text-3xl mb-2">📭</div>
-            <div className="text-sm font-medium">Noch keine Termine</div>
-            <div className="text-xs mt-1">Klick auf einen Tag im Kalender, um einen Termin hinzuzufügen.</div>
+            <div className="text-sm font-medium">{t('calendar.noEvents')}</div>
+            <div className="text-xs mt-1">{t('calendar.noEventsHint')}</div>
           </div>
         ) : (
           <div className="bg-white rounded-2xl border border-stone-100 overflow-hidden divide-y divide-stone-50">
             {upcomingFiltered.map(({ date, evs }) => {
               const isToday    = date.toDateString() === today.toDateString();
               const isTomorrow = date.toDateString() === new Date(today.getTime() + 86400000).toDateString();
-              const label      = isToday ? 'Heute' : isTomorrow ? 'Morgen' :
-                date.toLocaleDateString('de-DE', { weekday: 'short', day: 'numeric', month: 'short' });
+              const label      = isToday ? t('calendar.today') : isTomorrow ? t('calendar.tomorrow') :
+                date.toLocaleDateString(locale, { weekday: 'short', day: 'numeric', month: 'short' });
               return (
-                <div
-                  key={date.toISOString()}
-                  className="flex gap-3 px-4 py-3 active:bg-stone-50 transition-colors cursor-pointer"
-                  onClick={() => { setYear(date.getFullYear()); setMonth(date.getMonth()); setSel(date.getDate()); }}
-                >
-                  <div className={`flex-shrink-0 w-16 pt-0.5 text-xs font-bold ${isToday ? 'text-amber-500' : 'text-stone-400'}`}>
-                    {label}
-                  </div>
+                <div key={date.toISOString()} className="flex gap-3 px-4 py-3 active:bg-stone-50 transition-colors cursor-pointer"
+                  onClick={() => { setYear(date.getFullYear()); setMonth(date.getMonth()); setSel(date.getDate()); }}>
+                  <div className={`flex-shrink-0 w-16 pt-0.5 text-xs font-bold ${isToday ? 'text-amber-500' : 'text-stone-400'}`}>{label}</div>
                   <div className="flex-1 space-y-1">
                     {evs.map((ev, i) => {
                       const isMulti = ev.endDate && ev.endDate > (ev.startDate || ev.date);
@@ -223,20 +230,13 @@ export default function CalendarTab({ userEvents, setUserEvents }) {
                         <div key={i} className="flex items-center gap-2">
                           <div className={`w-1.5 h-1.5 rounded-full flex-shrink-0 ${TYPE_DOT[ev.type] || 'bg-stone-300'}`} />
                           <span className="text-sm font-semibold text-stone-700 flex-1">{ev.e || ev.emoji} {ev.name}</span>
-                          {isMulti && (
-                            <span className="text-[10px] text-violet-500 font-medium">
-                              bis {new Date(ev.endDate).toLocaleDateString('de-DE', { day: 'numeric', month: 'short' })}
-                            </span>
-                          )}
-                          {ev.source === 'annual' && <span className="text-[10px] text-stone-300">jährlich</span>}
+                          {isMulti && <span className="text-[10px] text-violet-500 font-medium">{t('calendar.until')} {new Date(ev.endDate).toLocaleDateString(locale, { day: 'numeric', month: 'short' })}</span>}
+                          {ev.source === 'annual' && <span className="text-[10px] text-stone-300">{t('calendar.annually')}</span>}
+                          {ev.source === 'plan'   && <span className="text-[10px] text-amber-400 font-medium">🗓</span>}
                           {ev.notes && <span className="text-xs text-stone-400 truncate">{ev.notes}</span>}
                           {ev.source === 'user' && (
-                            <button
-                              onClick={e => { e.stopPropagation(); delEvent(ev.id); }}
-                              className="flex-shrink-0 text-stone-300 hover:text-red-400 active:text-red-500 w-6 h-6 flex items-center justify-center transition-colors"
-                            >
-                              ✕
-                            </button>
+                            <button onClick={e => { e.stopPropagation(); delEvent(ev.id); }}
+                              className="flex-shrink-0 text-stone-300 hover:text-red-400 active:text-red-500 w-6 h-6 flex items-center justify-center transition-colors">✕</button>
                           )}
                         </div>
                       );
@@ -249,9 +249,9 @@ export default function CalendarTab({ userEvents, setUserEvents }) {
         )}
       </div>
 
-      {/* legend */}
+      {/* Legend */}
       <div className="bg-white rounded-2xl border border-stone-100 p-4">
-        <div className="text-xs font-bold text-stone-400 uppercase tracking-wide mb-2">Legende</div>
+        <div className="text-xs font-bold text-stone-400 uppercase tracking-wide mb-2">{t('calendar.legend')}</div>
         <div className="flex flex-wrap gap-3">
           {Object.entries(TYPE_DOT).map(([type, color]) => (
             <div key={type} className="flex items-center gap-1.5 text-xs text-stone-600">

@@ -5,16 +5,17 @@ export function getSeason(m) {
   return 'winter';
 }
 
+// Returns { emoji, cat, labelKey } — labelKey maps to translations.wx.*
 export function wxInfo(code) {
-  if (code === 0)  return { emoji: '☀️',  label: 'Sonnig',         cat: 'sunny'  };
-  if (code <= 2)   return { emoji: '🌤️',  label: 'Leicht bewölkt', cat: 'sunny'  };
-  if (code === 3)  return { emoji: '☁️',  label: 'Bewölkt',        cat: 'cloudy' };
-  if (code <= 48)  return { emoji: '🌫️',  label: 'Neblig',         cat: 'cloudy' };
-  if (code <= 57)  return { emoji: '🌦️',  label: 'Nieselregen',    cat: 'rainy'  };
-  if (code <= 67)  return { emoji: '🌧️',  label: 'Regen',          cat: 'rainy'  };
-  if (code <= 77)  return { emoji: '❄️',  label: 'Schnee',         cat: 'rainy'  };
-  if (code <= 82)  return { emoji: '🌦️',  label: 'Schauer',        cat: 'rainy'  };
-  return                   { emoji: '⛈️',  label: 'Gewitter',       cat: 'rainy'  };
+  if (code === 0)  return { emoji: '☀️',  cat: 'sunny',  labelKey: 'clear'        };
+  if (code <= 2)   return { emoji: '🌤️',  cat: 'sunny',  labelKey: 'partlyCloudy' };
+  if (code === 3)  return { emoji: '☁️',  cat: 'cloudy', labelKey: 'cloudy'       };
+  if (code <= 48)  return { emoji: '🌫️',  cat: 'cloudy', labelKey: 'foggy'        };
+  if (code <= 57)  return { emoji: '🌦️',  cat: 'rainy',  labelKey: 'drizzle'      };
+  if (code <= 67)  return { emoji: '🌧️',  cat: 'rainy',  labelKey: 'rain'         };
+  if (code <= 77)  return { emoji: '❄️',  cat: 'rainy',  labelKey: 'snow'         };
+  if (code <= 82)  return { emoji: '🌦️',  cat: 'rainy',  labelKey: 'showers'      };
+  return                   { emoji: '⛈️',  cat: 'rainy',  labelKey: 'storm'        };
 }
 
 export function scoreActivity(act, wxCat, season) {
