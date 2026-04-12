@@ -26,7 +26,7 @@ export default function Header({ weather }) {
         <div className="flex items-center gap-2 flex-shrink-0">
           {weather && (
             <div className="text-right text-xs text-stone-500 bg-stone-50 rounded-xl px-2.5 py-1.5 border border-stone-200">
-              <div className="font-medium">{wxInfo(weather.sat.code).emoji} Sa {weather.sat.maxT}°</div>
+              {weather.sat && <div className="font-medium">{wxInfo(weather.sat.code).emoji} Sa {weather.sat.maxT}°</div>}
               <div className="font-medium">{wxInfo(weather.sun.code).emoji} So {weather.sun.maxT}°</div>
             </div>
           )}
