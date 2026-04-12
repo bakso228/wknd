@@ -60,6 +60,16 @@ export function dayEvents(y, m, d, uEv) {
   return [...annual, ...personal];
 }
 
+// Returns an array of {sat, sun, satStr, sunStr, key, index} for the next n weekends
+export function getUpcomingWeekends(n = 5) {
+  const { sat } = getWeekend();
+  return Array.from({ length: n }, (_, i) => {
+    const s = new Date(sat); s.setDate(sat.getDate() + i * 7);
+    const u = new Date(s);   u.setDate(s.getDate() + 1);
+    return { sat: s, sun: u, satStr: toLocalDateStr(s), sunStr: toLocalDateStr(u), key: `wknd_${i}`, index: i };
+  });
+}
+
 // Synthesise plan items for a specific date from weekendPlan
 export function planEventsForDate(dateStr, weekendPlan, dayKey) {
   return (weekendPlan[dayKey] || []).map(act => ({

@@ -4,18 +4,22 @@ import { useLang } from '../../contexts/LangContext.jsx';
 import { BASE_ACTIVITIES, STICKY_DEFAULTS } from '../../data/activities.js';
 import { SOURCED_EVENTS } from '../../data/events.js';
 import { getSeason, wxInfo, scoreActivity } from '../../utils/weather.js';
-import { getWeekend, fmtShort } from '../../utils/date.js';
+import { getUpcomingWeekends, fmtShort } from '../../utils/date.js';
 
 export default function ExplorerTab({ weather, weekendPlan, setWeekendPlan, stickyActivities, setStickyActivities }) {
   const { t, lang } = useLang();
   const [catFilter,      setCatFilter]      = useState('all');
   const [locationFilter, setLocationFilter] = useState('all');
   const [typeFilter,     setTypeFilter]     = useState('all');
+  const [weekendFilter,  setWeekendFilter]  = useState('wknd_0');
   const [showAddSticky,  setShowAddSticky]  = useState(false);
   const [newSticky,      setNewSticky]      = useState({ name: '', emoji: '⭐', desc: '' });
 
   const season = getSeason(new Date().getMonth() + 1);
-  const wxCat  = weather ? wxInfo(weather.sat.code).cat : 'sunny';
+  // weather.sat may be null on Sundays (yesterday not in 16-day forecast)
+  const wxCat  = weather ? wxInfo((weather.sat || weather.sun).code).cat : 'sunny';
+
+  const upcomingWeekends = useMemo(() => getUpcomingWeekends(5), []);
 
   const allActivities = useMemo(() => {
     const userStickies = stickyActivities.filter(s => !STICKY_DEFAULTS.find(d => d.id === s.id));
@@ -46,9 +50,35 @@ export default function ExplorerTab({ weather, weekendPlan, setWeekendPlan, stic
   const isAdded  = (id, day) => (weekendPlan[day] || []).some(a => a.id === id);
   const addToDay = (act, day) => setWeekendPlan(p => ({ ...p, [day]: [...(p[day] || []), { ...act, _key: act.id + Date.now() }] }));
 
-  const sourcedItems = filtered.filter(a => a.eventType === 'sourced');
+  // Sourced items, filtered by selected weekend and sorted by startDate
+  const sourcedItems = useMemo(() => {
+    const items = filtered.filter(a => a.eventType === 'sourced');
+    if (weekendFilter === 'all') return items;
+    const wknd = upcomingWeekends.find(w => w.key === weekendFilter);
+    if (!wknd) return items;
+    return items
+      .filter(a => !a.startDate || (a.startDate <= wknd.sunStr && (a.endDate || a.startDate) >= wknd.satStr))
+      .sort((a, b) => (a.startDate || '').localeCompare(b.startDate || ''));
+  }, [filtered, weekendFilter, upcomingWeekends]);
+
+  // Grouped by weekend for the 'all upcoming' view
+  const sourcedByWeekend = useMemo(() => {
+    if (weekendFilter !== 'all') return null;
+    return upcomingWeekends.map(wknd => ({
+      wknd,
+      items: filtered
+        .filter(a => a.eventType === 'sourced' && (!a.startDate ||
+          (a.startDate <= wknd.sunStr && (a.endDate || a.startDate) >= wknd.satStr)))
+        .sort((a, b) => (a.startDate || '').localeCompare(b.startDate || '')),
+    })).filter(g => g.items.length > 0);
+  }, [filtered, weekendFilter, upcomingWeekends]);
+
   const stickyItems  = filtered.filter(a => a.cat === 'sticky');
   const regularItems = filtered.filter(a => a.eventType !== 'sourced' && a.cat !== 'sticky');
+  const hasSourced   = filtered.some(a => a.eventType === 'sourced');
+  const showSourced  = weekendFilter === 'all'
+    ? (sourcedByWeekend && sourcedByWeekend.length > 0)
+    : sourcedItems.length > 0;
 
   const saveSticky = () => {
     if (!newSticky.name.trim()) return;
@@ -59,7 +89,8 @@ export default function ExplorerTab({ weather, weekendPlan, setWeekendPlan, stic
   };
   const removeSticky = id => setStickyActivities(stickyActivities.filter(s => s.id !== id));
 
-  const { sat, sun } = getWeekend();
+  const selectedWknd = weekendFilter === 'all' ? null : upcomingWeekends.find(w => w.key === weekendFilter);
+  const WKND_LABELS  = ['this', 'next', 'in2wks', 'in3wks', 'in4wks'];
 
   const CAT_FILTERS = [
     { id: 'all',      e: '✨' }, { id: 'sourced',  e: '📰' }, { id: 'outdoor',  e: '🌿' },
@@ -80,7 +111,10 @@ export default function ExplorerTab({ weather, weekendPlan, setWeekendPlan, stic
         {weather && (
           <div className="flex-shrink-0 text-right text-xs text-stone-500 bg-white rounded-xl px-3 py-2 border border-stone-200">
             <div className="text-[10px] text-stone-400 font-bold uppercase tracking-wide mb-0.5">{t('explorer.weekend')}</div>
-            <div>{wxInfo(weather.sat.code).emoji} Sa {weather.sat.maxT}° · {wxInfo(weather.sun.code).emoji} So {weather.sun.maxT}°</div>
+            <div>
+              {weather.sat && <>{wxInfo(weather.sat.code).emoji} Sa {weather.sat.maxT}° · </>}
+              {wxInfo(weather.sun.code).emoji} So {weather.sun.maxT}°
+            </div>
           </div>
         )}
       </div>
@@ -116,21 +150,64 @@ export default function ExplorerTab({ weather, weekendPlan, setWeekendPlan, stic
         ))}
       </div>
 
+      {/* Weekend filter chips — shown only when sourced events are in scope */}
+      {hasSourced && (
+        <div className="flex gap-1.5 scroll-x -mx-4 px-4 pb-1">
+          {upcomingWeekends.map((w, i) => (
+            <button key={w.key} onClick={() => setWeekendFilter(w.key)}
+              className={`flex-shrink-0 text-[11px] px-2.5 py-1.5 rounded-full font-semibold border transition-colors min-h-[32px] ${weekendFilter === w.key ? 'bg-violet-600 text-white border-violet-600' : 'bg-white text-stone-500 border-stone-200'}`}>
+              {t(`explorer.wkndFilters.${WKND_LABELS[i]}`)}
+            </button>
+          ))}
+          <button onClick={() => setWeekendFilter('all')}
+            className={`flex-shrink-0 text-[11px] px-2.5 py-1.5 rounded-full font-semibold border transition-colors min-h-[32px] ${weekendFilter === 'all' ? 'bg-violet-600 text-white border-violet-600' : 'bg-white text-stone-500 border-stone-200'}`}>
+            {t('explorer.wkndFilters.allUpcoming')}
+          </button>
+        </div>
+      )}
+
       {/* Sourced events */}
-      {sourcedItems.length > 0 && (
+      {showSourced && (
         <section>
           <div className="flex items-center gap-2 mb-2">
-            <div className="text-xs font-bold text-violet-700 uppercase tracking-wide">{t('explorer.thisWeekend')}</div>
-            <div className="text-[10px] text-stone-400 bg-stone-100 px-2 py-0.5 rounded-full">{fmtShort(sat, lang)} – {fmtShort(sun, lang)}</div>
+            <div className="text-xs font-bold text-violet-700 uppercase tracking-wide">
+              {weekendFilter === 'all' ? t('explorer.upcomingEvents') : t('explorer.thisWeekend')}
+            </div>
+            {selectedWknd && (
+              <div className="text-[10px] text-stone-400 bg-stone-100 px-2 py-0.5 rounded-full">
+                {fmtShort(selectedWknd.sat, lang)} – {fmtShort(selectedWknd.sun, lang)}
+              </div>
+            )}
             <div className="text-[9px] text-stone-300 ml-auto hidden sm:block">{t('explorer.sourcedNote')}</div>
           </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-            {sourcedItems.map(act => (
-              <ActivityCard key={act.id} act={act} wxCat={wxCat}
-                onAddSat={() => addToDay(act, 'sat')} onAddSun={() => addToDay(act, 'sun')}
-                addedSat={isAdded(act.id, 'sat')} addedSun={isAdded(act.id, 'sun')} />
-            ))}
-          </div>
+
+          {weekendFilter === 'all' && sourcedByWeekend ? (
+            <div className="space-y-6">
+              {sourcedByWeekend.map(({ wknd, items }) => (
+                <div key={wknd.key}>
+                  <div className="text-[10px] text-violet-500 font-bold uppercase tracking-wide mb-2 bg-violet-50 inline-block px-2 py-0.5 rounded-full">
+                    {fmtShort(wknd.sat, lang)} – {fmtShort(wknd.sun, lang)}
+                  </div>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    {items.map(act => (
+                      <ActivityCard key={act.id} act={act} wxCat={wxCat}
+                        onAddSat={() => addToDay(act, 'sat')} onAddSun={() => addToDay(act, 'sun')}
+                        addedSat={isAdded(act.id, 'sat')} addedSun={isAdded(act.id, 'sun')} />
+                    ))}
+                  </div>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              {sourcedItems.map(act => (
+                <ActivityCard key={act.id} act={act} wxCat={wxCat}
+                  onAddSat={() => addToDay(act, 'sat')} onAddSun={() => addToDay(act, 'sun')}
+                  addedSat={isAdded(act.id, 'sat')} addedSun={isAdded(act.id, 'sun')} />
+              ))}
+            </div>
+          )}
+
           {(stickyItems.length > 0 || regularItems.length > 0) && typeFilter === 'all' && catFilter === 'all' && <div className="border-t border-stone-100 mt-4" />}
         </section>
       )}
@@ -180,7 +257,7 @@ export default function ExplorerTab({ weather, weekendPlan, setWeekendPlan, stic
       {/* All other activities */}
       {regularItems.length > 0 && (
         <section>
-          {(sourcedItems.length > 0 || stickyItems.length > 0) && typeFilter === 'all' && catFilter === 'all' && (
+          {(showSourced || stickyItems.length > 0) && typeFilter === 'all' && catFilter === 'all' && (
             <div className="text-xs font-bold text-stone-400 uppercase tracking-wide mb-3">{t('explorer.allYear')}</div>
           )}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
