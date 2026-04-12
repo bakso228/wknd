@@ -1,0 +1,32 @@
+export const MO = ['Januar','Februar','März','April','Mai','Juni','Juli','August','September','Oktober','November','Dezember'];
+export const DOW = ['Mo','Di','Mi','Do','Fr','Sa','So'];
+
+export const ANNUAL = [
+  { m:1,  d:6,  name:'Heilige Drei Könige',       e:'👑', type:'holiday'  },
+  { m:1,  d:15, name:'Fasching Season Begins',     e:'🎭', type:'festival' },
+  { m:2,  d:8,  name:'Starkbierfest begins',       e:'🍺', type:'festival' },
+  { m:2,  d:14, name:'Valentinstag',               e:'❤️', type:'holiday'  },
+  { m:3,  d:1,  name:'Starkbierfest (Paulaner)',   e:'🍺', type:'festival' },
+  { m:3,  d:20, name:'Frühlingsanfang',            e:'🌸', type:'seasonal' },
+  { m:4,  d:17, name:'Frühlingsfest begins',       e:'🎡', type:'festival' },
+  { m:5,  d:1,  name:'Tag der Arbeit + Maibaum',   e:'🌲', type:'holiday'  },
+  { m:5,  d:10, name:'Frühlingsfest ends',         e:'🎡', type:'festival' },
+  { m:6,  d:20, name:'Stadtgründungsfest',         e:'🏙️', type:'festival' },
+  { m:6,  d:21, name:'Sommeranfang',               e:'☀️', type:'seasonal' },
+  { m:7,  d:16, name:'Jakobidult',                 e:'🛍️', type:'festival' },
+  { m:8,  d:1,  name:'Auer Dult (Summer)',         e:'🛍️', type:'festival' },
+  { m:8,  d:15, name:'Mariä Himmelfahrt',          e:'🕊️', type:'holiday'  },
+  { m:9,  d:13, name:'Oktoberfest begins 🍺',      e:'🎠', type:'festival' },
+  { m:9,  d:22, name:'Herbstanfang',               e:'🍂', type:'seasonal' },
+  { m:10, d:3,  name:'Tag der Deutschen Einheit',  e:'🇩🇪', type:'holiday' },
+  { m:10, d:4,  name:'Oktoberfest ends',           e:'🍺', type:'festival' },
+  { m:10, d:18, name:'Herbstdult',                 e:'🛍️', type:'festival' },
+  { m:11, d:1,  name:'Allerheiligen',              e:'🕯️', type:'holiday'  },
+  { m:11, d:11, name:'Martinstag',                 e:'🏮', type:'culture'  },
+  { m:11, d:25, name:'Weihnachtsmärkte open',      e:'🎄', type:'festival' },
+  { m:12, d:6,  name:'Nikolaustag',                e:'🎅', type:'holiday'  },
+  { m:12, d:24, name:'Heiligabend',                e:'🎁', type:'holiday'  },
+  { m:12, d:25, name:'1. Weihnachtstag',           e:'🎄', type:'holiday'  },
+  { m:12, d:26, name:'2. Weihnachtstag',           e:'🎁', type:'holiday'  },
+  { m:12, d:31, name:'Silvester',                  e:'🎆', type:'holiday'  },
+];

@@ -1,0 +1,33 @@
+export const CATS_SOURCES = {
+  general:  { label: 'General',  emoji: '📍' },
+  kids:     { label: 'Kids',     emoji: '👧' },
+  theater:  { label: 'Theater',  emoji: '🎭' },
+  food:     { label: 'Food',     emoji: '🍺' },
+  outdoors: { label: 'Outdoors', emoji: '🌿' },
+  local:    { label: 'Local',    emoji: '🏠' },
+};
+
+export const SOURCES = [
+  { id:1,  cat:'general',  emoji:'🎯', name:'Mit Vergnügen München',       desc:'Weekly go-to guide for Munich — concerts, fairs, food, culture.', url:'https://muenchen.mitvergnuegen.com/' },
+  { id:2,  cat:'general',  emoji:'🏙️', name:'München.de Events',           desc:'Official Munich city events calendar.', url:'https://www.muenchen.de/veranstaltungen' },
+  { id:3,  cat:'general',  emoji:'📰', name:'In München',                  desc:"Munich's oldest city magazine with weekly listings.", url:'https://www.in-muenchen.de/veranstaltungen' },
+  { id:4,  cat:'general',  emoji:'🎲', name:'Bored in Munich',             desc:'Great English-language hub for things to do.', url:'https://boredinmunich.com/' },
+  { id:5,  cat:'general',  emoji:'⏱️', name:'Timeout Munich',              desc:'Curated by local experts — weekend picks and events.', url:'https://www.timeout.com/munich' },
+  { id:6,  cat:'general',  emoji:'🌍', name:'Munich Expats Events',        desc:'English-language events listing.', url:'https://munich-expats.com/events/' },
+  { id:7,  cat:'general',  emoji:'📅', name:'My Guide Munich',             desc:"What's on this week — family, sports, culture.", url:'https://www.myguidemunich.com/events/' },
+  { id:8,  cat:'general',  emoji:'🎟️', name:'München Ticket',             desc:'Browse and buy tickets for upcoming Munich shows.', url:'https://www.muenchenticket.de' },
+  { id:9,  cat:'kids',     emoji:'🎪', name:'Kindertheater München',        desc:"All children's theatre productions listed by the city.", url:'https://www.muenchen.de/veranstaltungen/events/kinder-und-jugendtheater.html' },
+  { id:10, cat:'kids',     emoji:'🧒', name:'Kindermuseum München',         desc:'Interactive museum for children 3–12.', url:'https://www.kindermuseum.de/' },
+  { id:11, cat:'kids',     emoji:'🦁', name:'Tierpark Hellabrunn',          desc:'Munich\'s zoo — check events and feeding times.', url:'https://www.zoo-muenchen.de/' },
+  { id:12, cat:'kids',     emoji:'🧱', name:'LEGOLAND Discovery Centre',    desc:'Indoor LEGO world near Olympiapark.', url:'https://www.legolanddiscoverycentre.de/muenchen/de' },
+  { id:13, cat:'theater',  emoji:'🎭', name:'Schauburg (Junges Theater)',   desc:"Munich's leading youth theatre.", url:'https://www.schauburg.net/' },
+  { id:14, cat:'theater',  emoji:'🪆', name:'Münchner Marionettentheater', desc:"Bavaria's oldest puppet theatre — book ahead.", url:'https://www.muema-theater.de/' },
+  { id:15, cat:'theater',  emoji:'🎡', name:'Circus Krone',                 desc:"Germany's biggest permanent circus.", url:'https://www.circus-krone.de/' },
+  { id:16, cat:'theater',  emoji:'🎵', name:'Gasteig HP8',                  desc:"Munich's main cultural centre.", url:'https://www.gasteig.de/' },
+  { id:17, cat:'food',     emoji:'🥨', name:'Viktualienmarkt',              desc:"Munich's iconic daily market.", url:'https://www.muenchen.de/sehenswuerdigkeiten/viktualienmarkt' },
+  { id:18, cat:'food',     emoji:'🛒', name:'Münchner Wochenmärkte',        desc:'Weekly farmers markets across Munich.', url:'https://www.muenchen.de/rathaus/wirtschaft/maerkte-und-veranstaltungen/wochenmaerkte' },
+  { id:19, cat:'outdoors', emoji:'🏟️', name:'Olympiapark',                  desc:'Tower, pool, cycling, weekend events.', url:'https://www.olympiapark.de/' },
+  { id:20, cat:'outdoors', emoji:'🚂', name:'MVV Ausflugsziele',            desc:'Day trips reachable by Munich public transit.', url:'https://www.mvv-muenchen.de/freizeit/ausflugsziele/index.html' },
+  { id:21, cat:'local',    emoji:'🏡', name:'Gemeinde Oberhaching',         desc:'Local events, community calendar, village markets.', url:'https://www.oberhaching.de/' },
+  { id:22, cat:'local',    emoji:'🗺️', name:'Landkreis München Events',     desc:'Events across the greater Munich district.', url:'https://www.landkreis-muenchen.de/service/veranstaltungen/' },
+];

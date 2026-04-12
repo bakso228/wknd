@@ -1,0 +1,331 @@
+// ═══════════════════════════════════════════════════════════════
+// ALL-YEAR ACTIVITIES DATABASE
+// cat: outdoor | indoor | theater | food | seasonal | sticky
+// location: 'munich' | 'day-trip'
+// eventType: 'venue' (permanent) | 'seasonal' (annual recurring)
+// ═══════════════════════════════════════════════════════════════
+export const BASE_ACTIVITIES = [
+  // ── OUTDOOR / IN MUNICH ──────────────────────────────────────
+  {
+    id: 'eng_garten', cat: 'outdoor', location: 'munich', eventType: 'venue',
+    emoji: '🌳', name: 'Englischer Garten',
+    desc: "Europe's largest urban park. Watch surfers at Eisbach, kids run free at the Chinese Tower playground.",
+    weather: ['sunny', 'cloudy'], season: ['spring', 'summer', 'fall'], duration: '2–4h', age: 'Perfect for toddlers',
+    url: 'https://www.muenchen.de/sehenswuerdigkeiten/parks-und-seen/englischer-garten', tags: ['free', 'kids', 'active'],
+  },
+  {
+    id: 'nymphenburg', cat: 'outdoor', location: 'munich', eventType: 'venue',
+    emoji: '🏰', name: 'Nymphenburg Palace & Gardens',
+    desc: 'Baroque palace with enormous gardens and canals. Kids love the ducks, boats, and ornate palace rooms.',
+    weather: ['sunny', 'cloudy'], season: ['spring', 'summer', 'fall'], duration: '2–3h', age: 'Good for all ages',
+    url: 'https://www.schloss-nymphenburg.de/', tags: ['culture', 'family'],
+  },
+  {
+    id: 'isar', cat: 'outdoor', location: 'munich', eventType: 'venue',
+    emoji: '🏞️', name: 'Isar River Walk & Beach',
+    desc: "Munich's beloved urban river — gravel beaches, cycling paths, barbecue spots in summer.",
+    weather: ['sunny', 'cloudy'], season: ['spring', 'summer', 'fall'], duration: '1–3h', age: 'Great with kids',
+    url: 'https://www.muenchen.de/natur/isar', tags: ['free', 'active', 'nature'],
+  },
+  {
+    id: 'olympia', cat: 'outdoor', location: 'munich', eventType: 'venue',
+    emoji: '🏟️', name: 'Olympiapark',
+    desc: 'Tower with Alpine views, cycling, weekend events. Often hosts free concerts in summer.',
+    weather: ['sunny', 'cloudy'], season: ['all'], duration: '2–4h', age: 'Fun for kids',
+    url: 'https://www.olympiapark.de/', tags: ['family', 'active'],
+  },
+  {
+    id: 'hellabrunn', cat: 'outdoor', location: 'munich', eventType: 'venue',
+    emoji: '🦁', name: 'Tierpark Hellabrunn',
+    desc: "Munich's much-loved zoo with the unique Mühlendorf historic village inside. Don't miss feeding times.",
+    weather: ['sunny', 'cloudy'], season: ['all'], duration: '4–5h', age: 'Kids will love it',
+    url: 'https://www.zoo-muenchen.de/', tags: ['kids', 'nature', 'paid'],
+  },
+  {
+    id: 'biking', cat: 'outdoor', location: 'munich', eventType: 'venue',
+    emoji: '🚴', name: 'Family Bike Tour (Isar Valley)',
+    desc: 'Flat Isar valley paths south toward Grünwald — car-free, ideal for kids on balance bikes or seats.',
+    weather: ['sunny', 'cloudy'], season: ['spring', 'summer', 'fall'], duration: '2–4h', age: 'From age 3 in seat',
+    url: 'https://www.adfc-muenchen.de/', tags: ['active', 'free', 'nature'],
+  },
+
+  // ── OUTDOOR / DAY TRIPS ───────────────────────────────────────
+  {
+    id: 'schleissheim', cat: 'outdoor', location: 'day-trip', eventType: 'venue',
+    emoji: '🌷', name: 'Schleißheim Palace & Gardens',
+    desc: 'Less-visited baroque palace north of Munich with manicured French gardens. Serene in spring.',
+    weather: ['sunny'], season: ['spring', 'summer'], duration: '2–3h', age: 'Good for all ages',
+    url: 'https://www.schloesser-schleissheim.de/', tags: ['culture'],
+  },
+  {
+    id: 'starnberg', cat: 'outdoor', location: 'day-trip', eventType: 'venue',
+    emoji: '⛵', name: 'Starnberger See',
+    desc: "30 min by S6. Paddleboat hire, swimming, lakeside promenade. One of Bavaria's most beautiful lakes.",
+    weather: ['sunny'], season: ['summer'], duration: '4–6h', age: 'Great with kids',
+    url: 'https://www.sta5.de/', tags: ['summer', 'swimming'],
+  },
+  {
+    id: 'ammersee', cat: 'outdoor', location: 'day-trip', eventType: 'venue',
+    emoji: '🏄', name: 'Ammersee',
+    desc: 'Quieter than Starnberg. Sandy beaches at Herrsching, good fish restaurants, charming village.',
+    weather: ['sunny'], season: ['summer'], duration: '4–6h', age: 'Great with kids',
+    url: 'https://www.ammersee-tourismus.de/', tags: ['summer', 'swimming'],
+  },
+  {
+    id: 'tegernsee', cat: 'outdoor', location: 'day-trip', eventType: 'venue',
+    emoji: '🌄', name: 'Tegernsee',
+    desc: 'Alpine lake ~1h south. Stunning mountain backdrop, village promenade, beer gardens on the water.',
+    weather: ['sunny', 'cloudy'], season: ['summer', 'fall'], duration: '5–6h', age: 'Good for all ages',
+    url: 'https://www.tegernsee.com/', tags: ['alpine', 'nature'],
+  },
+  {
+    id: 'chiemsee', cat: 'outdoor', location: 'day-trip', eventType: 'venue',
+    emoji: '🏝️', name: 'Chiemsee Day Trip',
+    desc: "Bavaria's largest lake with Ludwig II's island palace. Ferry rides, beaches, ~1h drive.",
+    weather: ['sunny'], season: ['summer'], duration: '6–7h', age: 'Great with kids',
+    url: 'https://www.chiemsee-alpenland.de/', tags: ['culture', 'summer'],
+  },
+  {
+    id: 'hiking', cat: 'outdoor', location: 'day-trip', eventType: 'venue',
+    emoji: '⛰️', name: 'Alpine Day Hike',
+    desc: 'Accessible via train to Kochel or Garmisch. Family-friendly summits with panoramic Alpine views.',
+    weather: ['sunny'], season: ['spring', 'summer', 'fall'], duration: '6–7h', age: 'Kids 4+ (can be carried)',
+    url: 'https://www.zugspitze.de/', tags: ['alpine', 'active'],
+  },
+  {
+    id: 'skiing', cat: 'outdoor', location: 'day-trip', eventType: 'seasonal',
+    emoji: '⛷️', name: 'Ski Day Trip',
+    desc: "Sudelfeld or Spitzingsee closest (1h). Zugspitze for a bigger day. Great family ski areas with kids' courses.",
+    weather: ['cloudy', 'sunny'], season: ['winter'], duration: '6–8h', age: 'Kids 3+ with lessons',
+    url: 'https://www.sudelfeld.de/', tags: ['winter', 'active'],
+  },
+
+  // ── INDOOR / IN MUNICH ────────────────────────────────────────
+  {
+    id: 'deutsches_m', cat: 'indoor', location: 'munich', eventType: 'venue',
+    emoji: '🔬', name: 'Deutsches Museum',
+    desc: "World's largest science & tech museum. Kids go wild on hands-on experiments. Plan 3+ hours.",
+    weather: ['rainy', 'any'], season: ['all'], duration: '3–5h', age: 'Great from age 4',
+    url: 'https://www.deutsches-museum.de/', tags: ['kids', 'rainy-day', 'culture', 'paid'],
+  },
+  {
+    id: 'bmw', cat: 'indoor', location: 'munich', eventType: 'venue',
+    emoji: '🚗', name: 'BMW Welt & Museum',
+    desc: 'Free entry to the spectacular BMW Welt showroom. Kids love climbing in cars.',
+    weather: ['rainy', 'any'], season: ['all'], duration: '2–3h', age: 'Kids love the cars',
+    url: 'https://www.bmw-welt.com/', tags: ['free', 'kids', 'culture'],
+  },
+  {
+    id: 'kindermuseum', cat: 'indoor', location: 'munich', eventType: 'venue',
+    emoji: '🧒', name: 'Kindermuseum München',
+    desc: 'Interactive museum made entirely for children 3–12. Always a brilliant rainy-day choice.',
+    weather: ['rainy', 'any'], season: ['all'], duration: '2–3h', age: 'Ages 3–12 best',
+    url: 'https://www.kindermuseum.de/', tags: ['kids', 'rainy-day', 'paid'],
+  },
+  {
+    id: 'lego_sea', cat: 'indoor', location: 'munich', eventType: 'venue',
+    emoji: '🧱', name: 'LEGOLAND + Sea Life',
+    desc: 'Indoor double-header near Olympiapark — LEGO world + aquarium. Full rainy day solved.',
+    weather: ['rainy', 'any'], season: ['all'], duration: '3–4h', age: 'Ages 3–10',
+    url: 'https://www.legolanddiscoverycentre.de/muenchen/de', tags: ['kids', 'rainy-day', 'paid'],
+  },
+  {
+    id: 'stadtmuseum', cat: 'indoor', location: 'munich', eventType: 'venue',
+    emoji: '🏛️', name: 'Münchner Stadtmuseum',
+    desc: "Munich's city history museum with engaging collections and a good café downstairs.",
+    weather: ['rainy', 'any'], season: ['all'], duration: '2h', age: 'Good from age 6',
+    url: 'https://www.stadtmuseum-online.de/', tags: ['culture', 'rainy-day'],
+  },
+  {
+    id: 'pinakotheken', cat: 'indoor', location: 'munich', eventType: 'venue',
+    emoji: '🖼️', name: 'Pinakotheken (€1 Sundays)',
+    desc: "Three world-class art museums side by side. Sundays just €1 — one of Munich's best secrets.",
+    weather: ['rainy', 'any'], season: ['all'], duration: '2–3h', age: 'Older kids / adults',
+    url: 'https://www.pinakothek.de/', tags: ['culture', 'rainy-day', 'cheap'],
+  },
+  {
+    id: 'spielzeugm', cat: 'indoor', location: 'munich', eventType: 'venue',
+    emoji: '🪀', name: 'Spielzeugmuseum',
+    desc: 'Nostalgic toy museum in the Altes Rathaus tower. Four floors of vintage toys — magical for young kids.',
+    weather: ['rainy', 'any'], season: ['all'], duration: '1.5h', age: 'Ages 2–8 best',
+    url: 'https://www.spielzeugmuseum-muenchen.de/', tags: ['kids', 'rainy-day'],
+  },
+  {
+    id: 'climbing', cat: 'indoor', location: 'munich', eventType: 'venue',
+    emoji: '🧗', name: 'Climbing (DAV Kletterzentrum)',
+    desc: "Munich's premier climbing centre near Olympiapark. Great kids' wall and top-rope area.",
+    weather: ['rainy', 'any'], season: ['all'], duration: '2–3h', age: 'From age 3 with gear',
+    url: 'https://www.kletterzentrummuenchen.de/', tags: ['active', 'kids', 'rainy-day'],
+  },
+  {
+    id: 'ikea', cat: 'indoor', location: 'munich', eventType: 'venue',
+    emoji: '🛋️', name: 'IKEA München',
+    desc: 'The classic family outing — browse, eat meatballs, kids play area. Fully planned Saturday.',
+    weather: ['rainy', 'any'], season: ['all'], duration: '2–3h', age: 'Kids play corner',
+    url: 'https://www.ikea.com/de/de/stores/muenchen/', tags: ['practical', 'family'],
+  },
+
+  // ── THEATER / IN MUNICH ───────────────────────────────────────
+  {
+    id: 'schauburg', cat: 'theater', location: 'munich', eventType: 'venue',
+    emoji: '🎭', name: 'Schauburg (Junges Theater)',
+    desc: "Munich's leading youth theatre — innovative productions from age 5 months to teens.",
+    weather: ['any'], season: ['all'], duration: '1.5–2h', age: 'From 5 months up',
+    url: 'https://www.schauburg.net/', tags: ['culture', 'kids'],
+  },
+  {
+    id: 'marionetten', cat: 'theater', location: 'munich', eventType: 'venue',
+    emoji: '🪆', name: 'Münchner Marionettentheater',
+    desc: "Bavaria's oldest puppet theatre — UNESCO heritage. Your 3 and 5 year olds will be spellbound.",
+    weather: ['any'], season: ['all'], duration: '1.5h', age: 'Ages 3–8 best',
+    url: 'https://www.muema-theater.de/', tags: ['kids', 'culture', 'paid'],
+  },
+  {
+    id: 'circus', cat: 'theater', location: 'munich', eventType: 'venue',
+    emoji: '🎪', name: 'Circus Krone',
+    desc: "Germany's largest permanent circus. Classic big-top experience for the whole family.",
+    weather: ['any'], season: ['fall', 'winter', 'spring'], duration: '2h', age: 'All ages',
+    url: 'https://www.circus-krone.de/', tags: ['kids', 'family'],
+  },
+  {
+    id: 'gasteig', cat: 'theater', location: 'munich', eventType: 'venue',
+    emoji: '🎵', name: 'Gasteig HP8',
+    desc: "Munich's main cultural centre — concerts, film, and children's programs. Rich calendar.",
+    weather: ['any'], season: ['all'], duration: '2h', age: 'Family programs available',
+    url: 'https://www.gasteig.de/', tags: ['culture', 'family'],
+  },
+  {
+    id: 'kino', cat: 'theater', location: 'munich', eventType: 'venue',
+    emoji: '🎬', name: 'Cinema (Mathäser / City)',
+    desc: 'Regular family film screenings. Mathäser is the biggest; ASTOR is the most luxurious.',
+    weather: ['rainy', 'any'], season: ['all'], duration: '2–3h', age: 'From age 3',
+    url: 'https://www.mathaeser.de/', tags: ['rainy-day', 'kids', 'family'],
+  },
+
+  // ── FOOD & MARKETS / IN MUNICH ────────────────────────────────
+  {
+    id: 'viktual', cat: 'food', location: 'munich', eventType: 'venue',
+    emoji: '🥨', name: 'Viktualienmarkt Brunch',
+    desc: "Munich's iconic daily market. Fresh Brezn, cheese, seasonal produce, beer garden. Perfect slow morning.",
+    weather: ['any'], season: ['all'], duration: '1.5h', age: 'Fun for kids',
+    url: 'https://www.muenchen.de/sehenswuerdigkeiten/viktualienmarkt', tags: ['food', 'free', 'culture'],
+  },
+  {
+    id: 'biergarten', cat: 'food', location: 'munich', eventType: 'venue',
+    emoji: '🍺', name: 'Biergarten Chinesischer Turm',
+    desc: "Munich's most iconic beer garden — 7,000 seats. Attached playground makes it perfect for families.",
+    weather: ['sunny', 'cloudy'], season: ['spring', 'summer', 'fall'], duration: '2–3h', age: 'Playground on site',
+    url: 'https://www.chinesischer-turm.de/', tags: ['food', 'family', 'relaxed'],
+  },
+  {
+    id: 'waldwirt', cat: 'food', location: 'munich', eventType: 'venue',
+    emoji: '🌲', name: 'Waldwirtschaft Großhesselohe',
+    desc: 'Beloved forest beer garden in Pullach, close to Oberhaching. Jazz every Sunday.',
+    weather: ['sunny', 'cloudy'], season: ['spring', 'summer', 'fall'], duration: '2–3h', age: 'Family welcome',
+    url: 'https://www.waldwirtschaft.de/', tags: ['food', 'local', 'relaxed'],
+  },
+  {
+    id: 'eataly', cat: 'food', location: 'munich', eventType: 'venue',
+    emoji: '🍝', name: 'Eataly München',
+    desc: 'Italian food hall with tastings, events, cooking classes, and incredible gelato.',
+    weather: ['any'], season: ['all'], duration: '1–2h', age: 'Kids friendly',
+    url: 'https://www.eataly.net/de_de/stores/munich/', tags: ['food', 'indoor', 'culture'],
+  },
+  {
+    id: 'wochenmarkt', cat: 'food', location: 'munich', eventType: 'venue',
+    emoji: '🥬', name: 'Wochenmarkt',
+    desc: 'Local weekly farmers\' market in Oberhaching or Deisenhofen. Fresh, local, lovely Saturday morning.',
+    weather: ['any'], season: ['all'], duration: '1h', age: 'Great with toddlers',
+    url: 'https://www.muenchen.de/rathaus/wirtschaft/maerkte-und-veranstaltungen/wochenmaerkte', tags: ['food', 'local', 'free'],
+  },
+
+  // ── SEASONAL / IN MUNICH ──────────────────────────────────────
+  {
+    id: 'frühlingsfest', cat: 'seasonal', location: 'munich', eventType: 'seasonal',
+    emoji: '🎡', name: 'Frühlingsfest (Theresienwiese)',
+    desc: 'Munich\'s spring folk festival — free entry, two beer tents, 100+ rides. Familientage with discounts for kids.',
+    weather: ['any'], season: ['spring'], duration: '3–4h', age: 'Kids rides available',
+    url: 'https://www.muenchen.de/freizeit/feste-und-braeuche/fruehlingsfest', tags: ['festival', 'family'], special: 'frühlingsfest',
+  },
+  {
+    id: 'oktoberfest', cat: 'seasonal', location: 'munich', eventType: 'seasonal',
+    emoji: '🎠', name: 'Oktoberfest — Oide Wiesn',
+    desc: 'The family section of Wiesn: vintage rides, folk music, reasonable prices. Avoid peak Saturday evenings.',
+    weather: ['any'], season: ['fall'], duration: '4–5h', age: 'Family-friendly section',
+    url: 'https://www.oktoberfest.de/', tags: ['festival', 'iconic'], special: 'oktoberfest',
+  },
+  {
+    id: 'christkindl', cat: 'seasonal', location: 'munich', eventType: 'seasonal',
+    emoji: '🎄', name: 'Christkindlmärkte',
+    desc: 'Munich has 20+ Christmas markets. Start at Marienplatz, visit the medieval market at Wittelsbacherplatz.',
+    weather: ['any'], season: ['winter'], duration: '2–3h', age: 'Magical for kids',
+    url: 'https://www.muenchen.de/weihnachtsmarkt', tags: ['festival', 'winter'], special: 'christmas',
+  },
+  {
+    id: 'eisstadion', cat: 'seasonal', location: 'munich', eventType: 'seasonal',
+    emoji: '⛸️', name: 'Ice Skating (Karlsplatz)',
+    desc: 'Outdoor rink at Karlsplatz or the indoor Olympia ice stadium. Munich winter tradition.',
+    weather: ['any'], season: ['winter'], duration: '2h', age: 'From age 3',
+    url: 'https://www.muenchen.de/freizeit/sport/eissport', tags: ['winter', 'active', 'family'],
+  },
+  {
+    id: 'fasching', cat: 'seasonal', location: 'munich', eventType: 'seasonal',
+    emoji: '🎭', name: 'Fasching Parade',
+    desc: "Munich's carnival season — kids' Fasching parade in Schwabing is delightful. Costumes a must.",
+    weather: ['any'], season: ['winter'], duration: '2h', age: 'Kids love costumes',
+    url: 'https://www.muenchen.de/freizeit/feste-und-braeuche/fasching', tags: ['festival', 'winter', 'free'], special: 'fasching',
+  },
+  {
+    id: 'stadtfest', cat: 'seasonal', location: 'munich', eventType: 'seasonal',
+    emoji: '🏙️', name: 'Stadtgründungsfest',
+    desc: "Munich's birthday celebration every June — free medieval market and concerts around the Altstadt.",
+    weather: ['sunny', 'cloudy'], season: ['summer'], duration: '3h', age: 'All ages',
+    url: 'https://www.muenchen.de/', tags: ['festival', 'free', 'culture'], special: 'stadtfest',
+  },
+  {
+    id: 'dult', cat: 'seasonal', location: 'munich', eventType: 'seasonal',
+    emoji: '🛍️', name: 'Auer Dult (Mariahilfplatz)',
+    desc: "Munich's traditional antique & pottery market, three times a year. Wonderful atmosphere.",
+    weather: ['sunny', 'cloudy'], season: ['spring', 'summer', 'fall'], duration: '2h', age: 'Good for all ages',
+    url: 'https://www.auerdult.de/', tags: ['market', 'culture'], special: 'dult',
+  },
+];
+
+// ── STICKY DEFAULTS ──────────────────────────────────────────
+export const STICKY_DEFAULTS = [
+  {
+    id: 'sticky_ikea', cat: 'sticky', location: 'munich', eventType: 'venue',
+    emoji: '🛋️', name: 'IKEA München',
+    desc: 'Browse, eat meatballs, stock up. Kids play corner.',
+    weather: ['any'], season: ['all'], duration: '2–3h', age: 'Kids play corner',
+    url: 'https://www.ikea.com/de/de/stores/muenchen/', tags: ['practical'],
+  },
+  {
+    id: 'sticky_climbing', cat: 'sticky', location: 'munich', eventType: 'venue',
+    emoji: '🧗', name: 'Climbing (DAV)',
+    desc: 'DAV Kletterzentrum. Kids wall and equipment hire.',
+    weather: ['any'], season: ['all'], duration: '2–3h', age: 'From age 3',
+    url: 'https://www.kletterzentrummuenchen.de/', tags: ['active', 'kids'],
+  },
+  {
+    id: 'sticky_biking', cat: 'sticky', location: 'munich', eventType: 'venue',
+    emoji: '🚴', name: 'Family Bike Tour',
+    desc: 'Flat Isar valley paths — perfect for kids on seats.',
+    weather: ['sunny', 'cloudy'], season: ['spring', 'summer', 'fall'], duration: '2–4h', age: 'From age 3 in seat',
+    url: 'https://www.adfc-muenchen.de/', tags: ['active', 'free'],
+  },
+  {
+    id: 'sticky_skiing', cat: 'sticky', location: 'day-trip', eventType: 'seasonal',
+    emoji: '⛷️', name: 'Ski Day Trip',
+    desc: 'Sudelfeld or Spitzingsee, ~1h. Kids ski schools available.',
+    weather: ['cloudy', 'sunny'], season: ['winter'], duration: '6–8h', age: 'Kids 3+ with lessons',
+    url: 'https://www.sudelfeld.de/', tags: ['active', 'winter'],
+  },
+  {
+    id: 'sticky_playdate', cat: 'sticky', location: 'munich', eventType: 'venue',
+    emoji: '👫', name: 'Playdate with Friends',
+    desc: 'Arrange a meetup with another family.',
+    weather: ['any'], season: ['all'], duration: '2–4h', age: 'Ages 3 & 5',
+    url: '', tags: ['social', 'kids'],
+  },
+];
