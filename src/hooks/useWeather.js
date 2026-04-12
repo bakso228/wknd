@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { getWeekend } from '../utils/date.js';
+import { getWeekend, toLocalDateStr } from '../utils/date.js';
 
 export function useWeather() {
   const [weather, setWeather] = useState(null);
@@ -17,17 +17,18 @@ export function useWeather() {
       .then(r => r.json())
       .then(data => {
         const times = data.daily.time;
-        const si = times.indexOf(sat.toISOString().split('T')[0]);
-        const su = times.indexOf(sun.toISOString().split('T')[0]);
-        if (si >= 0 && su >= 0) {
+        const si = times.indexOf(toLocalDateStr(sat));
+        const su = times.indexOf(toLocalDateStr(sun));
+        // su must be found; si may be -1 on Sunday (sat = yesterday, past forecast)
+        if (su >= 0) {
           setWeather({
-            sat: {
+            sat: si >= 0 ? {
               date:   sat,
               code:   data.daily.weathercode[si],
               maxT:   Math.round(data.daily.temperature_2m_max[si]),
               minT:   Math.round(data.daily.temperature_2m_min[si]),
               precip: data.daily.precipitation_sum[si],
-            },
+            } : null,
             sun: {
               date:   sun,
               code:   data.daily.weathercode[su],

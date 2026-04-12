@@ -2,7 +2,7 @@ import { useState, useMemo } from 'react';
 import AddEventModal from '../AddEventModal.jsx';
 import { useLang } from '../../contexts/LangContext.jsx';
 import { TYPE_DOT, TYPE_PILL } from '../../data/styles.js';
-import { daysInMonth, firstDow, dayEvents, fmtLong, fmtShort, getWeekend, planEventsForDate } from '../../utils/date.js';
+import { daysInMonth, firstDow, dayEvents, fmtLong, fmtShort, getWeekend, planEventsForDate, toLocalDateStr } from '../../utils/date.js';
 
 export default function CalendarTab({ userEvents, setUserEvents, weekendPlan }) {
   const { t, lang } = useLang();
@@ -31,15 +31,15 @@ export default function CalendarTab({ userEvents, setUserEvents, weekendPlan }) 
 
   // Weekend plan items as calendar events
   const { sat, sun } = getWeekend();
-  const satStr = sat.toISOString().split('T')[0];
-  const sunStr = sun.toISOString().split('T')[0];
+  const satStr = toLocalDateStr(sat);
+  const sunStr = toLocalDateStr(sun);
   const planSat = useMemo(() => planEventsForDate(satStr, weekendPlan, 'sat'), [weekendPlan, satStr]);
   const planSun = useMemo(() => planEventsForDate(sunStr, weekendPlan, 'sun'), [weekendPlan, sunStr]);
 
   // All events for a given day (annual + user + plan)
   const getAllDayEvents = (y, m, d) => {
     const base = dayEvents(y, m, d, userEvents);
-    const dateStr = new Date(y, m, d).toISOString().split('T')[0];
+    const dateStr = toLocalDateStr(new Date(y, m, d));
     const plan = dateStr === satStr ? planSat : dateStr === sunStr ? planSun : [];
     return [...base, ...plan];
   };

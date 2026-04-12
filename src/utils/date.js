@@ -1,10 +1,16 @@
 import { ANNUAL } from '../data/annual.js';
 
+// Returns "YYYY-MM-DD" in local time (avoids UTC-shift from toISOString)
+export function toLocalDateStr(d) {
+  const pad = n => String(n).padStart(2, '0');
+  return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
+}
+
 export function getWeekend() {
   const today = new Date();
   const day = today.getDay();
-  // On Sunday go forward 6 days to next Saturday, not back 1 day
-  const daysToSat = day === 6 ? 0 : day === 0 ? 6 : 6 - day;
+  // On Sunday show the current weekend (sat = yesterday), not next week
+  const daysToSat = day === 6 ? 0 : day === 0 ? -1 : 6 - day;
   const sat = new Date(today);
   sat.setDate(today.getDate() + daysToSat);
   sat.setHours(0, 0, 0, 0);

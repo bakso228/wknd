@@ -1,7 +1,7 @@
 import familyPhoto from '../../assets/family.jpg';
 import WxCard from '../WxCard.jsx';
 import { useLang } from '../../contexts/LangContext.jsx';
-import { getWeekend, fmtShort, dayEvents } from '../../utils/date.js';
+import { getWeekend, fmtShort, dayEvents, toLocalDateStr } from '../../utils/date.js';
 import { wxInfo } from '../../utils/weather.js';
 
 export default function PlanTab({ weather, wxLoading, wxError, weekendPlan, setWeekendPlan, userEvents, onGoExplorer }) {
@@ -13,17 +13,17 @@ export default function PlanTab({ weather, wxLoading, wxError, weekendPlan, setW
   const totalPlanned = (weekendPlan.sat || []).length + (weekendPlan.sun || []).length;
 
   // Calendar events that fall on this weekend
+  const satStr = toLocalDateStr(sat);
+  const sunStr = toLocalDateStr(sun);
   const calSat = (userEvents || []).filter(e => {
-    const d = sat.toISOString().split('T')[0];
     const start = e.startDate || e.date;
     const end   = e.endDate   || start;
-    return d >= start && d <= end;
+    return satStr >= start && satStr <= end;
   });
   const calSun = (userEvents || []).filter(e => {
-    const d = sun.toISOString().split('T')[0];
     const start = e.startDate || e.date;
     const end   = e.endDate   || start;
-    return d >= start && d <= end;
+    return sunStr >= start && sunStr <= end;
   });
 
   function DayCol({ dayKey, date, wxData, calEvents }) {
