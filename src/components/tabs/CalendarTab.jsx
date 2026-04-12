@@ -6,10 +6,11 @@ import { daysInMonth, firstDow, dayEvents, fmtLong, fmtShort } from '../../utils
 
 export default function CalendarTab({ userEvents, setUserEvents }) {
   const today = new Date();
-  const [year,    setYear]    = useState(today.getFullYear());
-  const [month,   setMonth]   = useState(today.getMonth());
-  const [sel,     setSel]     = useState(null);
-  const [showAdd, setShowAdd] = useState(false);
+  const [year,           setYear]           = useState(today.getFullYear());
+  const [month,          setMonth]          = useState(today.getMonth());
+  const [sel,            setSel]            = useState(null);
+  const [showAdd,        setShowAdd]        = useState(false);
+  const [showAllUpcoming, setShowAllUpcoming] = useState(false);
 
   const dim  = daysInMonth(year, month);
   const fdow = firstDow(year, month);
@@ -55,6 +56,14 @@ export default function CalendarTab({ userEvents, setUserEvents }) {
       .filter(({ evs }) => evs.length > 0),
     [upcoming]
   );
+
+  // Default: only rows that have at least one user event; filter to show only user events in each row
+  const upcomingFiltered = useMemo(() => {
+    if (showAllUpcoming) return upcomingDeduped;
+    return upcomingDeduped
+      .map(({ date, evs }) => ({ date, evs: evs.filter(ev => ev.source === 'user') }))
+      .filter(({ evs }) => evs.length > 0);
+  }, [upcomingDeduped, showAllUpcoming]);
 
   return (
     <div className="fade-in space-y-5">
@@ -162,7 +171,19 @@ export default function CalendarTab({ userEvents, setUserEvents }) {
       {/* upcoming events */}
       <div>
         <div className="flex items-center justify-between mb-3">
-          <div className="text-xs font-bold text-stone-400 uppercase tracking-wide">Demnächst</div>
+          <div className="flex items-center gap-2">
+            <div className="text-xs font-bold text-stone-400 uppercase tracking-wide">Demnächst</div>
+            <button
+              onClick={() => setShowAllUpcoming(v => !v)}
+              className={`text-[10px] font-semibold px-2 py-1 rounded-full border transition-colors ${
+                showAllUpcoming
+                  ? 'bg-stone-700 text-white border-stone-700'
+                  : 'bg-white text-stone-500 border-stone-200'
+              }`}
+            >
+              {showAllUpcoming ? 'Alle' : 'Meine Termine'}
+            </button>
+          </div>
           {!selDate && (
             <button
               onClick={() => { setSel(today.getDate()); }}
@@ -173,7 +194,7 @@ export default function CalendarTab({ userEvents, setUserEvents }) {
           )}
         </div>
 
-        {upcomingDeduped.length === 0 ? (
+        {upcomingFiltered.length === 0 ? (
           <div className="bg-white rounded-2xl border border-stone-100 p-8 text-center text-stone-400">
             <div className="text-3xl mb-2">📭</div>
             <div className="text-sm font-medium">Noch keine Termine</div>
@@ -181,7 +202,7 @@ export default function CalendarTab({ userEvents, setUserEvents }) {
           </div>
         ) : (
           <div className="bg-white rounded-2xl border border-stone-100 overflow-hidden divide-y divide-stone-50">
-            {upcomingDeduped.map(({ date, evs }) => {
+            {upcomingFiltered.map(({ date, evs }) => {
               const isToday    = date.toDateString() === today.toDateString();
               const isTomorrow = date.toDateString() === new Date(today.getTime() + 86400000).toDateString();
               const label      = isToday ? 'Heute' : isTomorrow ? 'Morgen' :
@@ -201,7 +222,7 @@ export default function CalendarTab({ userEvents, setUserEvents }) {
                       return (
                         <div key={i} className="flex items-center gap-2">
                           <div className={`w-1.5 h-1.5 rounded-full flex-shrink-0 ${TYPE_DOT[ev.type] || 'bg-stone-300'}`} />
-                          <span className="text-sm font-semibold text-stone-700">{ev.e || ev.emoji} {ev.name}</span>
+                          <span className="text-sm font-semibold text-stone-700 flex-1">{ev.e || ev.emoji} {ev.name}</span>
                           {isMulti && (
                             <span className="text-[10px] text-violet-500 font-medium">
                               bis {new Date(ev.endDate).toLocaleDateString('de-DE', { day: 'numeric', month: 'short' })}
@@ -209,6 +230,14 @@ export default function CalendarTab({ userEvents, setUserEvents }) {
                           )}
                           {ev.source === 'annual' && <span className="text-[10px] text-stone-300">jährlich</span>}
                           {ev.notes && <span className="text-xs text-stone-400 truncate">{ev.notes}</span>}
+                          {ev.source === 'user' && (
+                            <button
+                              onClick={e => { e.stopPropagation(); delEvent(ev.id); }}
+                              className="flex-shrink-0 text-stone-300 hover:text-red-400 active:text-red-500 w-6 h-6 flex items-center justify-center transition-colors"
+                            >
+                              ✕
+                            </button>
+                          )}
                         </div>
                       );
                     })}
