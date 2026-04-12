@@ -12,6 +12,7 @@ export const BASE_ACTIVITIES = [
     desc: "Europe's largest urban park. Watch surfers at Eisbach, kids run free at the Chinese Tower playground.",
     weather: ['sunny', 'cloudy'], season: ['spring', 'summer', 'fall'], duration: '2–4h', age: 'Perfect for toddlers',
     url: 'https://www.muenchen.de/sehenswuerdigkeiten/parks-und-seen/englischer-garten', tags: ['free', 'kids', 'active'],
+    lat: 48.1568, lng: 11.5935,
   },
   {
     id: 'nymphenburg', cat: 'outdoor', location: 'munich', eventType: 'venue',
@@ -19,6 +20,7 @@ export const BASE_ACTIVITIES = [
     desc: 'Baroque palace with enormous gardens and canals. Kids love the ducks, boats, and ornate palace rooms.',
     weather: ['sunny', 'cloudy'], season: ['spring', 'summer', 'fall'], duration: '2–3h', age: 'Good for all ages',
     url: 'https://www.schloss-nymphenburg.de/', tags: ['culture', 'family'],
+    lat: 48.1582, lng: 11.5033,
   },
   {
     id: 'isar', cat: 'outdoor', location: 'munich', eventType: 'venue',
@@ -33,6 +35,7 @@ export const BASE_ACTIVITIES = [
     desc: 'Tower with Alpine views, cycling, weekend events. Often hosts free concerts in summer.',
     weather: ['sunny', 'cloudy'], season: ['all'], duration: '2–4h', age: 'Fun for kids',
     url: 'https://www.olympiapark.de/', tags: ['family', 'active'],
+    lat: 48.1753, lng: 11.5521,
   },
   {
     id: 'hellabrunn', cat: 'outdoor', location: 'munich', eventType: 'venue',
@@ -40,6 +43,7 @@ export const BASE_ACTIVITIES = [
     desc: "Munich's much-loved zoo with the unique Mühlendorf historic village inside. Don't miss feeding times.",
     weather: ['sunny', 'cloudy'], season: ['all'], duration: '4–5h', age: 'Kids will love it',
     url: 'https://www.zoo-muenchen.de/', tags: ['kids', 'nature', 'paid'],
+    lat: 48.0953, lng: 11.5535,
   },
   {
     id: 'biking', cat: 'outdoor', location: 'munich', eventType: 'venue',
@@ -107,6 +111,7 @@ export const BASE_ACTIVITIES = [
     desc: "World's largest science & tech museum. Kids go wild on hands-on experiments. Plan 3+ hours.",
     weather: ['rainy', 'any'], season: ['all'], duration: '3–5h', age: 'Great from age 4',
     url: 'https://www.deutsches-museum.de/', tags: ['kids', 'rainy-day', 'culture', 'paid'],
+    lat: 48.1298, lng: 11.5835,
   },
   {
     id: 'bmw', cat: 'indoor', location: 'munich', eventType: 'venue',
@@ -114,6 +119,7 @@ export const BASE_ACTIVITIES = [
     desc: 'Free entry to the spectacular BMW Welt showroom. Kids love climbing in cars.',
     weather: ['rainy', 'any'], season: ['all'], duration: '2–3h', age: 'Kids love the cars',
     url: 'https://www.bmw-welt.com/', tags: ['free', 'kids', 'culture'],
+    lat: 48.1771, lng: 11.5561,
   },
   {
     id: 'kindermuseum', cat: 'indoor', location: 'munich', eventType: 'venue',
@@ -121,6 +127,7 @@ export const BASE_ACTIVITIES = [
     desc: 'Interactive museum made entirely for children 3–12. Always a brilliant rainy-day choice.',
     weather: ['rainy', 'any'], season: ['all'], duration: '2–3h', age: 'Ages 3–12 best',
     url: 'https://www.kindermuseum.de/', tags: ['kids', 'rainy-day', 'paid'],
+    lat: 48.1328, lng: 11.7095,
   },
   {
     id: 'lego_sea', cat: 'indoor', location: 'munich', eventType: 'venue',
@@ -128,6 +135,7 @@ export const BASE_ACTIVITIES = [
     desc: 'Indoor double-header near Olympiapark — LEGO world + aquarium. Full rainy day solved.',
     weather: ['rainy', 'any'], season: ['all'], duration: '3–4h', age: 'Ages 3–10',
     url: 'https://www.legolanddiscoverycentre.de/muenchen/de', tags: ['kids', 'rainy-day', 'paid'],
+    lat: 48.1603, lng: 11.5870,
   },
   {
     id: 'stadtmuseum', cat: 'indoor', location: 'munich', eventType: 'venue',
@@ -142,6 +150,7 @@ export const BASE_ACTIVITIES = [
     desc: "Three world-class art museums side by side. Sundays just €1 — one of Munich's best secrets.",
     weather: ['rainy', 'any'], season: ['all'], duration: '2–3h', age: 'Older kids / adults',
     url: 'https://www.pinakothek.de/', tags: ['culture', 'rainy-day', 'cheap'],
+    lat: 48.1484, lng: 11.5698,
   },
   {
     id: 'spielzeugm', cat: 'indoor', location: 'munich', eventType: 'venue',
@@ -156,6 +165,7 @@ export const BASE_ACTIVITIES = [
     desc: "Munich's premier climbing centre near Olympiapark. Great kids' wall and top-rope area.",
     weather: ['rainy', 'any'], season: ['all'], duration: '2–3h', age: 'From age 3 with gear',
     url: 'https://www.kletterzentrummuenchen.de/', tags: ['active', 'kids', 'rainy-day'],
+    lat: 48.1743, lng: 11.5555,
   },
   {
     id: 'ikea', cat: 'indoor', location: 'munich', eventType: 'venue',
@@ -172,6 +182,7 @@ export const BASE_ACTIVITIES = [
     desc: "Munich's leading youth theatre — innovative productions from age 5 months to teens.",
     weather: ['any'], season: ['all'], duration: '1.5–2h', age: 'From 5 months up',
     url: 'https://www.schauburg.net/', tags: ['culture', 'kids'],
+    lat: 48.1502, lng: 11.5739,
   },
   {
     id: 'marionetten', cat: 'theater', location: 'munich', eventType: 'venue',
@@ -179,6 +190,7 @@ export const BASE_ACTIVITIES = [
     desc: "Bavaria's oldest puppet theatre — UNESCO heritage. Your 3 and 5 year olds will be spellbound.",
     weather: ['any'], season: ['all'], duration: '1.5h', age: 'Ages 3–8 best',
     url: 'https://www.muema-theater.de/', tags: ['kids', 'culture', 'paid'],
+    lat: 48.1417, lng: 11.5629,
   },
   {
     id: 'circus', cat: 'theater', location: 'munich', eventType: 'venue',
@@ -186,6 +198,7 @@ export const BASE_ACTIVITIES = [
     desc: "Germany's largest permanent circus. Classic big-top experience for the whole family.",
     weather: ['any'], season: ['fall', 'winter', 'spring'], duration: '2h', age: 'All ages',
     url: 'https://www.circus-krone.de/', tags: ['kids', 'family'],
+    lat: 48.1475, lng: 11.5433,
   },
   {
     id: 'gasteig', cat: 'theater', location: 'munich', eventType: 'venue',
@@ -209,6 +222,7 @@ export const BASE_ACTIVITIES = [
     desc: "Munich's iconic daily market. Fresh Brezn, cheese, seasonal produce, beer garden. Perfect slow morning.",
     weather: ['any'], season: ['all'], duration: '1.5h', age: 'Fun for kids',
     url: 'https://www.muenchen.de/sehenswuerdigkeiten/viktualienmarkt', tags: ['food', 'free', 'culture'],
+    lat: 48.1351, lng: 11.5757,
   },
   {
     id: 'biergarten', cat: 'food', location: 'munich', eventType: 'venue',
@@ -216,6 +230,7 @@ export const BASE_ACTIVITIES = [
     desc: "Munich's most iconic beer garden — 7,000 seats. Attached playground makes it perfect for families.",
     weather: ['sunny', 'cloudy'], season: ['spring', 'summer', 'fall'], duration: '2–3h', age: 'Playground on site',
     url: 'https://www.chinesischer-turm.de/', tags: ['food', 'family', 'relaxed'],
+    lat: 48.1568, lng: 11.5944,
   },
   {
     id: 'waldwirt', cat: 'food', location: 'munich', eventType: 'venue',
@@ -223,6 +238,7 @@ export const BASE_ACTIVITIES = [
     desc: 'Beloved forest beer garden in Pullach, close to Oberhaching. Jazz every Sunday.',
     weather: ['sunny', 'cloudy'], season: ['spring', 'summer', 'fall'], duration: '2–3h', age: 'Family welcome',
     url: 'https://www.waldwirtschaft.de/', tags: ['food', 'local', 'relaxed'],
+    lat: 48.0677, lng: 11.5161,
   },
   {
     id: 'eataly', cat: 'food', location: 'munich', eventType: 'venue',
@@ -246,6 +262,7 @@ export const BASE_ACTIVITIES = [
     desc: 'Munich\'s spring folk festival — free entry, two beer tents, 100+ rides. Familientage with discounts for kids.',
     weather: ['any'], season: ['spring'], duration: '3–4h', age: 'Kids rides available',
     url: 'https://www.muenchen.de/freizeit/feste-und-braeuche/fruehlingsfest', tags: ['festival', 'family'], special: 'frühlingsfest',
+    lat: 48.1329, lng: 11.5490,
   },
   {
     id: 'oktoberfest', cat: 'seasonal', location: 'munich', eventType: 'seasonal',
@@ -288,6 +305,7 @@ export const BASE_ACTIVITIES = [
     desc: "Munich's traditional antique & pottery market, three times a year. Wonderful atmosphere.",
     weather: ['sunny', 'cloudy'], season: ['spring', 'summer', 'fall'], duration: '2h', age: 'Good for all ages',
     url: 'https://www.auerdult.de/', tags: ['market', 'culture'], special: 'dult',
+    lat: 48.1241, lng: 11.5862,
   },
 ];
 

@@ -1,5 +1,6 @@
 import { useState, useMemo } from 'react';
 import ActivityCard from '../ActivityCard.jsx';
+import MapView from '../MapView.jsx';
 import { useLang } from '../../contexts/LangContext.jsx';
 import { BASE_ACTIVITIES, STICKY_DEFAULTS } from '../../data/activities.js';
 import { SOURCED_EVENTS } from '../../data/events.js';
@@ -12,6 +13,7 @@ export default function ExplorerTab({ weather, weekendPlan, setWeekendPlan, stic
   const [locationFilter, setLocationFilter] = useState('all');
   const [typeFilter,     setTypeFilter]     = useState('all');
   const [weekendFilter,  setWeekendFilter]  = useState('wknd_0');
+  const [viewMode,       setViewMode]       = useState('cards'); // 'cards' | 'map'
   const [showAddSticky,  setShowAddSticky]  = useState(false);
   const [newSticky,      setNewSticky]      = useState({ name: '', emoji: '⭐', desc: '' });
 
@@ -116,15 +118,28 @@ export default function ExplorerTab({ weather, weekendPlan, setWeekendPlan, stic
             {filtered.length} {filtered.length === 1 ? t('explorer.activity') : t('explorer.activities')} · {t('explorer.rankedFor')} {wxCat === 'rainy' ? '🌧️' : '☀️'} {season}
           </p>
         </div>
-        {weather?.days?.[0] && (
-          <div className="flex-shrink-0 text-right text-xs text-stone-500 bg-white rounded-xl px-3 py-2 border border-stone-200">
-            <div className="text-[10px] text-stone-400 font-bold uppercase tracking-wide mb-0.5">{t('explorer.weekend')}</div>
-            <div>
-              {weather.sat && <>{wxInfo(weather.sat.code).emoji} Sa {weather.sat.maxT}° · </>}
-              {weather.sun && <>{wxInfo(weather.sun.code).emoji} So {weather.sun.maxT}°</>}
-            </div>
+        <div className="flex items-center gap-2 flex-shrink-0">
+          {/* Card / Map toggle */}
+          <div className="flex bg-stone-100 rounded-lg p-0.5 gap-0.5">
+            <button
+              onClick={() => setViewMode('cards')}
+              className={`px-2.5 py-1.5 rounded-md text-xs font-semibold transition-colors ${viewMode === 'cards' ? 'bg-white text-stone-800 shadow-sm' : 'text-stone-400'}`}
+            >📋</button>
+            <button
+              onClick={() => setViewMode('map')}
+              className={`px-2.5 py-1.5 rounded-md text-xs font-semibold transition-colors ${viewMode === 'map' ? 'bg-white text-stone-800 shadow-sm' : 'text-stone-400'}`}
+            >🗺️</button>
           </div>
-        )}
+          {weather?.days?.[0] && (
+            <div className="text-right text-xs text-stone-500 bg-white rounded-xl px-3 py-2 border border-stone-200">
+              <div className="text-[10px] text-stone-400 font-bold uppercase tracking-wide mb-0.5">{t('explorer.weekend')}</div>
+              <div>
+                {weather.sat && <>{wxInfo(weather.sat.code).emoji} Sa {weather.sat.maxT}° · </>}
+                {weather.sun && <>{wxInfo(weather.sun.code).emoji} So {weather.sun.maxT}°</>}
+              </div>
+            </div>
+          )}
+        </div>
       </div>
 
       {/* Category filter chips */}
@@ -174,8 +189,13 @@ export default function ExplorerTab({ weather, weekendPlan, setWeekendPlan, stic
         </div>
       )}
 
+      {/* Map view */}
+      {viewMode === 'map' && (
+        <MapView events={filtered} />
+      )}
+
       {/* Sourced events */}
-      {showSourced && (
+      {viewMode === 'cards' && showSourced && (
         <section>
           <div className="flex items-center gap-2 mb-2">
             <div className="text-xs font-bold text-violet-700 uppercase tracking-wide">
@@ -210,8 +230,8 @@ export default function ExplorerTab({ weather, weekendPlan, setWeekendPlan, stic
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               {sourcedItems.map(act => (
                 <ActivityCard key={act.id} act={act} wxCat={wxCat}
-                  onAddSat={() => addToDay(act, 'sat')} onAddSun={() => addToDay(act, 'sun')}
-                  addedSat={isAdded(act.id, 'sat')} addedSun={isAdded(act.id, 'sun')} />
+                  onAddSat={() => addToDay(act, planSatStr)} onAddSun={() => addToDay(act, planSunStr)}
+                  addedSat={isAdded(act.id, planSatStr)} addedSun={isAdded(act.id, planSunStr)} />
               ))}
             </div>
           )}
@@ -221,7 +241,7 @@ export default function ExplorerTab({ weather, weekendPlan, setWeekendPlan, stic
       )}
 
       {/* Sticky favourites */}
-      {stickyItems.length > 0 && (typeFilter === 'all' || typeFilter === 'venue') && (
+      {viewMode === 'cards' && stickyItems.length > 0 && (typeFilter === 'all' || typeFilter === 'venue') && (
         <section>
           <div className="flex items-center justify-between mb-2">
             <div className="text-xs font-bold text-stone-400 uppercase tracking-wide">{t('explorer.stickyFavs')}</div>
@@ -231,8 +251,8 @@ export default function ExplorerTab({ weather, weekendPlan, setWeekendPlan, stic
             {stickyItems.map(act => (
               <div key={act.id} className="relative">
                 <ActivityCard act={act} wxCat={wxCat}
-                  onAddSat={() => addToDay(act, 'sat')} onAddSun={() => addToDay(act, 'sun')}
-                  addedSat={isAdded(act.id, 'sat')} addedSun={isAdded(act.id, 'sun')} />
+                  onAddSat={() => addToDay(act, planSatStr)} onAddSun={() => addToDay(act, planSunStr)}
+                  addedSat={isAdded(act.id, planSatStr)} addedSun={isAdded(act.id, planSunStr)} />
                 {stickyActivities.find(s => s.id === act.id) && (
                   <button onClick={() => removeSticky(act.id)} className="absolute top-2 left-2 text-[9px] text-red-400 bg-white rounded px-1 border border-red-100 min-h-[24px]">remove</button>
                 )}
@@ -258,12 +278,12 @@ export default function ExplorerTab({ weather, weekendPlan, setWeekendPlan, stic
         </section>
       )}
 
-      {stickyItems.length === 0 && catFilter !== 'sticky' && typeFilter === 'all' && locationFilter === 'all' && (
+      {viewMode === 'cards' && stickyItems.length === 0 && catFilter !== 'sticky' && typeFilter === 'all' && locationFilter === 'all' && (
         <button onClick={() => setShowAddSticky(true)} className="text-xs text-amber-600 font-semibold">⭐ {t('explorer.addYours')}</button>
       )}
 
       {/* All other activities */}
-      {regularItems.length > 0 && (
+      {viewMode === 'cards' && regularItems.length > 0 && (
         <section>
           {(showSourced || stickyItems.length > 0) && typeFilter === 'all' && catFilter === 'all' && (
             <div className="text-xs font-bold text-stone-400 uppercase tracking-wide mb-3">{t('explorer.allYear')}</div>
@@ -271,14 +291,14 @@ export default function ExplorerTab({ weather, weekendPlan, setWeekendPlan, stic
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             {regularItems.map(act => (
               <ActivityCard key={act.id} act={act} wxCat={wxCat}
-                onAddSat={() => addToDay(act, 'sat')} onAddSun={() => addToDay(act, 'sun')}
-                addedSat={isAdded(act.id, 'sat')} addedSun={isAdded(act.id, 'sun')} />
+                onAddSat={() => addToDay(act, planSatStr)} onAddSun={() => addToDay(act, planSunStr)}
+                addedSat={isAdded(act.id, planSatStr)} addedSun={isAdded(act.id, planSunStr)} />
             ))}
           </div>
         </section>
       )}
 
-      {filtered.length === 0 && (
+      {viewMode === 'cards' && filtered.length === 0 && (
         <div className="text-center py-12 text-stone-400">
           <div className="text-4xl mb-3">🔍</div>
           <div className="font-semibold">{t('explorer.noResults')}</div>

@@ -16,7 +16,7 @@ export const SOURCED_EVENTS = [
     highlights: 'So 12. April · 15:00 · Book in advance · Marionettentheater Bille',
     venue: 'Marionettentheater Bille, Unterschleißheim', weather: ['any'], season: ['spring'], duration: '~1h', age: 'Ages 3+',
     url: 'https://www.muenchenticket.de/tickets/familie/', tags: ['theater', 'kids', 'puppet'],
-    source: 'München Ticket',
+    source: 'München Ticket', lat: 48.2803, lng: 11.5747,
   },
   {
     id: 'src_museum_sonntag', cat: 'indoor', location: 'munich', eventType: 'sourced',
@@ -27,7 +27,7 @@ export const SOURCED_EVENTS = [
     highlights: 'Deutsches Museum · Stadtmuseum · Museum Mensch und Natur · Many free on Sundays',
     venue: 'Various München museums', weather: ['any'], season: ['all'], duration: '1–2h', age: 'All ages',
     url: 'https://www.muenchen.de/veranstaltungen/event/kinder', tags: ['museum', 'family', 'free'],
-    source: 'muenchen.de',
+    source: 'muenchen.de', lat: 48.1298, lng: 11.5835,
   },
   {
     id: 'src_bmwopen_w0', cat: 'outdoor', location: 'munich', eventType: 'sourced',
@@ -38,7 +38,7 @@ export const SOURCED_EVENTS = [
     highlights: 'MTTC Iphitos, Aumeisterweg 3 · Qualifying & early rounds · Day tickets available',
     venue: 'MTTC Iphitos, Aumeisterweg 3', weather: ['sunny', 'cloudy'], season: ['spring'], duration: '2–4h', age: 'All ages',
     url: 'https://www.bmw-open.com/', tags: ['sport', 'spectator', 'tennis'],
-    source: 'muenchen.de',
+    source: 'muenchen.de', lat: 48.1598, lng: 11.5943,
   },
 
   // ── Apr 17–19 (KW 16) ───────────────────────────────────────
@@ -51,7 +51,7 @@ export const SOURCED_EVENTS = [
     highlights: 'Theresienwiese · Mo–Fr 11–23 Uhr · Sa/So/1.Mai 10–23 Uhr · Augustiner & Spaten Bier',
     venue: 'Theresienwiese, München', weather: ['sunny', 'cloudy'], season: ['spring'], duration: 'Ganztag', age: 'All ages',
     url: 'https://www.muenchen.de/veranstaltungen/feste-festivals/fruehlingsfest-2026-theresienwiese', tags: ['volksfest', 'beer', 'family', 'rides', 'seasonal'],
-    source: 'muenchen.de',
+    source: 'muenchen.de', lat: 48.1329, lng: 11.5490,
   },
   {
     id: 'src_brk_flohmarkt_apr18', cat: 'outdoor', location: 'munich', eventType: 'sourced',
@@ -62,7 +62,7 @@ export const SOURCED_EVENTS = [
     highlights: 'Sa 18. April · Ab 7:00 Uhr · Theresienwiese · Free entry',
     venue: 'Theresienwiese, München', weather: ['sunny', 'cloudy'], season: ['spring'], duration: 'Ganztag', age: 'All ages',
     url: 'https://www.muenchen.de/veranstaltungen/feste-festivals/fruehlingsfest-2026-theresienwiese', tags: ['flohmarkt', 'market', 'family', 'free'],
-    source: 'muenchen.de',
+    source: 'muenchen.de', lat: 48.1329, lng: 11.5490,
   },
   {
     id: 'src_spartan_race', cat: 'outdoor', location: 'munich', eventType: 'sourced',
@@ -73,7 +73,7 @@ export const SOURCED_EVENTS = [
     highlights: 'Sa 18. April · Olympiapark · Spectator free · Elite races all day',
     venue: 'Olympiapark, München', weather: ['any'], season: ['spring'], duration: '2–4h', age: 'Spectators all ages',
     url: 'https://www.olympiapark.de/de/veranstaltungen/', tags: ['sport', 'running', 'spectator'],
-    source: 'olympiapark.de',
+    source: 'olympiapark.de', lat: 48.1753, lng: 11.5521,
   },
   {
     id: 'src_johannes_oerding', cat: 'indoor', location: 'munich', eventType: 'sourced',
@@ -84,7 +84,7 @@ export const SOURCED_EVENTS = [
     highlights: 'Sa 18. April · 19:30 Uhr · Olympiahalle · Tickets via München Ticket',
     venue: 'Olympiahalle, Olympiapark', weather: ['any'], season: ['spring'], duration: '~2h', age: 'All ages',
     url: 'https://www.olympiapark.de/de/veranstaltungen/', tags: ['concert', 'pop', 'live music'],
-    source: 'olympiapark.de',
+    source: 'olympiapark.de', lat: 48.1753, lng: 11.5521,
   },
   {
     id: 'src_jurassic_world', cat: 'indoor', location: 'munich', eventType: 'sourced',
@@ -95,7 +95,7 @@ export const SOURCED_EVENTS = [
     highlights: 'Olympiapark München · Tägl. geöffnet · Tickets im Voraus buchen!',
     venue: 'Olympiapark, München', weather: ['any'], season: ['spring'], duration: '2–3h', age: 'Ages 4+',
     url: 'https://www.olympiapark.de/de/veranstaltungen/', tags: ['exhibition', 'dinosaurs', 'kids', 'family', 'science'],
-    source: 'olympiapark.de',
+    source: 'olympiapark.de', lat: 48.1753, lng: 11.5521,
   },
   {
     id: 'src_schauburg_hexe_apr18', cat: 'theater', location: 'munich', eventType: 'sourced',
@@ -106,7 +106,7 @@ export const SOURCED_EVENTS = [
     highlights: 'Schauburg, Franz-Joseph-Str. 47 · Check website for exact times · Ages 5+',
     venue: 'Schauburg, Franz-Joseph-Str. 47', weather: ['any'], season: ['spring'], duration: '~1.5h', age: 'Ages 5+',
     url: 'https://www.schauburg.net/de/die-kleine-hexe', tags: ['theater', 'kids', 'family'],
-    source: 'schauburg.net',
+    source: 'schauburg.net', lat: 48.1502, lng: 11.5739,
   },
   {
     id: 'src_schauburg_ksp_apr19', cat: 'theater', location: 'munich', eventType: 'sourced',
@@ -117,7 +117,7 @@ export const SOURCED_EVENTS = [
     highlights: 'Schauburg Labor · Morning sessions · Ages 2+ · Check for exact time',
     venue: 'Schauburg Labor, Franz-Joseph-Str. 47', weather: ['any'], season: ['spring'], duration: '~1h', age: 'Ages 2+',
     url: 'https://www.schauburg.net/de/klangspielplatz', tags: ['workshop', 'music', 'kids', 'toddlers'],
-    source: 'schauburg.net',
+    source: 'schauburg.net', lat: 48.1502, lng: 11.5739,
   },
 
   // ── Apr 25–26 (KW 17) ───────────────────────────────────────
@@ -130,7 +130,7 @@ export const SOURCED_EVENTS = [
     highlights: 'Mariahilfplatz, Au · Mo–Fr 10–20 Uhr · Sa/So 10–20 Uhr · Free entry',
     venue: 'Mariahilfplatz, Au-Haidhausen', weather: ['sunny', 'cloudy'], season: ['spring'], duration: '2–4h', age: 'All ages',
     url: 'https://www.auerdult.de', tags: ['dult', 'market', 'traditional', 'family', 'antiques'],
-    source: 'auerdult.de',
+    source: 'auerdult.de', lat: 48.1241, lng: 11.5862,
   },
   {
     id: 'src_fruehlingsfest_oldtimer', cat: 'outdoor', location: 'munich', eventType: 'sourced',
@@ -141,7 +141,7 @@ export const SOURCED_EVENTS = [
     highlights: 'So 26. April · Theresienwiese · Free to watch · Part of Frühlingsfest',
     venue: 'Theresienwiese, München', weather: ['sunny', 'cloudy'], season: ['spring'], duration: '~2h', age: 'All ages',
     url: 'https://www.muenchen.de/veranstaltungen/feste-festivals/fruehlingsfest-2026-theresienwiese', tags: ['cars', 'oldtimer', 'free', 'spectator'],
-    source: 'muenchen.de',
+    source: 'muenchen.de', lat: 48.1329, lng: 11.5490,
   },
   {
     id: 'src_night_of_jumps', cat: 'indoor', location: 'munich', eventType: 'sourced',
@@ -152,7 +152,7 @@ export const SOURCED_EVENTS = [
     highlights: 'Sa 25. April · 19:00 Uhr · Olympiahalle · Tickets required',
     venue: 'Olympiahalle, Olympiapark', weather: ['any'], season: ['spring'], duration: '~2h', age: 'Ages 6+',
     url: 'https://www.olympiapark.de/de/veranstaltungen/', tags: ['show', 'motocross', 'spectator', 'family'],
-    source: 'olympiapark.de',
+    source: 'olympiapark.de', lat: 48.1753, lng: 11.5521,
   },
   {
     id: 'src_e_bike_days', cat: 'outdoor', location: 'munich', eventType: 'sourced',
@@ -163,7 +163,7 @@ export const SOURCED_EVENTS = [
     highlights: 'Fr–So · Olympiapark · Test rides free · Tickets for stadium events',
     venue: 'Olympiapark, München', weather: ['sunny', 'cloudy'], season: ['spring'], duration: 'Ganztag', age: 'All ages',
     url: 'https://www.olympiapark.de/de/veranstaltungen/', tags: ['cycling', 'ebike', 'sport', 'family', 'outdoor'],
-    source: 'olympiapark.de',
+    source: 'olympiapark.de', lat: 48.1753, lng: 11.5521,
   },
   {
     id: 'src_schauburg_timm_apr25', cat: 'theater', location: 'munich', eventType: 'sourced',
@@ -174,7 +174,7 @@ export const SOURCED_EVENTS = [
     highlights: 'Schauburg, Franz-Joseph-Str. 47 · Check website for times · Ages 8+',
     venue: 'Schauburg, Franz-Joseph-Str. 47', weather: ['any'], season: ['spring'], duration: '~1.5h', age: 'Ages 8+',
     url: 'https://www.schauburg.net/de/timm-thaler', tags: ['theater', 'kids', 'family'],
-    source: 'schauburg.net',
+    source: 'schauburg.net', lat: 48.1502, lng: 11.5739,
   },
   {
     id: 'src_jurassic_w2', cat: 'indoor', location: 'munich', eventType: 'sourced',
@@ -185,7 +185,7 @@ export const SOURCED_EVENTS = [
     highlights: 'Olympiapark München · Tägl. geöffnet · Tickets online buchen',
     venue: 'Olympiapark, München', weather: ['any'], season: ['spring'], duration: '2–3h', age: 'Ages 4+',
     url: 'https://www.olympiapark.de/de/veranstaltungen/', tags: ['exhibition', 'dinosaurs', 'kids', 'family'],
-    source: 'olympiapark.de',
+    source: 'olympiapark.de', lat: 48.1753, lng: 11.5521,
   },
   {
     id: 'src_tierpark_fruehling', cat: 'outdoor', location: 'munich', eventType: 'sourced',
@@ -196,7 +196,7 @@ export const SOURCED_EVENTS = [
     highlights: 'Tierparkstr. 30 · Tägl. 9–18 Uhr (bis 19 Uhr im Sommer) · Kinder unter 4 gratis',
     venue: 'Tierparkstr. 30, Thalkirchen', weather: ['sunny', 'cloudy'], season: ['spring'], duration: 'Ganztag', age: 'All ages',
     url: 'https://www.hellabrunn.de', tags: ['zoo', 'animals', 'family', 'outdoor', 'kids'],
-    source: 'muenchenmitkind.de',
+    source: 'muenchenmitkind.de', lat: 48.0953, lng: 11.5535,
   },
 
   // ── May 2–3 (KW 18) ─────────────────────────────────────────
@@ -209,7 +209,7 @@ export const SOURCED_EVENTS = [
     highlights: 'So 3. Mai · Theresienwiese · 10–23 Uhr · Free entry to grounds',
     venue: 'Theresienwiese, München', weather: ['any'], season: ['spring'], duration: '2–4h', age: 'All ages',
     url: 'https://www.muenchen.de/veranstaltungen/feste-festivals/fruehlingsfest-2026-theresienwiese', tags: ['volksfest', 'traditional', 'bavarian', 'family'],
-    source: 'muenchen.de',
+    source: 'muenchen.de', lat: 48.1329, lng: 11.5490,
   },
   {
     id: 'src_maidult_end', cat: 'seasonal', location: 'munich', eventType: 'sourced',
@@ -220,7 +220,7 @@ export const SOURCED_EVENTS = [
     highlights: 'Mariahilfplatz, Au · 10–20 Uhr · Free entry',
     venue: 'Mariahilfplatz, Au-Haidhausen', weather: ['sunny', 'cloudy'], season: ['spring'], duration: '2–4h', age: 'All ages',
     url: 'https://www.auerdult.de', tags: ['dult', 'market', 'traditional', 'family'],
-    source: 'auerdult.de',
+    source: 'auerdult.de', lat: 48.1241, lng: 11.5862,
   },
   {
     id: 'src_schauburg_kuh_may2', cat: 'theater', location: 'munich', eventType: 'sourced',
@@ -231,7 +231,7 @@ export const SOURCED_EVENTS = [
     highlights: 'Schauburg, Franz-Joseph-Str. 47 · Morning & afternoon shows · Ages 3+',
     venue: 'Schauburg, Franz-Joseph-Str. 47', weather: ['any'], season: ['spring'], duration: '~1h', age: 'Ages 3+',
     url: 'https://www.schauburg.net/de/die-kuh-rosmarie', tags: ['theater', 'kids', 'toddlers'],
-    source: 'schauburg.net',
+    source: 'schauburg.net', lat: 48.1502, lng: 11.5739,
   },
   {
     id: 'src_englischer_garten_may', cat: 'outdoor', location: 'munich', eventType: 'sourced',
@@ -242,7 +242,7 @@ export const SOURCED_EVENTS = [
     highlights: 'Englischer Garten · Eisbach Surfing free to watch · Biergarten ab 11 Uhr',
     venue: 'Englischer Garten, München', weather: ['sunny', 'cloudy'], season: ['spring'], duration: 'Ganztag', age: 'All ages',
     url: 'https://www.muenchen.de/freizeit/parks/englischer-garten', tags: ['outdoor', 'park', 'surfing', 'biergarten', 'free'],
-    source: 'muenchen.de',
+    source: 'muenchen.de', lat: 48.1568, lng: 11.5935,
   },
   {
     id: 'src_deutsches_museum_may', cat: 'indoor', location: 'munich', eventType: 'sourced',
@@ -253,7 +253,7 @@ export const SOURCED_EVENTS = [
     highlights: 'Museumsinsel 1 · Tägl. 9–17 Uhr · Kinder (6–17) 4€ · Kinder unter 6 gratis',
     venue: 'Museumsinsel 1, Isarvorstadt', weather: ['any'], season: ['all'], duration: '3–5h', age: 'Ages 5+',
     url: 'https://www.deutsches-museum.de', tags: ['museum', 'science', 'family', 'kids', 'indoor'],
-    source: 'muenchen.de',
+    source: 'muenchen.de', lat: 48.1298, lng: 11.5835,
   },
 
   // ── May 9–10 (KW 19) ────────────────────────────────────────
@@ -266,7 +266,7 @@ export const SOURCED_EVENTS = [
     highlights: 'Theresienwiese · Sa 10–23 Uhr · So: HandwerksFrühling · Closing day!',
     venue: 'Theresienwiese, München', weather: ['any'], season: ['spring'], duration: 'Ganztag', age: 'All ages',
     url: 'https://www.muenchen.de/veranstaltungen/feste-festivals/fruehlingsfest-2026-theresienwiese', tags: ['volksfest', 'family', 'rides', 'seasonal', 'closing'],
-    source: 'muenchen.de',
+    source: 'muenchen.de', lat: 48.1329, lng: 11.5490,
   },
   {
     id: 'src_wings_for_life', cat: 'outdoor', location: 'munich', eventType: 'sourced',
@@ -277,7 +277,7 @@ export const SOURCED_EVENTS = [
     highlights: 'So 10. Mai · Start 13:00 · Olympiapark · Spectators free to watch',
     venue: 'Olympiapark, München', weather: ['any'], season: ['spring'], duration: '2–4h', age: 'Spectators all ages',
     url: 'https://www.olympiapark.de/de/veranstaltungen/', tags: ['running', 'charity', 'sport', 'spectator'],
-    source: 'olympiapark.de',
+    source: 'olympiapark.de', lat: 48.1753, lng: 11.5521,
   },
   {
     id: 'src_schauburg_iwillaber_may9', cat: 'theater', location: 'munich', eventType: 'sourced',
@@ -288,7 +288,7 @@ export const SOURCED_EVENTS = [
     highlights: 'Schauburg, Franz-Joseph-Str. 47 · Morning shows · Ages 2+',
     venue: 'Schauburg, Franz-Joseph-Str. 47', weather: ['any'], season: ['spring'], duration: '~50min', age: 'Ages 2+',
     url: 'https://www.schauburg.net/de/ich-will-aber', tags: ['theater', 'kids', 'toddlers'],
-    source: 'schauburg.net',
+    source: 'schauburg.net', lat: 48.1502, lng: 11.5739,
   },
   {
     id: 'src_jurassic_w4', cat: 'indoor', location: 'munich', eventType: 'sourced',
@@ -299,7 +299,7 @@ export const SOURCED_EVENTS = [
     highlights: 'Olympiapark München · Tägl. geöffnet · Tickets online buchen!',
     venue: 'Olympiapark, München', weather: ['any'], season: ['spring'], duration: '2–3h', age: 'Ages 4+',
     url: 'https://www.olympiapark.de/de/veranstaltungen/', tags: ['exhibition', 'dinosaurs', 'kids', 'family'],
-    source: 'olympiapark.de',
+    source: 'olympiapark.de', lat: 48.1753, lng: 11.5521,
   },
 
   // ── Multi-weekend / Day Trips ────────────────────────────────
@@ -312,7 +312,7 @@ export const SOURCED_EVENTS = [
     highlights: 'S6 nach Starnberg (30 Min.) · Promenade kostenlos · Bootsverleih ab 10 Uhr',
     venue: 'Starnberg, Starnberger See', weather: ['sunny'], season: ['spring'], duration: 'Ganztag', age: 'All ages',
     url: 'https://www.muenchen.de/freizeit/ausflugsziele/starnberger-see', tags: ['lake', 'outdoor', 'swimming', 'day-trip', 'family'],
-    source: 'muenchen.de',
+    source: 'muenchen.de', lat: 47.9980, lng: 11.3398,
   },
   {
     id: 'src_tegernsee_daytrip', cat: 'outdoor', location: 'day-trip', eventType: 'sourced',
@@ -323,7 +323,7 @@ export const SOURCED_EVENTS = [
     highlights: 'Zug ab München Hbf ~1h · Schliersee alternative · Biergarten Herzogliches Bräustüberl',
     venue: 'Tegernsee, Oberbayern', weather: ['sunny', 'cloudy'], season: ['spring'], duration: 'Ganztag', age: 'All ages',
     url: 'https://www.tegernsee.com', tags: ['lake', 'mountains', 'day-trip', 'outdoor', 'brewery'],
-    source: 'muenchen.de',
+    source: 'muenchen.de', lat: 47.7090, lng: 11.7533,
   },
   {
     id: 'src_schloss_nymphenburg', cat: 'outdoor', location: 'munich', eventType: 'sourced',
@@ -334,7 +334,7 @@ export const SOURCED_EVENTS = [
     highlights: 'Schloss Nymphenburg · Park kostenlos · Schloss 8€/Erw., 7€ Kinder · Tägl. 9–18 Uhr',
     venue: 'Schloss Nymphenburg, Neuhausen', weather: ['sunny', 'cloudy'], season: ['spring'], duration: '2–4h', age: 'All ages',
     url: 'https://www.schloss-nymphenburg.de', tags: ['palace', 'park', 'outdoor', 'history', 'family'],
-    source: 'muenchen.de',
+    source: 'muenchen.de', lat: 48.1582, lng: 11.5033,
   },
   {
     id: 'src_olympiaturm', cat: 'outdoor', location: 'munich', eventType: 'sourced',
@@ -345,7 +345,7 @@ export const SOURCED_EVENTS = [
     highlights: 'Olympiapark · Turm: 11€/Erw., 7€ Kinder · Park kostenlos · See: Tretboote verfügbar',
     venue: 'Olympiapark, München', weather: ['sunny', 'cloudy'], season: ['spring'], duration: '2–3h', age: 'All ages',
     url: 'https://www.olympiapark.de', tags: ['tower', 'views', 'outdoor', 'park', 'family'],
-    source: 'olympiapark.de',
+    source: 'olympiapark.de', lat: 48.1753, lng: 11.5521,
   },
   {
     id: 'src_sealife_muenchen', cat: 'indoor', location: 'munich', eventType: 'sourced',
@@ -356,7 +356,7 @@ export const SOURCED_EVENTS = [
     highlights: 'Werneckstr. 13 (Englischer Garten) · Kinder 3–14: 12€ · Online Rabatt verfügbar',
     venue: 'Werneckstr. 13, Schwabing', weather: ['any'], season: ['all'], duration: '1–2h', age: 'Ages 2+',
     url: 'https://www.visitsealife.com/muenchen/', tags: ['aquarium', 'kids', 'family', 'indoor', 'rainy day'],
-    source: 'muenchen.de',
+    source: 'muenchen.de', lat: 48.1603, lng: 11.5870,
   },
   {
     id: 'src_flohmarkt_olympia_apr', cat: 'outdoor', location: 'munich', eventType: 'sourced',
@@ -368,7 +368,7 @@ export const SOURCED_EVENTS = [
     highlights: 'Olympiapark · 7–16 Uhr · Einlass 1€ · Gute Schnäppchen früh morgens',
     venue: 'Olympiapark, München', weather: ['sunny', 'cloudy'], season: ['spring'], duration: '2–3h', age: 'All ages',
     url: 'https://www.olympiapark.de/de/veranstaltungen/', tags: ['flohmarkt', 'market', 'vintage', 'outdoor'],
-    source: 'olympiapark.de',
+    source: 'olympiapark.de', lat: 48.1753, lng: 11.5521,
   },
   {
     id: 'src_mvths_muenchen_tour', cat: 'indoor', location: 'munich', eventType: 'sourced',
@@ -379,7 +379,7 @@ export const SOURCED_EVENTS = [
     highlights: 'Dachauer Str. 46 · Sa/So 10:00 & 15:00 · Kinder ab 12€ · Check Spielplan online',
     venue: 'Münchner Theater für Kinder, Dachauer Str. 46', weather: ['any'], season: ['spring'], duration: '~1h', age: 'Ages 3+',
     url: 'https://www.muenchnertheaterfuerkinder.de', tags: ['theater', 'kids', 'family'],
-    source: 'muenchenmitkind.de',
+    source: 'muenchenmitkind.de', lat: 48.1618, lng: 11.5478,
   },
   {
     id: 'src_mvhs_kindermuseum', cat: 'indoor', location: 'munich', eventType: 'sourced',
@@ -390,7 +390,7 @@ export const SOURCED_EVENTS = [
     highlights: 'Museumsinsel Riem · Di–So 10–17 Uhr · Kinder 6€, Erw. 7€',
     venue: 'Kindermuseum, Messestadt Riem', weather: ['any'], season: ['all'], duration: '2h', age: 'Ages 3–12',
     url: 'https://www.kindermuseum-münchen.de', tags: ['museum', 'kids', 'interactive', 'indoor'],
-    source: 'muenchenmitkind.de',
+    source: 'muenchenmitkind.de', lat: 48.1328, lng: 11.7095,
   },
   {
     id: 'src_kunsthalle_haar', cat: 'indoor', location: 'munich', eventType: 'sourced',
@@ -401,7 +401,7 @@ export const SOURCED_EVENTS = [
     highlights: 'Kunsthalle München, Theatinerstr. 8 · Di–So 10–20 Uhr · Erw. 12€, Kinder unter 12 gratis',
     venue: 'Kunsthalle München, Theatinerstr. 8', weather: ['any'], season: ['all'], duration: '1.5–2h', age: 'Ages 8+',
     url: 'https://www.kunsthalle-muc.de', tags: ['art', 'exhibition', 'culture', 'family'],
-    source: 'muenchenmitkind.de',
+    source: 'muenchenmitkind.de', lat: 48.1419, lng: 11.5741,
   },
 
 ];
