@@ -249,7 +249,7 @@ export default function CalendarTab({ userEvents, setUserEvents, weekendPlan }) 
           {Object.entries(TYPE_DOT).map(([type, color]) => (
             <div key={type} className="flex items-center gap-1.5 text-xs text-stone-600">
               <div className={`w-2.5 h-2.5 rounded-full ${color}`} />
-              {type.charAt(0).toUpperCase() + type.slice(1)}
+              {t(`calendar.typeLabels.${type}`) || type}
             </div>
           ))}
         </div>

@@ -31,7 +31,7 @@ export function scoreActivity(act, wxCat, season) {
   const m = new Date().getMonth() + 1;
   const d = new Date().getDate();
   if (act.special === 'oktoberfest'   && ((m === 9 && d >= 13) || (m === 10 && d <= 4)))          s += 5;
-  if (act.special === 'christmas'     && ((m === 11 && d >= 25) || (m === 12 && d <= 24)))         s += 5;
+  if (act.special === 'christmas'     && m === 12)                                                   s += 5;
   if (act.special === 'frühlingsfest' && ((m === 4 && d >= 17) || (m === 5 && d <= 10)))           s += 5;
   if (act.special === 'fasching'      && (m === 1 || m === 2 || (m === 3 && d < 10)))              s += 4;
   if (act.special === 'stadtfest'     && (m === 6 && d >= 18 && d <= 23))                          s += 4;

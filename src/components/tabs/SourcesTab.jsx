@@ -11,7 +11,7 @@ export default function SourcesTab() {
     <div className="fade-in space-y-5">
       <div>
         <h2 className="text-lg font-bold text-stone-800">{t('sources.title')}</h2>
-        <p className="text-xs text-stone-400 mt-0.5">{SOURCES.length} {t('sources.subtitle')}</p>
+        <p className="text-xs text-stone-400 mt-0.5">{t('sources.subtitle')}</p>
       </div>
 
       <div className="flex gap-2 scroll-x -mx-4 px-4 pb-1">

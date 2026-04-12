@@ -52,7 +52,7 @@ export default function ExplorerTab({ weather, weekendPlan, setWeekendPlan, stic
   // +Sa/+So always targets the nearest upcoming Saturday/Sunday (within the 7-day window)
   const _today = new Date(); _today.setHours(0, 0, 0, 0);
   const _dow   = _today.getDay();
-  const _sat   = new Date(_today); _sat.setDate(_today.getDate() + (_dow === 6 ? 0 : (6 - _dow + 7) % 7));
+  const _sat   = new Date(_today); _sat.setDate(_today.getDate() + (_dow === 6 ? 0 : _dow === 0 ? -1 : 6 - _dow));
   const _sun   = new Date(_today); _sun.setDate(_today.getDate() + (_dow === 0 ? 0 : (7 - _dow) % 7));
   const planSatStr = toLocalDateStr(_sat);
   const planSunStr = toLocalDateStr(_sun);

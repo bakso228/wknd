@@ -69,6 +69,10 @@ export const translations = {
       annually: 'jährlich',
       legend: 'Legende',
       planItem: 'Wochenendplan',
+      typeLabels: {
+        holiday: 'Feiertag', festival: 'Festival', food: 'Essen', culture: 'Kultur',
+        outdoors: 'Draußen', seasonal: 'Jahresfest', personal: 'Persönlich', plan: 'Wochenendplan',
+      },
     },
     modal: {
       title: 'Neues Ereignis',
@@ -84,9 +88,10 @@ export const translations = {
     },
     sources: {
       title: 'Veranstaltungsquellen',
-      subtitle: 'kuratierte München-Ressourcen',
+      subtitle: 'Kuratierte Webseiten für Münchner Familien',
       cats: { all:'✨ Alle', general:'📍 Allgemein', kids:'👧 Kinder', theater:'🎭 Theater', food:'🍺 Essen', outdoors:'🌿 Draußen', local:'🏠 Lokal' },
     },
+    common: { sat: 'Sa', sun: 'So' },
   },
 
   en: {
@@ -159,6 +164,10 @@ export const translations = {
       annually: 'annually',
       legend: 'Legend',
       planItem: 'Weekend plan',
+      typeLabels: {
+        holiday: 'Holiday', festival: 'Festival', food: 'Food', culture: 'Culture',
+        outdoors: 'Outdoors', seasonal: 'Annual', personal: 'Personal', plan: 'Weekend plan',
+      },
     },
     modal: {
       title: 'New Event',
@@ -174,8 +183,9 @@ export const translations = {
     },
     sources: {
       title: 'Event Sources',
-      subtitle: 'curated Munich resources',
+      subtitle: 'Curated links for Munich families',
       cats: { all:'✨ All', general:'📍 General', kids:'👧 Kids', theater:'🎭 Theater', food:'🍺 Food', outdoors:'🌿 Outdoors', local:'🏠 Local' },
     },
+    common: { sat: 'Sat', sun: 'Sun' },
   },
 };
