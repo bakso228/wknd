@@ -1,6 +1,6 @@
 import familyPhoto from '../../assets/family.jpg';
 import { useLang } from '../../contexts/LangContext.jsx';
-import { dayEvents, fmtShort, toLocalDateStr } from '../../utils/date.js';
+import { fmtShort, toLocalDateStr } from '../../utils/date.js';
 import { wxInfo } from '../../utils/weather.js';
 
 export default function PlanTab({ weather, wxLoading, wxError, weekendPlan, setWeekendPlan, userEvents, onGoExplorer }) {
@@ -11,10 +11,12 @@ export default function PlanTab({ weather, wxLoading, wxError, weekendPlan, setW
   const todayStr    = toLocalDateStr(today);
   const tomorrowStr = toLocalDateStr(new Date(today.getFullYear(), today.getMonth(), today.getDate() + 1));
 
-  const next7 = Array.from({ length: 7 }, (_, i) => {
-    const d = new Date(today);
-    d.setDate(today.getDate() + i);
-    return d;
+  // Always show today → 2nd upcoming Sunday (covers current + next full weekend)
+  const dow         = today.getDay();
+  const daysToSun1  = dow === 0 ? 0 : 7 - dow;  // 0 if today is Sun, else days until next Sun
+  const totalDays   = daysToSun1 + 7 + 1;        // through the Sunday one week after sun1
+  const planDays    = Array.from({ length: totalDays }, (_, i) => {
+    const d = new Date(today); d.setDate(today.getDate() + i); return d;
   });
 
   const totalPlanned = Object.values(weekendPlan).reduce((s, a) => s + a.length, 0);
@@ -42,6 +44,13 @@ export default function PlanTab({ weather, wxLoading, wxError, weekendPlan, setW
 
   const isSatOrSun = d => d.getDay() === 6 || d.getDay() === 0;
 
+  // Color scheme: amber=today, violet=weekend, sky=weekday
+  const dayGradient = d => {
+    if (toLocalDateStr(d) === todayStr) return 'from-amber-400 to-orange-400';
+    if (isSatOrSun(d))                 return 'from-violet-500 to-purple-500';
+    return 'from-sky-500 to-blue-500';
+  };
+
   function DayCard({ date }) {
     const dStr     = toLocalDateStr(date);
     const items    = weekendPlan[dStr] || [];
@@ -50,31 +59,27 @@ export default function PlanTab({ weather, wxLoading, wxError, weekendPlan, setW
     const calEvs   = calEventsForDay(date);
     const isEmpty  = items.length === 0 && calEvs.length === 0;
     const isWeekend = isSatOrSun(date);
-    const isToday  = dStr === todayStr;
+    const gradient  = dayGradient(date);
 
-    const gradient = isToday
-      ? 'from-amber-400 to-orange-400'
-      : isWeekend
-        ? 'from-violet-500 to-purple-500'
-        : 'from-stone-400 to-stone-500';
-
-    // Weekday cards with no content: just show the header (no body)
+    // Weekday cards with no content: compact single-line header
     if (!isWeekend && isEmpty) {
       return (
-        <div className="bg-white rounded-xl border border-stone-200 overflow-hidden">
+        <div className="bg-white rounded-xl border border-stone-100 overflow-hidden">
           <div className={`bg-gradient-to-r ${gradient} px-4 py-2.5 flex items-center justify-between`}>
-            <div>
+            <div className="flex items-center gap-2">
               <span className="font-bold text-white text-sm">{getDayLabel(date)}</span>
-              <span className="text-white/70 text-xs ml-2">{fmtShort(date, lang)}</span>
+              <span className="text-white/70 text-xs">{fmtShort(date, lang)}</span>
             </div>
-            {wxMeta && <div className="text-white text-xs">{wxMeta.emoji} {wx.maxT}°</div>}
+            {wxMeta && (
+              <div className="text-white/90 text-xs font-semibold">{wxMeta.emoji} {wx.maxT}°</div>
+            )}
           </div>
         </div>
       );
     }
 
     return (
-      <div className="bg-white rounded-2xl border border-stone-200 overflow-hidden">
+      <div className="bg-white rounded-2xl border border-stone-100 overflow-hidden shadow-sm">
         <div className={`bg-gradient-to-r ${gradient} px-4 py-3.5`}>
           <div className="flex items-center justify-between">
             <div>
@@ -85,7 +90,7 @@ export default function PlanTab({ weather, wxLoading, wxError, weekendPlan, setW
               </div>
             </div>
             {items.length > 0 && (
-              <div className="text-white/70 text-[11px] font-semibold bg-white/20 px-2 py-0.5 rounded-full">
+              <div className="text-white/80 text-[11px] font-semibold bg-white/20 px-2 py-0.5 rounded-full">
                 {items.length} {items.length === 1 ? t('plan.activity') : t('plan.activities')}
               </div>
             )}
@@ -140,8 +145,10 @@ export default function PlanTab({ weather, wxLoading, wxError, weekendPlan, setW
     );
   }
 
+  const compact = planDays.length > 9; // condense chips when many days
+
   return (
-    <div className="fade-in space-y-4">
+    <div className="fade-in space-y-3">
       {/* Family hero photo */}
       <div className="relative rounded-2xl overflow-hidden h-40 shadow-md">
         <img
@@ -153,7 +160,7 @@ export default function PlanTab({ weather, wxLoading, wxError, weekendPlan, setW
         <div className="absolute bottom-0 left-0 right-0 px-4 pb-3.5">
           <div className="text-white font-bold text-base drop-shadow">Familie Scheybani 🏡</div>
           <div className="text-white/75 text-xs mt-0.5 drop-shadow">
-            {fmtShort(today, lang)} – {fmtShort(next7[6], lang)}
+            {fmtShort(today, lang)} – {fmtShort(planDays[planDays.length - 1], lang)}
           </div>
         </div>
         {totalPlanned > 0 && (
@@ -163,35 +170,54 @@ export default function PlanTab({ weather, wxLoading, wxError, weekendPlan, setW
         )}
       </div>
 
-      {/* 7-day weather strip */}
+      {/* Full-width weather strip — fills entire width via CSS grid */}
       {(weather?.days || wxLoading) && (
-        <div className="flex gap-2 overflow-x-auto -mx-4 px-4 pb-1 scrollbar-hide">
+        <div
+          className="grid gap-1.5 w-full"
+          style={{ gridTemplateColumns: `repeat(${planDays.length}, 1fr)` }}
+        >
           {wxLoading
-            ? Array.from({ length: 7 }).map((_, i) => (
-                <div key={i} className="flex-shrink-0 w-14 bg-white rounded-xl border border-stone-200 animate-pulse p-2 h-20" />
+            ? planDays.map((_, i) => (
+                <div key={i} className="bg-white rounded-xl border border-stone-200 animate-pulse h-16" />
               ))
-            : weather.days.map(d => {
-                const wx = wxInfo(d.code);
-                const isToday   = d.dateStr === todayStr;
-                const isWeekend = d.date.getDay() === 6 || d.date.getDay() === 0;
+            : planDays.map(d => {
+                const wx        = wxForDay(d);
+                const dStr      = toLocalDateStr(d);
+                const isToday   = dStr === todayStr;
+                const isWeekend = isSatOrSun(d);
+                const wxMeta    = wx ? wxInfo(wx.code) : null;
                 return (
-                  <div key={d.dateStr}
-                    className={`flex-shrink-0 text-center rounded-xl px-2.5 py-2 border min-w-[52px] ${
-                      isToday   ? 'bg-amber-50 border-amber-300 shadow-sm' :
+                  <div key={dStr}
+                    className={`text-center rounded-xl py-1.5 px-0.5 border flex flex-col items-center justify-center ${
+                      isToday   ? 'bg-amber-50 border-amber-300' :
                       isWeekend ? 'bg-violet-50 border-violet-200' :
                                   'bg-white border-stone-200'
                     }`}>
-                    <div className={`text-[9px] font-bold uppercase tracking-wide ${isToday ? 'text-amber-600' : 'text-stone-400'}`}>
+                    <div className={`text-[9px] font-bold uppercase leading-tight ${
+                      isToday ? 'text-amber-600' : isWeekend ? 'text-violet-600' : 'text-stone-500'
+                    }`}>
                       {isToday
                         ? (lang === 'de' ? 'Heute' : 'Today')
-                        : d.date.toLocaleDateString(locale, { weekday: 'short' })}
+                        : d.toLocaleDateString(locale, { weekday: 'short' }).replace('.', '')}
                     </div>
-                    <div className="text-[9px] text-stone-400 mb-0.5">
-                      {d.date.toLocaleDateString(locale, { day: 'numeric', month: 'numeric' })}
-                    </div>
-                    <div className="text-xl my-0.5">{wx.emoji}</div>
-                    <div className="text-xs font-bold text-stone-700">{d.maxT}°</div>
-                    <div className="text-[9px] text-stone-400">{d.minT}°</div>
+                    {!compact && (
+                      <div className="text-[8px] text-stone-400 leading-tight">
+                        {d.toLocaleDateString(locale, { day: 'numeric', month: 'numeric' })}
+                      </div>
+                    )}
+                    {wx ? (
+                      <>
+                        <div className="text-base leading-tight my-0.5">{wxMeta.emoji}</div>
+                        <div className={`text-xs font-bold leading-tight ${isToday ? 'text-amber-700' : isWeekend ? 'text-violet-700' : 'text-stone-700'}`}>
+                          {wx.maxT}°
+                        </div>
+                        {!compact && (
+                          <div className="text-[8px] text-stone-400 leading-tight">{wx.minT}°</div>
+                        )}
+                      </>
+                    ) : (
+                      <div className="text-[9px] text-stone-300 mt-1">–</div>
+                    )}
                   </div>
                 );
               })
@@ -200,12 +226,12 @@ export default function PlanTab({ weather, wxLoading, wxError, weekendPlan, setW
       )}
 
       {wxError && (
-        <div className="text-center py-3 text-stone-400 text-xs">🌡️ {t('wx.unavailable')}</div>
+        <div className="text-center py-2 text-stone-400 text-xs">🌡️ {t('wx.unavailable')}</div>
       )}
 
-      {/* 7 day plan cards */}
+      {/* Day plan cards */}
       <div className="space-y-2">
-        {next7.map(d => <DayCard key={toLocalDateStr(d)} date={d} />)}
+        {planDays.map(d => <DayCard key={toLocalDateStr(d)} date={d} />)}
       </div>
 
       <div className="bg-amber-50 border border-amber-200 rounded-xl p-3 flex gap-2">

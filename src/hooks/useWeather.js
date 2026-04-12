@@ -20,8 +20,8 @@ export function useWeather() {
       .then(data => {
         const times = data.daily.time;
 
-        // Build 7-day array starting from today
-        const days = Array.from({ length: 7 }, (_, i) => {
+        // Build 14-day array starting from today (covers 2 full weekends)
+        const days = Array.from({ length: 14 }, (_, i) => {
           const d = new Date(today);
           d.setDate(today.getDate() + i);
           const dStr = toLocalDateStr(d);
