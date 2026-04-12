@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { getWeekend, toLocalDateStr } from '../utils/date.js';
+import { toLocalDateStr } from '../utils/date.js';
 
 export function useWeather() {
   const [weather, setWeather] = useState(null);
@@ -7,7 +7,9 @@ export function useWeather() {
   const [error, setError]     = useState(false);
 
   useEffect(() => {
-    const { sat, sun } = getWeekend();
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
     fetch(
       'https://api.open-meteo.com/v1/forecast' +
       '?latitude=48.0262&longitude=11.5709' +
@@ -17,26 +19,29 @@ export function useWeather() {
       .then(r => r.json())
       .then(data => {
         const times = data.daily.time;
-        const si = times.indexOf(toLocalDateStr(sat));
-        const su = times.indexOf(toLocalDateStr(sun));
-        // su must be found; si may be -1 on Sunday (sat = yesterday, past forecast)
-        if (su >= 0) {
-          setWeather({
-            sat: si >= 0 ? {
-              date:   sat,
-              code:   data.daily.weathercode[si],
-              maxT:   Math.round(data.daily.temperature_2m_max[si]),
-              minT:   Math.round(data.daily.temperature_2m_min[si]),
-              precip: data.daily.precipitation_sum[si],
-            } : null,
-            sun: {
-              date:   sun,
-              code:   data.daily.weathercode[su],
-              maxT:   Math.round(data.daily.temperature_2m_max[su]),
-              minT:   Math.round(data.daily.temperature_2m_min[su]),
-              precip: data.daily.precipitation_sum[su],
-            },
-          });
+
+        // Build 7-day array starting from today
+        const days = Array.from({ length: 7 }, (_, i) => {
+          const d = new Date(today);
+          d.setDate(today.getDate() + i);
+          const dStr = toLocalDateStr(d);
+          const idx  = times.indexOf(dStr);
+          if (idx < 0) return null;
+          return {
+            date:   d,
+            dateStr: dStr,
+            code:   data.daily.weathercode[idx],
+            maxT:   Math.round(data.daily.temperature_2m_max[idx]),
+            minT:   Math.round(data.daily.temperature_2m_min[idx]),
+            precip: data.daily.precipitation_sum[idx],
+          };
+        }).filter(Boolean);
+
+        if (days.length > 0) {
+          // sat/sun always found within a 7-day window — backward compat for Header/Explorer
+          const sat = days.find(d => d.date.getDay() === 6) || null;
+          const sun = days.find(d => d.date.getDay() === 0) || null;
+          setWeather({ days, sat, sun });
         }
         setLoading(false);
       })

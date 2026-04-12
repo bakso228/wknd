@@ -12,11 +12,11 @@ import { useLocalStorage } from './hooks/useLocalStorage.js';
 function AppInner() {
   const [tab, setTab] = useState('plan');
   const { weather, loading: wxLoading, error: wxError } = useWeather();
-  const [weekendPlan,      setWeekendPlan]      = useState({ sat: [], sun: [] });
+  const [weekendPlan,      setWeekendPlan]      = useState({});
   const [userEvents,       setUserEvents]       = useLocalStorage('wochenende_events', []);
   const [stickyActivities, setStickyActivities] = useLocalStorage('wochenende_stickies', []);
 
-  const planCount = (weekendPlan.sat || []).length + (weekendPlan.sun || []).length;
+  const planCount = Object.values(weekendPlan).reduce((s, a) => s + a.length, 0);
 
   return (
     <div className="min-h-screen bg-stone-50">

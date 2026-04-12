@@ -2,7 +2,7 @@ import { useState, useMemo } from 'react';
 import AddEventModal from '../AddEventModal.jsx';
 import { useLang } from '../../contexts/LangContext.jsx';
 import { TYPE_DOT, TYPE_PILL } from '../../data/styles.js';
-import { daysInMonth, firstDow, dayEvents, fmtLong, fmtShort, getWeekend, planEventsForDate, toLocalDateStr } from '../../utils/date.js';
+import { daysInMonth, firstDow, dayEvents, fmtLong, fmtShort, planEventsForDate, toLocalDateStr } from '../../utils/date.js';
 
 export default function CalendarTab({ userEvents, setUserEvents, weekendPlan }) {
   const { t, lang } = useLang();
@@ -29,18 +29,11 @@ export default function CalendarTab({ userEvents, setUserEvents, weekendPlan }) 
     new Date(2000, 0, 3 + i).toLocaleDateString(locale, { weekday: 'short' })
   ), [locale]);
 
-  // Weekend plan items as calendar events
-  const { sat, sun } = getWeekend();
-  const satStr = toLocalDateStr(sat);
-  const sunStr = toLocalDateStr(sun);
-  const planSat = useMemo(() => planEventsForDate(satStr, weekendPlan, 'sat'), [weekendPlan, satStr]);
-  const planSun = useMemo(() => planEventsForDate(sunStr, weekendPlan, 'sun'), [weekendPlan, sunStr]);
-
   // All events for a given day (annual + user + plan)
   const getAllDayEvents = (y, m, d) => {
-    const base = dayEvents(y, m, d, userEvents);
+    const base    = dayEvents(y, m, d, userEvents);
     const dateStr = toLocalDateStr(new Date(y, m, d));
-    const plan = dateStr === satStr ? planSat : dateStr === sunStr ? planSun : [];
+    const plan    = planEventsForDate(dateStr, weekendPlan, dateStr);
     return [...base, ...plan];
   };
 
@@ -79,7 +72,7 @@ export default function CalendarTab({ userEvents, setUserEvents, weekendPlan }) 
         evs: evs.filter(ev => {
           if (ev.source === 'annual' || ev.source === 'plan') return true;
           const startStr = ev.startDate || ev.date;
-          const thisStr  = date.toISOString().split('T')[0];
+          const thisStr  = toLocalDateStr(date);
           if (startStr !== thisStr && ev.endDate && ev.endDate > ev.startDate) return false;
           return true;
         }),

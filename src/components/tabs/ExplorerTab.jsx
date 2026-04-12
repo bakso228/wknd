@@ -4,7 +4,7 @@ import { useLang } from '../../contexts/LangContext.jsx';
 import { BASE_ACTIVITIES, STICKY_DEFAULTS } from '../../data/activities.js';
 import { SOURCED_EVENTS } from '../../data/events.js';
 import { getSeason, wxInfo, scoreActivity } from '../../utils/weather.js';
-import { getUpcomingWeekends, fmtShort } from '../../utils/date.js';
+import { getUpcomingWeekends, fmtShort, toLocalDateStr } from '../../utils/date.js';
 
 export default function ExplorerTab({ weather, weekendPlan, setWeekendPlan, stickyActivities, setStickyActivities }) {
   const { t, lang } = useLang();
@@ -16,8 +16,8 @@ export default function ExplorerTab({ weather, weekendPlan, setWeekendPlan, stic
   const [newSticky,      setNewSticky]      = useState({ name: '', emoji: '⭐', desc: '' });
 
   const season = getSeason(new Date().getMonth() + 1);
-  // weather.sat may be null on Sundays (yesterday not in 16-day forecast)
-  const wxCat  = weather ? wxInfo((weather.sat || weather.sun).code).cat : 'sunny';
+  // Use today's weather (days[0]) for activity ranking
+  const wxCat  = weather?.days?.[0] ? wxInfo(weather.days[0].code).cat : 'sunny';
 
   const upcomingWeekends = useMemo(() => getUpcomingWeekends(5), []);
 
@@ -46,6 +46,14 @@ export default function ExplorerTab({ weather, weekendPlan, setWeekendPlan, stic
     if (typeFilter === 'seasonal') list = list.filter(a => a.eventType === 'seasonal');
     return list;
   }, [scored, catFilter, locationFilter, typeFilter]);
+
+  // +Sa/+So always targets the nearest upcoming Saturday/Sunday (within the 7-day window)
+  const _today = new Date(); _today.setHours(0, 0, 0, 0);
+  const _dow   = _today.getDay();
+  const _sat   = new Date(_today); _sat.setDate(_today.getDate() + (_dow === 6 ? 0 : (6 - _dow + 7) % 7));
+  const _sun   = new Date(_today); _sun.setDate(_today.getDate() + (_dow === 0 ? 0 : (7 - _dow) % 7));
+  const planSatStr = toLocalDateStr(_sat);
+  const planSunStr = toLocalDateStr(_sun);
 
   const isAdded  = (id, day) => (weekendPlan[day] || []).some(a => a.id === id);
   const addToDay = (act, day) => setWeekendPlan(p => ({ ...p, [day]: [...(p[day] || []), { ...act, _key: act.id + Date.now() }] }));
@@ -108,12 +116,12 @@ export default function ExplorerTab({ weather, weekendPlan, setWeekendPlan, stic
             {filtered.length} {filtered.length === 1 ? t('explorer.activity') : t('explorer.activities')} · {t('explorer.rankedFor')} {wxCat === 'rainy' ? '🌧️' : '☀️'} {season}
           </p>
         </div>
-        {weather && (
+        {weather?.days?.[0] && (
           <div className="flex-shrink-0 text-right text-xs text-stone-500 bg-white rounded-xl px-3 py-2 border border-stone-200">
             <div className="text-[10px] text-stone-400 font-bold uppercase tracking-wide mb-0.5">{t('explorer.weekend')}</div>
             <div>
               {weather.sat && <>{wxInfo(weather.sat.code).emoji} Sa {weather.sat.maxT}° · </>}
-              {wxInfo(weather.sun.code).emoji} So {weather.sun.maxT}°
+              {weather.sun && <>{wxInfo(weather.sun.code).emoji} So {weather.sun.maxT}°</>}
             </div>
           </div>
         )}
@@ -191,8 +199,8 @@ export default function ExplorerTab({ weather, weekendPlan, setWeekendPlan, stic
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     {items.map(act => (
                       <ActivityCard key={act.id} act={act} wxCat={wxCat}
-                        onAddSat={() => addToDay(act, 'sat')} onAddSun={() => addToDay(act, 'sun')}
-                        addedSat={isAdded(act.id, 'sat')} addedSun={isAdded(act.id, 'sun')} />
+                        onAddSat={() => addToDay(act, planSatStr)} onAddSun={() => addToDay(act, planSunStr)}
+                        addedSat={isAdded(act.id, planSatStr)} addedSun={isAdded(act.id, planSunStr)} />
                     ))}
                   </div>
                 </div>
