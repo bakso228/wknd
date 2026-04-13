@@ -1,6 +1,6 @@
 export const translations = {
   de: {
-    nav: { plan: 'Plan', explorer: 'Erkunden', calendar: 'Kalender', sources: 'Quellen' },
+    nav: { plan: 'Plan', explorer: 'Erkunden', calendar: 'Kalender', todos: 'Todos', sources: 'Quellen' },
     header: { subtitle: 'Familienplaner · Oberhaching / München' },
     plan: {
       weekend: 'Wochenende',
@@ -86,6 +86,23 @@ export const translations = {
       save: 'Speichern',
       types: { personal:'Persönlich', festival:'Festival', outdoors:'Draußen', food:'Essen', culture:'Kultur', holiday:'Feiertag' },
     },
+    todos: {
+      title: 'Aufgaben',
+      placeholder: 'Was muss noch erledigt werden?',
+      who: 'Von wem',
+      addName: 'Name',
+      namePlaceholder: 'Name...',
+      datePlaceholder: 'Datum (optional)',
+      filterOpen: 'Offen',
+      filterDone: 'Erledigt',
+      filterAll: 'Alle',
+      everyone: 'Alle',
+      empty: 'Keine offenen Aufgaben',
+      emptyDone: 'Noch nichts erledigt',
+      due: 'Fällig',
+      openOne: 'offene Aufgabe',
+      openMany: 'offene Aufgaben',
+    },
     sources: {
       title: 'Veranstaltungsquellen',
       subtitle: 'Kuratierte Webseiten für Münchner Familien',
@@ -95,7 +112,7 @@ export const translations = {
   },
 
   en: {
-    nav: { plan: 'Plan', explorer: 'Explore', calendar: 'Calendar', sources: 'Sources' },
+    nav: { plan: 'Plan', explorer: 'Explore', calendar: 'Calendar', todos: 'Todos', sources: 'Sources' },
     header: { subtitle: 'Family Planner · Oberhaching / Munich' },
     plan: {
       weekend: 'Weekend',
@@ -180,6 +197,23 @@ export const translations = {
       cancel: 'Cancel',
       save: 'Save',
       types: { personal:'Personal', festival:'Festival', outdoors:'Outdoors', food:'Food', culture:'Culture', holiday:'Holiday' },
+    },
+    todos: {
+      title: 'To-Do',
+      placeholder: "What needs doing?",
+      who: 'Who',
+      addName: 'Name',
+      namePlaceholder: 'Name...',
+      datePlaceholder: 'Date (optional)',
+      filterOpen: 'Open',
+      filterDone: 'Done',
+      filterAll: 'All',
+      everyone: 'Everyone',
+      empty: 'No open todos',
+      emptyDone: 'Nothing completed yet',
+      due: 'Due',
+      openOne: 'open todo',
+      openMany: 'open todos',
     },
     sources: {
       title: 'Event Sources',

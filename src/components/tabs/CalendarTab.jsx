@@ -4,7 +4,7 @@ import { useLang } from '../../contexts/LangContext.jsx';
 import { TYPE_DOT, TYPE_PILL } from '../../data/styles.js';
 import { daysInMonth, firstDow, dayEvents, fmtLong, fmtShort, planEventsForDate, toLocalDateStr } from '../../utils/date.js';
 
-export default function CalendarTab({ userEvents, setUserEvents, weekendPlan }) {
+export default function CalendarTab({ userEvents, setUserEvents, weekendPlan, todos = [] }) {
   const { t, lang } = useLang();
   const today = new Date();
   const [year,            setYear]            = useState(today.getFullYear());
@@ -29,12 +29,24 @@ export default function CalendarTab({ userEvents, setUserEvents, weekendPlan }) 
     new Date(2000, 0, 3 + i).toLocaleDateString(locale, { weekday: 'short' })
   ), [locale]);
 
-  // All events for a given day (annual + user + plan)
+  // All events for a given day (annual + user + plan + todos with due date)
   const getAllDayEvents = (y, m, d) => {
     const base    = dayEvents(y, m, d, userEvents);
     const dateStr = toLocalDateStr(new Date(y, m, d));
     const plan    = planEventsForDate(dateStr, weekendPlan, dateStr);
-    return [...base, ...plan];
+    const dueTodos = todos
+      .filter(td => td.dueDate === dateStr)
+      .map(td => ({
+        id: td.id,
+        name: td.text,
+        emoji: td.completed ? '✅' : '☐',
+        type: 'todo',
+        source: 'todo',
+        startDate: td.dueDate,
+        owner: td.owner,
+        completed: td.completed,
+      }));
+    return [...base, ...plan, ...dueTodos];
   };
 
   const selDate = sel ? new Date(year, month, sel) : null;
@@ -70,7 +82,7 @@ export default function CalendarTab({ userEvents, setUserEvents, weekendPlan }) 
       .map(({ date, evs }) => ({
         date,
         evs: evs.filter(ev => {
-          if (ev.source === 'annual' || ev.source === 'plan') return true;
+          if (ev.source === 'annual' || ev.source === 'plan' || ev.source === 'todo') return true;
           const startStr = ev.startDate || ev.date;
           const thisStr  = toLocalDateStr(date);
           if (startStr !== thisStr && ev.endDate && ev.endDate > ev.startDate) return false;
@@ -85,7 +97,7 @@ export default function CalendarTab({ userEvents, setUserEvents, weekendPlan }) 
   const upcomingFiltered = useMemo(() => {
     if (showAllUpcoming) return upcomingDeduped;
     return upcomingDeduped
-      .map(({ date, evs }) => ({ date, evs: evs.filter(ev => ev.source === 'user' || ev.source === 'plan') }))
+      .map(({ date, evs }) => ({ date, evs: evs.filter(ev => ev.source === 'user' || ev.source === 'plan' || ev.source === 'todo') }))
       .filter(({ evs }) => evs.length > 0);
   }, [upcomingDeduped, showAllUpcoming]);
 
@@ -149,13 +161,14 @@ export default function CalendarTab({ userEvents, setUserEvents, weekendPlan }) 
           {selEvs.length > 0 && (
             <div className="mt-3 space-y-1.5">
               {selEvs.map((ev, i) => (
-                <div key={i} className={`flex items-center justify-between rounded-xl px-3 py-2.5 text-sm ${TYPE_PILL[ev.type] || 'bg-white border border-stone-200 text-stone-700'}`}>
+                <div key={i} className={`flex items-center justify-between rounded-xl px-3 py-2.5 text-sm ${ev.source === 'todo' ? (ev.completed ? 'bg-stone-50 border border-stone-100 text-stone-400' : 'bg-sky-50 border border-sky-100 text-stone-700') : (TYPE_PILL[ev.type] || 'bg-white border border-stone-200 text-stone-700')}`}>
                   <div className="flex items-center gap-2">
                     <span>{ev.e || ev.emoji}</span>
                     <div>
-                      <div className="font-semibold">{ev.name}</div>
-                      {ev.source === 'plan'   && <div className="text-xs opacity-60">🗓 {t('calendar.planItem')}</div>}
-                      {ev.notes               && <div className="text-xs opacity-60">{ev.notes}</div>}
+                      <div className={`font-semibold ${ev.source === 'todo' && ev.completed ? 'line-through' : ''}`}>{ev.name}</div>
+                      {ev.source === 'plan' && <div className="text-xs opacity-60">🗓 {t('calendar.planItem')}</div>}
+                      {ev.source === 'todo' && ev.owner && <div className="text-xs opacity-60">{ev.owner}</div>}
+                      {ev.notes             && <div className="text-xs opacity-60">{ev.notes}</div>}
                     </div>
                   </div>
                   {ev.source === 'user' && (
@@ -221,11 +234,12 @@ export default function CalendarTab({ userEvents, setUserEvents, weekendPlan }) 
                       const isMulti = ev.endDate && ev.endDate > (ev.startDate || ev.date);
                       return (
                         <div key={i} className="flex items-center gap-2">
-                          <div className={`w-1.5 h-1.5 rounded-full flex-shrink-0 ${TYPE_DOT[ev.type] || 'bg-stone-300'}`} />
-                          <span className="text-sm font-semibold text-stone-700 flex-1">{ev.e || ev.emoji} {ev.name}</span>
+                          <div className={`w-1.5 h-1.5 rounded-full flex-shrink-0 ${ev.source === 'todo' ? 'bg-sky-300' : (TYPE_DOT[ev.type] || 'bg-stone-300')}`} />
+                          <span className={`text-sm font-semibold flex-1 ${ev.source === 'todo' && ev.completed ? 'line-through text-stone-400' : 'text-stone-700'}`}>{ev.e || ev.emoji} {ev.name}</span>
                           {isMulti && <span className="text-[10px] text-violet-500 font-medium">{t('calendar.until')} {new Date(ev.endDate).toLocaleDateString(locale, { day: 'numeric', month: 'short' })}</span>}
                           {ev.source === 'annual' && <span className="text-[10px] text-stone-300">{t('calendar.annually')}</span>}
                           {ev.source === 'plan'   && <span className="text-[10px] text-amber-400 font-medium">🗓</span>}
+                          {ev.source === 'todo' && ev.owner && <span className="text-[10px] text-stone-400">{ev.owner}</span>}
                           {ev.notes && <span className="text-xs text-stone-400 truncate">{ev.notes}</span>}
                           {ev.source === 'user' && (
                             <button onClick={e => { e.stopPropagation(); delEvent(ev.id); }}

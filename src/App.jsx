@@ -6,6 +6,7 @@ import PlanTab from './components/tabs/PlanTab.jsx';
 import ExplorerTab from './components/tabs/ExplorerTab.jsx';
 import CalendarTab from './components/tabs/CalendarTab.jsx';
 import SourcesTab from './components/tabs/SourcesTab.jsx';
+import TodoTab from './components/tabs/TodoTab.jsx';
 import { useWeather } from './hooks/useWeather.js';
 import { useSupabaseStorage } from './hooks/useSupabaseStorage.js';
 
@@ -15,8 +16,10 @@ function AppInner() {
   const [weekendPlan,      setWeekendPlan]      = useSupabaseStorage('weekend_plan', {});
   const [userEvents,       setUserEvents]       = useSupabaseStorage('user_events', []);
   const [stickyActivities, setStickyActivities] = useSupabaseStorage('sticky_activities', []);
+  const [todos,            setTodos]            = useSupabaseStorage('todos', []);
 
-  const planCount = Object.values(weekendPlan).reduce((s, a) => s + a.length, 0);
+  const planCount  = Object.values(weekendPlan).reduce((s, a) => s + a.length, 0);
+  const todoCount  = todos.filter(t => !t.completed).length;
 
   return (
     <div className="min-h-screen bg-stone-50">
@@ -48,12 +51,16 @@ function AppInner() {
             userEvents={userEvents}
             setUserEvents={setUserEvents}
             weekendPlan={weekendPlan}
+            todos={todos}
           />
+        )}
+        {tab === 'todos' && (
+          <TodoTab todos={todos} setTodos={setTodos} />
         )}
         {tab === 'sources' && <SourcesTab />}
       </main>
 
-      <BottomNav tab={tab} setTab={setTab} planCount={planCount} />
+      <BottomNav tab={tab} setTab={setTab} planCount={planCount} todoCount={todoCount} />
     </div>
   );
 }
