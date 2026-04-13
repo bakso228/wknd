@@ -7,14 +7,14 @@ import ExplorerTab from './components/tabs/ExplorerTab.jsx';
 import CalendarTab from './components/tabs/CalendarTab.jsx';
 import SourcesTab from './components/tabs/SourcesTab.jsx';
 import { useWeather } from './hooks/useWeather.js';
-import { useLocalStorage } from './hooks/useLocalStorage.js';
+import { useSupabaseStorage } from './hooks/useSupabaseStorage.js';
 
 function AppInner() {
   const [tab, setTab] = useState('plan');
   const { weather, loading: wxLoading, error: wxError } = useWeather();
-  const [weekendPlan,      setWeekendPlan]      = useState({});
-  const [userEvents,       setUserEvents]       = useLocalStorage('wochenende_events', []);
-  const [stickyActivities, setStickyActivities] = useLocalStorage('wochenende_stickies', []);
+  const [weekendPlan,      setWeekendPlan]      = useSupabaseStorage('weekend_plan', {});
+  const [userEvents,       setUserEvents]       = useSupabaseStorage('user_events', []);
+  const [stickyActivities, setStickyActivities] = useSupabaseStorage('sticky_activities', []);
 
   const planCount = Object.values(weekendPlan).reduce((s, a) => s + a.length, 0);
 
