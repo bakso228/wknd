@@ -5,7 +5,6 @@ import BottomNav from './components/BottomNav.jsx';
 import PlanTab from './components/tabs/PlanTab.jsx';
 import ExplorerTab from './components/tabs/ExplorerTab.jsx';
 import CalendarTab from './components/tabs/CalendarTab.jsx';
-import SourcesTab from './components/tabs/SourcesTab.jsx';
 import TodoTab from './components/tabs/TodoTab.jsx';
 import { useWeather } from './hooks/useWeather.js';
 import { useSupabaseStorage } from './hooks/useSupabaseStorage.js';
@@ -57,7 +56,6 @@ function AppInner() {
         {tab === 'todos' && (
           <TodoTab todos={todos} setTodos={setTodos} />
         )}
-        {tab === 'sources' && <SourcesTab />}
       </main>
 
       <BottomNav tab={tab} setTab={setTab} planCount={planCount} todoCount={todoCount} />
