@@ -3,7 +3,7 @@ import { useLang } from '../contexts/LangContext.jsx';
 import { TYPE_PILL } from '../data/styles.js';
 import { fmtLong } from '../utils/date.js';
 
-const EMOJIS = ['🎉','🎂','🏖️','🎭','🚗','✈️','🏠','⚽','🎸','🍕','👨‍👩‍👧‍👦','❤️','🌟','🎈','🌳','🎄','🏃','🎓'];
+const EMOJIS = ['📌','🎉','🎂','🏖️','🎭','🚗','✈️','🏠','⚽','🎸','🍕','👨‍👩‍👧‍👦','❤️','🌟','🎈','🌳','🎄','🏃','🎓'];
 const TYPE_KEYS = ['personal','festival','outdoors','food','culture','holiday'];
 
 export default function AddEventModal({ date, onSave, onClose, initialEvent }) {
@@ -33,7 +33,7 @@ export default function AddEventModal({ date, onSave, onClose, initialEvent }) {
       onClick={e => { if (e.target === e.currentTarget) onClose(); }}
     >
       <div
-        className="bg-white rounded-t-3xl sm:rounded-2xl w-full sm:max-w-md p-6 space-y-4 relative"
+        className="bg-white rounded-t-3xl sm:rounded-2xl w-full sm:max-w-md p-6 space-y-4 relative max-h-[90vh] overflow-y-auto"
         style={{ paddingBottom: 'max(1.5rem, calc(env(safe-area-inset-bottom) + 1rem))' }}
       >
         <div className="sm:hidden absolute top-3 left-1/2 -translate-x-1/2 w-10 h-1 bg-stone-200 rounded-full" />
