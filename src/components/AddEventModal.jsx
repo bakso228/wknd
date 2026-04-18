@@ -13,7 +13,7 @@ export default function AddEventModal({ date, onSave, onClose, initialEvent }) {
   const startStr = `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}`;
 
   const [name,    setName]    = useState(initialEvent?.name  ?? '');
-  const [emoji,   setEmoji]   = useState(initialEvent?.emoji ?? '🎉');
+  const [emoji,   setEmoji]   = useState(initialEvent?.emoji ?? '📌');
   const [type,    setType]    = useState(initialEvent?.type  ?? 'personal');
   const [notes,   setNotes]   = useState(initialEvent?.notes ?? '');
   const [endDate, setEndDate] = useState(initialEvent?.endDate ?? startStr);
