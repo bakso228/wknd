@@ -1,7 +1,7 @@
 import { useLang } from '../contexts/LangContext.jsx';
 import { CAT_BADGE } from '../data/styles.js';
 
-export default function ActivityCard({ act, onAddSat, onAddSun, addedSat, addedSun, wxCat }) {
+export default function ActivityCard({ act, onAddSat, onAddSun, addedSat, addedSun, wxCat, onHide }) {
   const { t } = useLang();
   const isSourced    = act.eventType === 'sourced';
   const weatherMatch = act.weather.includes('any') || act.weather.includes(wxCat);
@@ -85,11 +85,17 @@ export default function ActivityCard({ act, onAddSat, onAddSun, addedSat, addedS
         )}
       </div>
 
-      {act.url && (
-        <div className="px-4 pb-3 mt-auto">
-          <a href={act.url} target="_blank" rel="noopener noreferrer" className="text-[10px] text-amber-600 hover:underline font-semibold">
-            {t('card.openWebsite')}
-          </a>
+      {(act.url || onHide) && (
+        <div className="px-4 pb-3 mt-auto flex items-center justify-between">
+          {act.url
+            ? <a href={act.url} target="_blank" rel="noopener noreferrer" className="text-[10px] text-amber-600 hover:underline font-semibold">{t('card.openWebsite')}</a>
+            : <span />
+          }
+          {onHide && (
+            <button onClick={onHide} className="text-[10px] text-stone-300 hover:text-stone-500 transition-colors min-h-[28px] px-1">
+              hide
+            </button>
+          )}
         </div>
       )}
     </div>

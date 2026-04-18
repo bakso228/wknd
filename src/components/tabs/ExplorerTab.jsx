@@ -7,7 +7,7 @@ import { SOURCED_EVENTS } from '../../data/events.js';
 import { getSeason, wxInfo, scoreActivity } from '../../utils/weather.js';
 import { getUpcomingWeekends, fmtShort, toLocalDateStr } from '../../utils/date.js';
 
-export default function ExplorerTab({ weather, weekendPlan, setWeekendPlan, stickyActivities, setStickyActivities }) {
+export default function ExplorerTab({ weather, weekendPlan, setWeekendPlan, stickyActivities, setStickyActivities, hiddenActivities, setHiddenActivities }) {
   const { t, lang } = useLang();
   const [catFilter,      setCatFilter]      = useState('all');
   const [locationFilter, setLocationFilter] = useState('all');
@@ -16,6 +16,7 @@ export default function ExplorerTab({ weather, weekendPlan, setWeekendPlan, stic
   const [viewMode,       setViewMode]       = useState('cards'); // 'cards' | 'map'
   const [showAddSticky,  setShowAddSticky]  = useState(false);
   const [newSticky,      setNewSticky]      = useState({ name: '', emoji: '⭐', desc: '' });
+  const [showHidden,     setShowHidden]     = useState(false);
 
   const season = getSeason(new Date().getMonth() + 1);
   // Use today's weather (days[0]) for activity ranking
@@ -28,12 +29,23 @@ export default function ExplorerTab({ weather, weekendPlan, setWeekendPlan, stic
     return [...STICKY_DEFAULTS, ...userStickies, ...BASE_ACTIVITIES];
   }, [stickyActivities]);
 
+  const hiddenSet = useMemo(() => new Set(hiddenActivities), [hiddenActivities]);
+
   const scored = useMemo(() =>
     [...SOURCED_EVENTS, ...allActivities]
+      .filter(a => !hiddenSet.has(a.id))
       .map(a => ({ ...a, _score: scoreActivity(a, wxCat, season) }))
       .sort((a, b) => b._score - a._score),
-    [allActivities, wxCat, season]
+    [allActivities, wxCat, season, hiddenSet]
   );
+
+  const hiddenItems = useMemo(() =>
+    [...SOURCED_EVENTS, ...allActivities].filter(a => hiddenSet.has(a.id)),
+    [allActivities, hiddenSet]
+  );
+
+  const hideActivity   = id => setHiddenActivities(prev => [...prev, id]);
+  const unhideActivity = id => setHiddenActivities(prev => prev.filter(h => h !== id));
 
   const filtered = useMemo(() => {
     let list = scored;
@@ -220,7 +232,8 @@ export default function ExplorerTab({ weather, weekendPlan, setWeekendPlan, stic
                     {items.map(act => (
                       <ActivityCard key={act.id} act={act} wxCat={wxCat}
                         onAddSat={() => addToDay(act, planSatStr)} onAddSun={() => addToDay(act, planSunStr)}
-                        addedSat={isAdded(act.id, planSatStr)} addedSun={isAdded(act.id, planSunStr)} />
+                        addedSat={isAdded(act.id, planSatStr)} addedSun={isAdded(act.id, planSunStr)}
+                        onHide={() => hideActivity(act.id)} />
                     ))}
                   </div>
                 </div>
@@ -231,7 +244,8 @@ export default function ExplorerTab({ weather, weekendPlan, setWeekendPlan, stic
               {sourcedItems.map(act => (
                 <ActivityCard key={act.id} act={act} wxCat={wxCat}
                   onAddSat={() => addToDay(act, planSatStr)} onAddSun={() => addToDay(act, planSunStr)}
-                  addedSat={isAdded(act.id, planSatStr)} addedSun={isAdded(act.id, planSunStr)} />
+                  addedSat={isAdded(act.id, planSatStr)} addedSun={isAdded(act.id, planSunStr)}
+                  onHide={() => hideActivity(act.id)} />
               ))}
             </div>
           )}
@@ -252,7 +266,8 @@ export default function ExplorerTab({ weather, weekendPlan, setWeekendPlan, stic
               <div key={act.id} className="relative">
                 <ActivityCard act={act} wxCat={wxCat}
                   onAddSat={() => addToDay(act, planSatStr)} onAddSun={() => addToDay(act, planSunStr)}
-                  addedSat={isAdded(act.id, planSatStr)} addedSun={isAdded(act.id, planSunStr)} />
+                  addedSat={isAdded(act.id, planSatStr)} addedSun={isAdded(act.id, planSunStr)}
+                  onHide={() => hideActivity(act.id)} />
                 {stickyActivities.find(s => s.id === act.id) && (
                   <button onClick={() => removeSticky(act.id)} className="absolute top-2 left-2 text-[9px] text-red-400 bg-white rounded px-1 border border-red-100 min-h-[24px]">remove</button>
                 )}
@@ -292,7 +307,8 @@ export default function ExplorerTab({ weather, weekendPlan, setWeekendPlan, stic
             {regularItems.map(act => (
               <ActivityCard key={act.id} act={act} wxCat={wxCat}
                 onAddSat={() => addToDay(act, planSatStr)} onAddSun={() => addToDay(act, planSunStr)}
-                addedSat={isAdded(act.id, planSatStr)} addedSun={isAdded(act.id, planSunStr)} />
+                addedSat={isAdded(act.id, planSatStr)} addedSun={isAdded(act.id, planSunStr)}
+                onHide={() => hideActivity(act.id)} />
             ))}
           </div>
         </section>
@@ -306,6 +322,40 @@ export default function ExplorerTab({ weather, weekendPlan, setWeekendPlan, stic
             {t('explorer.clearFilters')}
           </button>
         </div>
+      )}
+
+      {/* Hidden activities */}
+      {hiddenItems.length > 0 && (
+        <section className="pt-2 border-t border-stone-100">
+          <button
+            onClick={() => setShowHidden(v => !v)}
+            className="flex items-center gap-2 text-xs text-stone-400 hover:text-stone-600 transition-colors w-full py-1"
+          >
+            <span>👁 {hiddenItems.length} hidden {hiddenItems.length === 1 ? 'activity' : 'activities'}</span>
+            <span className="ml-auto">{showHidden ? '▲' : '▼'}</span>
+          </button>
+          {showHidden && (
+            <div className="mt-2 space-y-2">
+              {hiddenItems.map(act => (
+                <div key={act.id} className="flex items-center justify-between gap-3 bg-stone-50 rounded-lg px-3 py-2.5 border border-stone-100">
+                  <div className="flex items-center gap-2 min-w-0">
+                    <span className="text-base flex-shrink-0">{act.emoji}</span>
+                    <div className="min-w-0">
+                      <div className="text-xs font-semibold text-stone-500 truncate">{act.name}</div>
+                      {act.dateShort && <div className="text-[10px] text-stone-400">{act.dateShort}</div>}
+                    </div>
+                  </div>
+                  <button
+                    onClick={() => unhideActivity(act.id)}
+                    className="flex-shrink-0 text-[10px] font-semibold text-amber-600 border border-amber-200 bg-amber-50 rounded-lg px-2.5 py-1.5 min-h-[32px] hover:bg-amber-100 transition-colors"
+                  >
+                    unhide
+                  </button>
+                </div>
+              ))}
+            </div>
+          )}
+        </section>
       )}
     </div>
   );

@@ -12,10 +12,11 @@ import { useSupabaseStorage } from './hooks/useSupabaseStorage.js';
 function AppInner() {
   const [tab, setTab] = useState('plan');
   const { weather, loading: wxLoading, error: wxError } = useWeather();
-  const [weekendPlan,      setWeekendPlan]      = useSupabaseStorage('weekend_plan', {});
-  const [userEvents,       setUserEvents]       = useSupabaseStorage('user_events', []);
-  const [stickyActivities, setStickyActivities] = useSupabaseStorage('sticky_activities', []);
-  const [todos,            setTodos]            = useSupabaseStorage('todos', []);
+  const [weekendPlan,       setWeekendPlan]       = useSupabaseStorage('weekend_plan', {});
+  const [userEvents,        setUserEvents]        = useSupabaseStorage('user_events', []);
+  const [stickyActivities,  setStickyActivities]  = useSupabaseStorage('sticky_activities', []);
+  const [todos,             setTodos]             = useSupabaseStorage('todos', []);
+  const [hiddenActivities,  setHiddenActivities]  = useSupabaseStorage('hidden_activities', []);
 
   const planCount  = Object.values(weekendPlan).reduce((s, a) => s + a.length, 0);
   const todoCount  = todos.filter(t => !t.completed).length;
@@ -43,6 +44,8 @@ function AppInner() {
             setWeekendPlan={setWeekendPlan}
             stickyActivities={stickyActivities}
             setStickyActivities={setStickyActivities}
+            hiddenActivities={hiddenActivities}
+            setHiddenActivities={setHiddenActivities}
           />
         )}
         {tab === 'calendar' && (
