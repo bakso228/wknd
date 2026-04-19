@@ -1,10 +1,12 @@
 import { useLang } from '../contexts/LangContext.jsx';
 import { CAT_BADGE } from '../data/styles.js';
+import { distanceFromHome, formatDistance } from '../utils/distance.js';
 
 export default function ActivityCard({ act, onAddSat, onAddSun, addedSat, addedSun, wxCat, onHide }) {
   const { t } = useLang();
   const isSourced    = act.eventType === 'sourced';
   const weatherMatch = act.weather.includes('any') || act.weather.includes(wxCat);
+  const distStr      = formatDistance(distanceFromHome(act));
 
   const catBadge = isSourced ? CAT_BADGE.sourced : (CAT_BADGE[act.cat] || 'bg-stone-100 text-stone-600');
   const catLabel = isSourced ? t('card.thisWeekend') : t(`catLabels.${act.cat}`);
@@ -82,6 +84,9 @@ export default function ActivityCard({ act, onAddSat, onAddSun, addedSat, addedS
         )}
         {act.age && (
           <span className="text-[10px] bg-stone-50 text-stone-500 px-2 py-0.5 rounded border border-stone-100">👶 {act.age}</span>
+        )}
+        {distStr && (
+          <span className="text-[10px] bg-teal-50 text-teal-700 px-2 py-0.5 rounded border border-teal-100" title="Straight-line from Oberhaching · drive time approximate">🏠 {distStr}</span>
         )}
       </div>
 

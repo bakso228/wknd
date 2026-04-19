@@ -1,0 +1,548 @@
+// ═══════════════════════════════════════════════════════════════
+// KIDS-MUNICH VENUES — sourced from muenchen.travel "mit Kindern"
+// article (https://www.muenchen.travel/artikel/muenchen-tipps-fuer/
+// muenchen-mit-kindern).
+//
+// Same schema as BASE_ACTIVITIES. Uses area + depth where possible.
+// Coordinates are approximate (±500 m) for distance-from-home display.
+// Entries marked `// verify` should have URL / address confirmed.
+// ═══════════════════════════════════════════════════════════════
+export const KIDS_MUNICH = [
+
+  // ── MUSEUMS / INDOOR SIGHTS ──────────────────────────────────
+  {
+    id: 'km_spielzeugmuseum', cat: 'indoor', location: 'munich', eventType: 'venue',
+    area: 'core', depth: 'short',
+    emoji: '🧸', name: 'Spielzeugmuseum (Altes Rathaus)',
+    desc: 'Historic toy collection spanning two centuries, right on Marienplatz — wooden trains, dolls, tin cars. Compact, perfect 1h stop.',
+    weather: ['any'], season: ['all'], duration: '1h', age: 'Ages 3+',
+    url: 'https://www.muenchner-stadtmuseum.de/sammlungen/spielzeug', // verify
+    tags: ['culture', 'kids', 'indoor', 'quick'],
+    lat: 48.1372, lng: 11.5775,
+  },
+  {
+    id: 'km_mensch_natur', cat: 'indoor', location: 'munich', eventType: 'venue',
+    area: 'core', depth: 'short',
+    emoji: '🦕', name: 'Museum Mensch und Natur',
+    desc: 'Natural history museum inside Nymphenburg Palace. Dinosaur skeletons, a giant crystal room, human biology hands-on stations.',
+    weather: ['any'], season: ['all'], duration: '1–2h', age: 'Ages 4+',
+    url: 'https://www.mmn-muenchen.de/', tags: ['culture', 'kids', 'indoor'],
+    lat: 48.1585, lng: 11.5024,
+  },
+  {
+    id: 'km_marstall', cat: 'indoor', location: 'munich', eventType: 'venue',
+    area: 'core', depth: 'short',
+    emoji: '🐎', name: 'Marstallmuseum Nymphenburg',
+    desc: 'Baroque royal carriages, sleighs and riding gear in the south wing of Nymphenburg Palace — Ludwig II\'s gilded carriages are a highlight.',
+    weather: ['any'], season: ['all'], duration: '1h', age: 'Ages 5+',
+    url: 'https://www.schloss-nymphenburg.de/deutsch/museum/marstall.htm', // verify
+    tags: ['culture', 'kids', 'indoor'],
+    lat: 48.1578, lng: 11.5021,
+  },
+  {
+    id: 'km_palaeo', cat: 'indoor', location: 'munich', eventType: 'venue',
+    area: 'core', depth: 'micro',
+    emoji: '🦖', name: 'Paläontologisches Museum',
+    desc: 'Small, free paleontology museum near Königsplatz — dinosaur skeletons, Archaeopteryx fossil, ice-age giants. Perfect rainy-hour stop.',
+    weather: ['any'], season: ['all'], duration: '45min–1h', age: 'Ages 4+',
+    url: 'https://www.palmuc.de/bspg/', // verify
+    tags: ['culture', 'kids', 'indoor', 'free', 'quick'],
+    lat: 48.1470, lng: 11.5643,
+  },
+  {
+    id: 'km_aegyptisch', cat: 'indoor', location: 'munich', eventType: 'venue',
+    area: 'core', depth: 'short',
+    emoji: '🏺', name: 'Ägyptisches Museum',
+    desc: 'Striking underground Egyptian museum at Königsplatz. Mummies, sphinx, family tours on weekends. Free for under 18.',
+    weather: ['any'], season: ['all'], duration: '1–2h', age: 'Ages 6+',
+    url: 'https://www.smaek.de/', tags: ['culture', 'kids', 'indoor', 'free-kids'],
+    lat: 48.1462, lng: 11.5700,
+  },
+  {
+    id: 'km_pinakothek_moderne', cat: 'indoor', location: 'munich', eventType: 'venue',
+    area: 'core', depth: 'short',
+    emoji: '🎨', name: 'Pinakothek der Moderne',
+    desc: 'Modern art, design, architecture. Good family programme (Kinderprogramm) every Sunday. Sunday ticket 1 €.',
+    weather: ['any'], season: ['all'], duration: '1–2h', age: 'Ages 5+',
+    url: 'https://www.pinakothek-der-moderne.de/', tags: ['culture', 'kids', 'indoor'],
+    lat: 48.1469, lng: 11.5719,
+  },
+  {
+    id: 'km_kinderkunsthaus', cat: 'indoor', location: 'munich', eventType: 'venue',
+    area: 'core', depth: 'short',
+    emoji: '🖌️', name: 'Kinderkunsthaus Schwabing',
+    desc: 'Hands-on art house — open workshops in the studio and media lab, drop-in creative sessions for kids.',
+    weather: ['any'], season: ['all'], duration: '1–2h', age: 'Ages 3+',
+    url: 'https://www.kinderkunsthaus.de/', tags: ['culture', 'kids', 'indoor'],
+    lat: 48.1698, lng: 11.5849,
+  },
+  {
+    id: 'km_flugwerft', cat: 'indoor', location: 'day-trip', eventType: 'venue',
+    area: 'region', depth: 'half',
+    emoji: '✈️', name: 'Flugwerft Schleißheim',
+    desc: 'Aviation branch of the Deutsches Museum. Historic planes, helicopter, flight simulator. Combine with Schleißheim Palace.',
+    weather: ['any'], season: ['all'], duration: '2–3h', age: 'Ages 4+',
+    url: 'https://www.deutsches-museum.de/flugwerft', tags: ['culture', 'kids', 'indoor'],
+    lat: 48.2397, lng: 11.5699,
+  },
+  {
+    id: 'km_fc_bayern', cat: 'indoor', location: 'munich', eventType: 'venue',
+    area: 'region', depth: 'short',
+    emoji: '⚽', name: 'FC Bayern Museum & Allianz Arena',
+    desc: 'Stadium tour plus the trophy-stuffed FC Bayern museum. Great for football-obsessed kids.',
+    weather: ['any'], season: ['all'], duration: '2h', age: 'Ages 6+',
+    url: 'https://fcbayern.com/fcbayernerlebniswelt/de', tags: ['culture', 'kids', 'indoor'],
+    lat: 48.2188, lng: 11.6247,
+  },
+  {
+    id: 'km_sea_life', cat: 'indoor', location: 'munich', eventType: 'venue',
+    area: 'core', depth: 'short',
+    emoji: '🐠', name: 'Sea Life München (Olympiapark)',
+    desc: 'Indoor aquarium with sharks, rays, walk-through ocean tunnel. Reliable rainy-day hit for young kids.',
+    weather: ['any'], season: ['all'], duration: '1.5–2h', age: 'Ages 3+',
+    url: 'https://www.visitsealife.com/muenchen/', tags: ['kids', 'indoor', 'paid'],
+    lat: 48.1742, lng: 11.5510,
+  },
+  {
+    id: 'km_wow', cat: 'indoor', location: 'munich', eventType: 'venue',
+    area: 'core', depth: 'short',
+    emoji: '🎨', name: 'WOW Museum (Optische Illusionen)',
+    desc: 'Nineteen interactive illusion rooms and photo stations. Instagram bait but genuinely fun with kids 5+.',
+    weather: ['any'], season: ['all'], duration: '1–2h', age: 'Ages 5+',
+    url: 'https://wow-muenchen.de/', tags: ['kids', 'indoor', 'paid'],
+    lat: 48.1362, lng: 11.5770,
+  },
+  {
+    id: 'km_magic_bavaria', cat: 'indoor', location: 'munich', eventType: 'venue',
+    area: 'region', depth: 'short',
+    emoji: '🎩', name: 'Magic Bavaria (MONA Center)',
+    desc: 'Interactive illusion museum inside the MONA shopping centre in Moosach. Good before-/after-shopping indoor fix.',
+    weather: ['any'], season: ['all'], duration: '1–2h', age: 'Ages 5+',
+    url: 'https://magic-bavaria.de/', // verify
+    tags: ['kids', 'indoor', 'paid'],
+    lat: 48.1816, lng: 11.5122,
+  },
+
+  // ── ENGLISCHER GARTEN HIGHLIGHTS ─────────────────────────────
+  {
+    id: 'km_seehaus', cat: 'food', location: 'munich', eventType: 'venue',
+    area: 'core', depth: 'short',
+    emoji: '⛵', name: 'Seehaus am Kleinhesseloher See',
+    desc: 'Lakeside beer garden in the Englischer Garten with terrace views. Pair with a rowing-boat rental on the lake.',
+    weather: ['sunny', 'cloudy'], season: ['spring', 'summer', 'fall'], duration: '1–2h', age: 'Great with kids',
+    url: 'https://www.kuffler.de/de/restaurant/seehaus.html', tags: ['food', 'family', 'playground'],
+    lat: 48.1604, lng: 11.5946,
+  },
+  {
+    id: 'km_eisbachwelle', cat: 'outdoor', location: 'munich', eventType: 'venue',
+    area: 'core', depth: 'micro',
+    emoji: '🏄', name: 'Eisbachwelle',
+    desc: 'The legendary river-wave where Munich surfers ride year-round. Zero effort to watch, kids love the spectacle.',
+    weather: ['any'], season: ['all'], duration: '15–30min', age: 'Any age',
+    url: 'https://www.muenchen.de/sehenswuerdigkeiten/eisbachwelle', tags: ['free', 'iconic', 'quick'],
+    lat: 48.1440, lng: 11.5868,
+  },
+
+  // ── OLYMPIAPARK EXTRAS ───────────────────────────────────────
+  {
+    id: 'km_parkeisenbahn', cat: 'outdoor', location: 'munich', eventType: 'venue',
+    area: 'core', depth: 'micro',
+    emoji: '🚂', name: 'Olympiapark Parkeisenbahn',
+    desc: 'Mini park train that loops from the Olympiasee past BMW Welt every 30 min (seasonal). Tickets from the driver.',
+    weather: ['sunny', 'cloudy'], season: ['spring', 'summer', 'fall'], duration: '30–45min', age: 'Toddlers love it',
+    url: 'https://www.olympiapark.de/', // verify
+    tags: ['kids', 'quick'],
+    lat: 48.1732, lng: 11.5487,
+  },
+
+  // ── THEATERS ─────────────────────────────────────────────────
+  {
+    id: 'km_marionetten', cat: 'theater', location: 'munich', eventType: 'venue',
+    area: 'core', depth: 'short',
+    emoji: '🪆', name: 'Münchner Marionettentheater',
+    desc: "One of the oldest puppet theatres in the German-speaking world — beautiful 19th-century little house, booking required.",
+    weather: ['any'], season: ['all'], duration: '1–1.5h', age: 'Ages 4+',
+    url: 'https://www.muema-theater.de/', tags: ['culture', 'kids', 'indoor'],
+    lat: 48.1313, lng: 11.5660,
+  },
+  {
+    id: 'km_theater_kinder', cat: 'theater', location: 'munich', eventType: 'venue',
+    area: 'core', depth: 'short',
+    emoji: '🎭', name: 'Münchner Theater für Kinder',
+    desc: 'Classic children\'s plays — Räuber Hotzenplotz, Dornröschen, Pinocchio. Performed by professional actors for kids 4+.',
+    weather: ['any'], season: ['all'], duration: '1–1.5h', age: 'Ages 4+',
+    url: 'https://www.muenchner-theater-fuer-kinder.de/', tags: ['culture', 'kids', 'indoor'],
+    lat: 48.1437, lng: 11.5491,
+  },
+  {
+    id: 'km_pfoertnerhaus', cat: 'theater', location: 'munich', eventType: 'venue',
+    area: 'region', depth: 'short',
+    emoji: '🎭', name: 'Kleines Theater im Pförtnerhaus',
+    desc: 'Long-standing hand-puppet theatre in Oberföhring with a weekly-changing programme and tiny theatre café.',
+    weather: ['any'], season: ['all'], duration: '1h', age: 'Ages 3+',
+    url: 'https://www.puppentheater-pfoertnerhaus.de/', // verify
+    tags: ['culture', 'kids', 'indoor'],
+    lat: 48.1664, lng: 11.6407,
+  },
+
+  // ── KID-FRIENDLY CAFES ───────────────────────────────────────
+  {
+    id: 'km_la_sophia', cat: 'food', location: 'munich', eventType: 'venue',
+    area: 'core', depth: 'short',
+    emoji: '☕', name: 'La Sophia (Au)',
+    desc: 'Italian café in the Au district with a dedicated reading-and-drawing corner for kids. Handy mid-sightseeing break.',
+    weather: ['any'], season: ['all'], duration: '1–1.5h', age: 'Great with kids',
+    url: 'https://lasophia.de/', // verify
+    tags: ['food', 'family', 'indoor'],
+    lat: 48.1279, lng: 11.5852,
+  },
+  {
+    id: 'km_sportgeister', cat: 'food', location: 'munich', eventType: 'venue',
+    area: 'core', depth: 'short',
+    emoji: '🤸', name: 'Kleine Sportgeister Turncafé',
+    desc: 'Schwabing "gym-café" — tiny indoor soft-play for 0–3 year-olds with espresso for parents. Booking required.',
+    weather: ['any'], season: ['all'], duration: '1–2h', age: 'Ages 0–3',
+    url: 'https://www.kleinesportgeister.de/', tags: ['food', 'indoor', 'kids'],
+    lat: 48.1749, lng: 11.5801,
+  },
+  {
+    id: 'km_cafe_zuckertag', cat: 'food', location: 'munich', eventType: 'venue',
+    area: 'core', depth: 'short',
+    emoji: '🍪', name: 'Café Zuckertag',
+    desc: 'Family café in the Schlachthofviertel with a play-room for 0–6 year-olds and a summer outdoor playground.',
+    weather: ['any'], season: ['all'], duration: '1–2h', age: 'Ages 0–6',
+    url: 'https://cafezuckertag.de/', // verify
+    tags: ['food', 'family', 'indoor'],
+    lat: 48.1283, lng: 11.5548,
+  },
+  {
+    id: 'km_pfefferminza', cat: 'food', location: 'munich', eventType: 'venue',
+    area: 'core', depth: 'short',
+    emoji: '☕', name: 'Café Pfefferminza (Giesing)',
+    desc: 'Giesing kids-café with kids portions and a drawing corner. Laid-back, never too loud.',
+    weather: ['any'], season: ['all'], duration: '1–1.5h', age: 'Great with kids',
+    url: 'https://pfefferminza.de/', // verify
+    tags: ['food', 'family', 'indoor'],
+    lat: 48.1120, lng: 11.5839,
+  },
+  {
+    id: 'km_cafe_steinchen', cat: 'food', location: 'munich', eventType: 'venue',
+    area: 'core', depth: 'short',
+    emoji: '🌿', name: 'Café Steinchen (Laim)',
+    desc: 'Laim café with a green outdoor area and a self-built wooden train set on the terrace. Warm-weather favourite.',
+    weather: ['sunny', 'cloudy'], season: ['spring', 'summer', 'fall'], duration: '1–2h', age: 'Great with kids',
+    url: 'https://www.cafe-steinchen.de/', // verify
+    tags: ['food', 'family'],
+    lat: 48.1422, lng: 11.5088,
+  },
+  {
+    id: 'km_glueckskind', cat: 'food', location: 'munich', eventType: 'venue',
+    area: 'core', depth: 'short',
+    emoji: '🌻', name: 'Café Glückskind (Haidhausen)',
+    desc: 'Haidhausen side-street café with terrace, roomy kids corner, and daily lunch specials.',
+    weather: ['any'], season: ['all'], duration: '1–1.5h', age: 'Great with kids',
+    url: 'https://www.cafe-glueckskind.de/', // verify
+    tags: ['food', 'family'],
+    lat: 48.1313, lng: 11.6023,
+  },
+  {
+    id: 'km_lillys_deli', cat: 'food', location: 'munich', eventType: 'venue',
+    area: 'core', depth: 'short',
+    emoji: '🥗', name: "Lilly's Deli",
+    desc: 'Vegetarian deli with a paid (3 €) climb-and-play area for kids — parents can actually eat in peace.',
+    weather: ['any'], season: ['all'], duration: '1–2h', age: 'Great with kids',
+    url: 'https://lillysdeli.de/', // verify
+    tags: ['food', 'family', 'indoor'],
+    lat: 48.1525, lng: 11.5683,
+  },
+
+  // ── BIERGÄRTEN MIT SPIELPLATZ ────────────────────────────────
+  {
+    id: 'km_hofbraeukeller', cat: 'food', location: 'munich', eventType: 'venue',
+    area: 'core', depth: 'short',
+    emoji: '🍺', name: 'Hofbräukeller am Wiener Platz',
+    desc: 'Classic Haidhausen beer garden on a chestnut-shaded square with a small kids\' playground just outside.',
+    weather: ['sunny', 'cloudy'], season: ['spring', 'summer', 'fall'], duration: '1.5–2h', age: 'Family welcome',
+    url: 'https://www.hofbraeukeller.de/', tags: ['food', 'family', 'playground'],
+    lat: 48.1321, lng: 11.5970,
+  },
+  {
+    id: 'km_augustinerkeller', cat: 'food', location: 'munich', eventType: 'venue',
+    area: 'core', depth: 'short',
+    emoji: '🌰', name: 'Augustiner-Keller',
+    desc: 'Enormous chestnut-shaded beer garden at Hackerbrücke. Play area tucked in a corner, classic Munich atmosphere.',
+    weather: ['sunny', 'cloudy'], season: ['spring', 'summer', 'fall'], duration: '1.5–2.5h', age: 'Family welcome',
+    url: 'https://www.augustinerkeller.de/', tags: ['food', 'family', 'iconic'],
+    lat: 48.1431, lng: 11.5486,
+  },
+
+  // ── INDOOR PLAYGROUNDS ───────────────────────────────────────
+  {
+    id: 'km_coco_loco', cat: 'indoor', location: 'munich', eventType: 'venue',
+    area: 'south', depth: 'half',
+    emoji: '🌴', name: 'Coco Loco (Grünwald)',
+    desc: 'Caribbean-themed jungle indoor playground in Grünwald — bouncy castles, trampolines, separate toddler zone. Close to Oberhaching.',
+    weather: ['any'], season: ['all'], duration: '2–3h', age: 'Ages 1–10',
+    url: 'https://www.cocoloco-muenchen.de/', // verify
+    tags: ['kids', 'indoor', 'paid', 'local'],
+    lat: 48.0413, lng: 11.5424,
+  },
+  {
+    id: 'km_wichtelwerk', cat: 'indoor', location: 'munich', eventType: 'venue',
+    area: 'core', depth: 'half',
+    emoji: '🏰', name: 'Wichtelwerk (Freiham)',
+    desc: 'Huge west-Munich indoor playground — ball pit, climbing labyrinth, go-kart track. Up to age 10.',
+    weather: ['any'], season: ['all'], duration: '2–3h', age: 'Ages 2–10',
+    url: 'https://www.wichtelwerk.de/', tags: ['kids', 'indoor', 'paid'],
+    lat: 48.1379, lng: 11.4179,
+  },
+  {
+    id: 'km_jump_house', cat: 'indoor', location: 'munich', eventType: 'venue',
+    area: 'core', depth: 'short',
+    emoji: '🤾', name: 'Jump House München',
+    desc: 'Trampoline park in the north with dodgeball, foam pits, ninja course. Book a slot.',
+    weather: ['any'], season: ['all'], duration: '1–2h', age: 'Ages 4+',
+    url: 'https://www.jumphouse.de/muenchen/', tags: ['active', 'kids', 'indoor'],
+    lat: 48.2078, lng: 11.6207,
+  },
+  {
+    id: 'km_maxxarena', cat: 'indoor', location: 'day-trip', eventType: 'venue',
+    area: 'region', depth: 'half',
+    emoji: '🤸', name: 'MaxxArena (Kirchheim)',
+    desc: 'Trampoline + climbing complex in Kirchheim east of Munich. Bigger and usually less crowded than Jump House.',
+    weather: ['any'], season: ['all'], duration: '2h', age: 'Ages 5+',
+    url: 'https://www.maxxarena.de/', tags: ['active', 'kids', 'indoor'],
+    lat: 48.1750, lng: 11.7536,
+  },
+  {
+    id: 'km_erdino', cat: 'indoor', location: 'day-trip', eventType: 'venue',
+    area: 'trip', depth: 'half',
+    emoji: '🦕', name: 'Erdino Hallenspielplatz (Erding)',
+    desc: 'Huge three-storey indoor play maze in Erding, with a climbing volcano and hopping Dino. Easy S-Bahn / car combo with the Erding thermal baths.',
+    weather: ['any'], season: ['all'], duration: '2–3h', age: 'Ages 2–12',
+    url: 'https://www.erdino.de/', tags: ['kids', 'indoor', 'paid'],
+    lat: 48.3078, lng: 11.8921,
+  },
+
+  // ── POOLS ────────────────────────────────────────────────────
+  {
+    id: 'km_michaelibad', cat: 'outdoor', location: 'munich', eventType: 'venue',
+    area: 'core', depth: 'half',
+    emoji: '🏊', name: 'Michaelibad',
+    desc: 'Huge outdoor pool complex in the east with slides, diving boards, meadow. Year-round indoor pool attached.',
+    weather: ['sunny'], season: ['summer'], duration: '3–4h', age: 'Kids love it',
+    url: 'https://www.swm.de/baeder/baederportraets/michaelibad', tags: ['swimming', 'kids', 'summer'],
+    lat: 48.1258, lng: 11.6304,
+  },
+  {
+    id: 'km_westbad', cat: 'outdoor', location: 'munich', eventType: 'venue',
+    area: 'core', depth: 'half',
+    emoji: '🏊', name: 'Westbad',
+    desc: 'West-Munich combined outdoor/indoor bath. Kids pool, slide, diving tower. Usually less crowded than Michaelibad.',
+    weather: ['sunny'], season: ['summer'], duration: '2–4h', age: 'Kids love it',
+    url: 'https://www.swm.de/baeder/baederportraets/westbad', tags: ['swimming', 'kids'],
+    lat: 48.1386, lng: 11.4845,
+  },
+  {
+    id: 'km_dantebad', cat: 'outdoor', location: 'munich', eventType: 'venue',
+    area: 'core', depth: 'half',
+    emoji: '🏊', name: 'Dantebad',
+    desc: 'Outdoor pool in Moosach with a heated lane open all winter — Munich\'s year-round open-air swim.',
+    weather: ['any'], season: ['all'], duration: '2–3h', age: 'Kids ok with supervision',
+    url: 'https://www.swm.de/baeder/baederportraets/dantebad', tags: ['swimming'],
+    lat: 48.1735, lng: 11.5258,
+  },
+  {
+    id: 'km_cosima', cat: 'outdoor', location: 'munich', eventType: 'venue',
+    area: 'core', depth: 'half',
+    emoji: '🌊', name: 'Cosimawellenbad',
+    desc: 'Indoor wave pool in Bogenhausen — periodic waves, sauna world upstairs. Great rainy Sunday.',
+    weather: ['any'], season: ['all'], duration: '2–3h', age: 'Kids love it',
+    url: 'https://www.swm.de/baeder/baederportraets/cosimawellenbad', tags: ['swimming', 'indoor'],
+    lat: 48.1627, lng: 11.6451,
+  },
+  {
+    id: 'km_ungererbad', cat: 'outdoor', location: 'munich', eventType: 'venue',
+    area: 'core', depth: 'half',
+    emoji: '🏊', name: 'Ungererbad',
+    desc: 'Large Schwabing outdoor pool under old trees. Separate toddler pool, long slide, classic summer family day.',
+    weather: ['sunny'], season: ['summer'], duration: '3–4h', age: 'Kids love it',
+    url: 'https://www.swm.de/baeder/baederportraets/ungererbad', tags: ['swimming', 'kids', 'summer'],
+    lat: 48.1798, lng: 11.5915,
+  },
+
+  // ── SPORT / ACTIVE ───────────────────────────────────────────
+  {
+    id: 'km_surftown', cat: 'outdoor', location: 'day-trip', eventType: 'venue',
+    area: 'region', depth: 'half',
+    emoji: '🏄', name: 'O2 Surftown MUC',
+    desc: 'Germany\'s first stationary-wave surf park, just south of the airport. Lessons from 8 yrs, beginner-friendly waves.',
+    weather: ['sunny'], season: ['spring', 'summer', 'fall'], duration: '2–4h', age: 'Ages 8+',
+    url: 'https://o2surftownmuc.com/', tags: ['active', 'summer', 'paid'],
+    lat: 48.3347, lng: 11.7861,
+  },
+  {
+    id: 'km_balls_clubs', cat: 'indoor', location: 'munich', eventType: 'venue',
+    area: 'core', depth: 'short',
+    emoji: '⛳', name: 'Balls & Clubs Indoor Minigolf',
+    desc: 'Themed indoor-minigolf bunker near Isartor — 18 creative holes, all-weather, good for rainy kids 5+.',
+    weather: ['any'], season: ['all'], duration: '1–1.5h', age: 'Ages 5+',
+    url: 'https://www.ballsandclubs.de/', tags: ['kids', 'indoor', 'paid'],
+    lat: 48.1342, lng: 11.5843,
+  },
+  {
+    id: 'km_exus_neongolf', cat: 'indoor', location: 'munich', eventType: 'venue',
+    area: 'core', depth: 'short',
+    emoji: '🌈', name: 'Exus 3D Neongolf',
+    desc: 'Indoor blacklight minigolf at the Theresienwiese — 3D glasses included, glow-in-the-dark themed rooms.',
+    weather: ['any'], season: ['all'], duration: '1h', age: 'Ages 5+',
+    url: 'https://www.exus-muenchen.de/', // verify
+    tags: ['kids', 'indoor', 'paid'],
+    lat: 48.1338, lng: 11.5510,
+  },
+
+  // ── DAY TRIPS ────────────────────────────────────────────────
+  {
+    id: 'km_wildpark_poing', cat: 'outdoor', location: 'day-trip', eventType: 'venue',
+    area: 'region', depth: 'half',
+    emoji: '🦌', name: 'Wildpark Poing',
+    desc: '4 km forest trail past deer, boars, lynx. Daily bird-of-prey show, two big adventure playgrounds.',
+    weather: ['sunny', 'cloudy'], season: ['spring', 'summer', 'fall'], duration: '3–5h', age: 'All ages',
+    url: 'https://www.wildpark-poing.net/', tags: ['kids', 'nature', 'paid'],
+    lat: 48.1715, lng: 11.7926,
+  },
+  {
+    id: 'km_blindham', cat: 'outdoor', location: 'day-trip', eventType: 'venue',
+    area: 'south', depth: 'half',
+    emoji: '🦌', name: 'Bergtierpark Blindham (Aying)',
+    desc: 'Native Bavarian wildlife park with panorama view of the Alps and a Spielstadl for rainy moments. Cash only!',
+    weather: ['any'], season: ['spring', 'summer', 'fall'], duration: '2–4h', age: 'Great with kids',
+    url: 'https://www.bergtierpark.de/', tags: ['kids', 'nature', 'paid', 'local'],
+    lat: 47.9560, lng: 11.8058,
+  },
+  {
+    id: 'km_schliersee', cat: 'outdoor', location: 'day-trip', eventType: 'venue',
+    area: 'trip', depth: 'full',
+    emoji: '⛰️', name: 'Schliersee',
+    desc: 'Bavarian pre-Alps lake an hour south by BOB. Playground next to a beer garden by the pier, pedalos, mountain backdrop.',
+    weather: ['sunny'], season: ['summer'], duration: '5–7h', age: 'Great with kids',
+    url: 'https://www.schliersee.de/', tags: ['nature', 'summer', 'swimming', 'train'],
+    lat: 47.7298, lng: 11.8597,
+  },
+  {
+    id: 'km_maerchenwald', cat: 'outdoor', location: 'day-trip', eventType: 'venue',
+    area: 'region', depth: 'half',
+    emoji: '🧚', name: 'Märchenwald im Isartal',
+    desc: 'Fairy-tale forest park near Wolfratshausen — storybook cottages, climbing frames, gentle rides. Magic for 3–7 yr olds.',
+    weather: ['sunny', 'cloudy'], season: ['spring', 'summer', 'fall'], duration: '3–4h', age: 'Ages 3–8',
+    url: 'https://www.maerchenwald-isartal.de/', tags: ['kids', 'nature', 'paid'],
+    lat: 47.9150, lng: 11.4224,
+  },
+  {
+    id: 'km_skyline', cat: 'outdoor', location: 'day-trip', eventType: 'venue',
+    area: 'trip', depth: 'full',
+    emoji: '🎢', name: 'Allgäu Skyline Park',
+    desc: '60+ rides theme park toward the Allgäu (~1 h drive). Mix of kiddie rides and real coasters.',
+    weather: ['sunny'], season: ['spring', 'summer', 'fall'], duration: 'Ganztag', age: 'Ages 3+',
+    url: 'https://www.skylinepark.de/', tags: ['kids', 'paid', 'summer'],
+    lat: 48.0703, lng: 10.6787,
+  },
+  {
+    id: 'km_flughafen_bp', cat: 'outdoor', location: 'day-trip', eventType: 'venue',
+    area: 'region', depth: 'half',
+    emoji: '✈️', name: 'Flughafen Besucherpark',
+    desc: 'Airport visitor park with a viewing mound, parked historic aircraft, year-round adventure playground. Free.',
+    weather: ['sunny', 'cloudy'], season: ['all'], duration: '2–3h', age: 'Plane fans any age',
+    url: 'https://www.munich-airport.de/besucherpark-8538', // verify
+    tags: ['kids', 'free'],
+    lat: 48.3597, lng: 11.7836,
+  },
+  {
+    id: 'km_kiddi_car', cat: 'outdoor', location: 'day-trip', eventType: 'venue',
+    area: 'region', depth: 'short',
+    emoji: '🚗', name: 'Kiddi-Car Fürstenfeldbruck',
+    desc: 'Real mini-car traffic training circuit for kids 6–12 — drive around pedestrian crossings and traffic lights in mini cars / quads.',
+    weather: ['sunny', 'cloudy'], season: ['spring', 'summer', 'fall'], duration: '1–2h', age: 'Ages 6–12',
+    url: 'https://www.kiddi-car.de/', tags: ['kids', 'paid', 'active'],
+    lat: 48.1824, lng: 11.2415,
+  },
+
+  // ── PLAYGROUNDS ──────────────────────────────────────────────
+  {
+    id: 'km_theresien_bavariaring', cat: 'outdoor', location: 'munich', eventType: 'venue',
+    area: 'core', depth: 'short',
+    emoji: '🛝', name: 'Theresienwiese Spielplatz (Bavariaring)',
+    desc: 'Newly built playground with a 12 m play tower, long slides, and barrier-free paths. Stunning when the Wiesn is not on.',
+    weather: ['sunny', 'cloudy'], season: ['spring', 'summer', 'fall'], duration: '1–2h', age: 'Ages 3–12',
+    url: 'https://www.muenchen.de/', // verify
+    tags: ['free', 'playground', 'kids'],
+    lat: 48.1344, lng: 11.5475,
+  },
+  {
+    id: 'km_maulwurfshausen', cat: 'outdoor', location: 'munich', eventType: 'venue',
+    area: 'core', depth: 'half',
+    emoji: '🛖', name: 'Abenteuerspielplatz Maulwurfshausen (Ostpark)',
+    desc: '50+ kid-built huts and towers in the Ostpark — supervised adventure playground for ages 6–13, creativity run wild.',
+    weather: ['sunny', 'cloudy'], season: ['spring', 'summer', 'fall'], duration: '2–4h', age: 'Ages 6–13',
+    url: 'https://www.muenchen.de/', // verify
+    tags: ['free', 'playground', 'kids'],
+    lat: 48.1217, lng: 11.6321,
+  },
+  {
+    id: 'km_seidenspinner', cat: 'outdoor', location: 'munich', eventType: 'venue',
+    area: 'south', depth: 'short',
+    emoji: '🛝', name: 'Seidenspinner-Spielplatz (Flaucher)',
+    desc: 'Big playground in the Isarauen just above the Flaucher — pair with an Isar walk or BBQ.',
+    weather: ['sunny', 'cloudy'], season: ['spring', 'summer', 'fall'], duration: '1–2h', age: 'Ages 2–12',
+    url: 'https://www.muenchen.de/sehenswuerdigkeiten/parks-und-seen/isar', tags: ['free', 'playground', 'kids'],
+    lat: 48.1056, lng: 11.5473,
+  },
+  {
+    id: 'km_laimer_platz', cat: 'outdoor', location: 'munich', eventType: 'venue',
+    area: 'core', depth: 'short',
+    emoji: '🛝', name: 'Spielplatz Laimer Platz',
+    desc: 'Large 3,000 m² playground, fully renovated 2024 — equipment for toddlers through to teens.',
+    weather: ['sunny', 'cloudy'], season: ['spring', 'summer', 'fall'], duration: '1–2h', age: 'All ages',
+    url: 'https://www.muenchen.de/', // verify
+    tags: ['free', 'playground', 'kids'],
+    lat: 48.1396, lng: 11.5056,
+  },
+  {
+    id: 'km_riemer_park', cat: 'outdoor', location: 'munich', eventType: 'venue',
+    area: 'region', depth: 'half',
+    emoji: '🏞️', name: 'Riemer Park',
+    desc: 'Giant former airport-turned-park in Riem. Pirate, tomato, airplane, and elephant themed playgrounds; swimming lake in summer.',
+    weather: ['sunny', 'cloudy'], season: ['spring', 'summer', 'fall'], duration: '2–4h', age: 'All ages',
+    url: 'https://www.muenchen.de/sehenswuerdigkeiten/parks-und-seen/riemer-park', tags: ['free', 'playground', 'kids'],
+    lat: 48.1406, lng: 11.7026,
+  },
+
+  // ── CITY CENTER SIGHTS FOR KIDS ──────────────────────────────
+  {
+    id: 'km_marienplatz', cat: 'outdoor', location: 'munich', eventType: 'venue',
+    area: 'core', depth: 'short',
+    emoji: '🕰️', name: 'Marienplatz + Glockenspiel',
+    desc: "Munich's heart. Glockenspiel chimes 11:00 & 12:00 (and 17:00 in summer). Climb the Neues Rathaus tower afterward.",
+    weather: ['any'], season: ['all'], duration: '1–2h', age: 'Any age',
+    url: 'https://www.muenchen.de/sehenswuerdigkeiten/marienplatz', tags: ['free', 'iconic', 'kids'],
+    lat: 48.1374, lng: 11.5755,
+  },
+  {
+    id: 'km_alter_peter', cat: 'indoor', location: 'munich', eventType: 'venue',
+    area: 'core', depth: 'micro',
+    emoji: '🗼', name: 'Alter Peter Tower Climb',
+    desc: '306 steps up St Peter\'s belfry — best panorama over Marienplatz and the Alps on a clear day.',
+    weather: ['any'], season: ['all'], duration: '30–45min', age: 'Ages 5+ (stairs!)',
+    url: 'https://www.muenchen.de/sehenswuerdigkeiten/alter-peter', tags: ['culture', 'quick', 'iconic'],
+    lat: 48.1363, lng: 11.5759,
+  },
+  {
+    id: 'km_hofgarten', cat: 'outdoor', location: 'munich', eventType: 'venue',
+    area: 'core', depth: 'short',
+    emoji: '🌹', name: 'Hofgarten + Residenz Löwen',
+    desc: 'Symmetrical Italian-style garden beside the Residenz. Kids love rubbing the bronze lions\' noses for luck.',
+    weather: ['sunny', 'cloudy'], season: ['spring', 'summer', 'fall'], duration: '45min–1h', age: 'Any age',
+    url: 'https://www.muenchen.de/sehenswuerdigkeiten/hofgarten', tags: ['free', 'culture', 'quick'],
+    lat: 48.1427, lng: 11.5790,
+  },
+];
