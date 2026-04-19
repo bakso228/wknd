@@ -3,6 +3,7 @@ import ActivityCard from '../ActivityCard.jsx';
 import MapView from '../MapView.jsx';
 import { useLang } from '../../contexts/LangContext.jsx';
 import { BASE_ACTIVITIES, STICKY_DEFAULTS } from '../../data/activities.js';
+import { MICRO_LOCAL } from '../../data/microLocal.js';
 import { SOURCED_EVENTS } from '../../data/events.js';
 import { getSeason, wxInfo, scoreActivity } from '../../utils/weather.js';
 import { getUpcomingWeekends, fmtShort, toLocalDateStr } from '../../utils/date.js';
@@ -26,7 +27,7 @@ export default function ExplorerTab({ weather, weekendPlan, setWeekendPlan, stic
 
   const allActivities = useMemo(() => {
     const userStickies = stickyActivities.filter(s => !STICKY_DEFAULTS.find(d => d.id === s.id));
-    return [...STICKY_DEFAULTS, ...userStickies, ...BASE_ACTIVITIES];
+    return [...STICKY_DEFAULTS, ...userStickies, ...BASE_ACTIVITIES, ...MICRO_LOCAL];
   }, [stickyActivities]);
 
   const hiddenSet = useMemo(() => new Set(hiddenActivities), [hiddenActivities]);
