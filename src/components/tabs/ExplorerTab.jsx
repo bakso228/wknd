@@ -1,10 +1,12 @@
 import { useState, useMemo } from 'react';
 import ActivityCard from '../ActivityCard.jsx';
+import ItineraryCard from '../ItineraryCard.jsx';
 import MapView from '../MapView.jsx';
 import { useLang } from '../../contexts/LangContext.jsx';
 import { BASE_ACTIVITIES, STICKY_DEFAULTS } from '../../data/activities.js';
 import { MICRO_LOCAL } from '../../data/microLocal.js';
 import { KIDS_MUNICH } from '../../data/kidsMunich.js';
+import { ITINERARIES } from '../../data/itineraries.js';
 import { SOURCED_EVENTS } from '../../data/events.js';
 import { getSeason, wxInfo, scoreActivity } from '../../utils/weather.js';
 import { distanceFromHome } from '../../utils/distance.js';
@@ -86,6 +88,50 @@ export default function ExplorerTab({ weather, weekendPlan, setWeekendPlan, stic
 
   const isAdded  = (id, day) => (weekendPlan[day] || []).some(a => a.id === id);
   const addToDay = (act, day) => setWeekendPlan(p => ({ ...p, [day]: [...(p[day] || []), { ...act, _key: act.id + Date.now() }] }));
+
+  // Resolve itinerary stops to full activities + apply active filters.
+  const allById = useMemo(() => {
+    const map = new Map();
+    [...allActivities, ...SOURCED_EVENTS].forEach(a => map.set(a.id, a));
+    return map;
+  }, [allActivities]);
+
+  const visibleItineraries = useMemo(() => {
+    if (typeFilter === 'sourced' || typeFilter === 'seasonal') return [];
+    if (catFilter === 'sticky' || catFilter === 'sourced')     return [];
+    return ITINERARIES
+      .map(itin => ({
+        ...itin,
+        stops: itin.stops.map(s => {
+          const a = allById.get(s.activityId);
+          return a ? { ...a, _stay: s.stay } : null;
+        }).filter(Boolean),
+      }))
+      .filter(itin => itin.stops.length >= 2)
+      .filter(itin => {
+        if (locationFilter === 'nearby') return itin.area === 'south';
+        if (locationFilter === 'munich') return itin.area !== 'south' || itin.stops.every(s => s.location === 'munich');
+        if (locationFilter === 'day-trip') return itin.stops.some(s => s.location === 'day-trip');
+        return true;
+      })
+      .filter(itin => itin.weather.includes('any') || itin.weather.includes(wxCat))
+      .filter(itin => itin.season.includes('all')  || itin.season.includes(season));
+  }, [allById, catFilter, locationFilter, typeFilter, wxCat, season]);
+
+  const addItineraryToDay = (itin, day) =>
+    setWeekendPlan(p => ({
+      ...p,
+      [day]: [
+        ...(p[day] || []),
+        ...itin.stops
+          .filter(s => !(p[day] || []).some(a => a.id === s.id))
+          .map(s => ({ ...s, _key: s.id + Date.now() + Math.random() })),
+      ],
+    }));
+
+  const itinAdded = (itin, day) =>
+    itin.stops.length > 0 &&
+    itin.stops.every(s => (weekendPlan[day] || []).some(a => a.id === s.id));
 
   // Sourced items, filtered by selected weekend and sorted by startDate
   const sourcedItems = useMemo(() => {
@@ -232,6 +278,29 @@ export default function ExplorerTab({ weather, weekendPlan, setWeekendPlan, stic
       {/* Map view */}
       {viewMode === 'map' && (
         <MapView events={filtered} />
+      )}
+
+      {/* Itineraries */}
+      {viewMode === 'cards' && visibleItineraries.length > 0 && (
+        <section>
+          <div className="text-xs font-bold text-amber-700 uppercase tracking-wide mb-2">
+            🗺️ Routen &amp; Halbtage
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            {visibleItineraries.map(itin => (
+              <ItineraryCard
+                key={itin.id}
+                itin={itin}
+                stops={itin.stops}
+                onAddSat={() => addItineraryToDay(itin, planSatStr)}
+                onAddSun={() => addItineraryToDay(itin, planSunStr)}
+                addedSat={itinAdded(itin, planSatStr)}
+                addedSun={itinAdded(itin, planSunStr)}
+              />
+            ))}
+          </div>
+          <div className="border-t border-stone-100 mt-4" />
+        </section>
       )}
 
       {/* Sourced events */}
