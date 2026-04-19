@@ -1,3 +1,5 @@
+import { distanceFromHome } from './distance.js';
+
 export function getSeason(m) {
   if (m >= 3 && m <= 5) return 'spring';
   if (m >= 6 && m <= 8) return 'summer';
@@ -18,15 +20,39 @@ export function wxInfo(code) {
   return                   { emoji: '⛈️',  cat: 'rainy',  labelKey: 'storm'        };
 }
 
+// Area/location proximity score relative to Oberhaching.
+function areaBonus(act) {
+  if (act.area === 'south')  return 4;
+  if (act.area === 'core')   return 2;
+  if (act.area === 'region') return 0;
+  if (act.area === 'trip')   return -2;
+  // Fallback: use lat/lng if present
+  const d = distanceFromHome(act);
+  if (d == null) return 0;
+  if (d.km < 8)  return 4;
+  if (d.km < 20) return 2;
+  if (d.km < 40) return 0;
+  return -2;
+}
+
 export function scoreActivity(act, wxCat, season) {
   if (act.cat === 'sticky') return 999;
-  if (act.eventType === 'sourced') return 100;
 
   let s = 5;
+  // Sourced events get a strong recency bonus (weekend-specific),
+  // but still compete on weather/season/area.
+  if (act.eventType === 'sourced') s += 20;
+
   const wMatch = act.weather.includes('any') || act.weather.includes(wxCat);
   const sMatch = act.season.includes('all')  || act.season.includes(season);
   if (wMatch) s += 3; else s -= 3;
   if (sMatch) s += 3; else s -= 2;
+
+  // Proximity to Oberhaching.
+  s += areaBonus(act);
+
+  // Short/micro activities surface more when weather is poor.
+  if ((act.depth === 'micro' || act.depth === 'short') && wxCat === 'rainy') s += 2;
 
   const m = new Date().getMonth() + 1;
   const d = new Date().getDate();

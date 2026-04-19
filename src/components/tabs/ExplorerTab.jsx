@@ -7,6 +7,7 @@ import { MICRO_LOCAL } from '../../data/microLocal.js';
 import { KIDS_MUNICH } from '../../data/kidsMunich.js';
 import { SOURCED_EVENTS } from '../../data/events.js';
 import { getSeason, wxInfo, scoreActivity } from '../../utils/weather.js';
+import { distanceFromHome } from '../../utils/distance.js';
 import { getUpcomingWeekends, fmtShort, toLocalDateStr } from '../../utils/date.js';
 
 export default function ExplorerTab({ weather, weekendPlan, setWeekendPlan, stickyActivities, setStickyActivities, hiddenActivities, setHiddenActivities }) {
@@ -14,6 +15,7 @@ export default function ExplorerTab({ weather, weekendPlan, setWeekendPlan, stic
   const [catFilter,      setCatFilter]      = useState('all');
   const [locationFilter, setLocationFilter] = useState('all');
   const [typeFilter,     setTypeFilter]     = useState('all');
+  const [depthFilter,    setDepthFilter]    = useState('all');
   const [weekendFilter,  setWeekendFilter]  = useState('wknd_0');
   const [viewMode,       setViewMode]       = useState('cards'); // 'cards' | 'map'
   const [showAddSticky,  setShowAddSticky]  = useState(false);
@@ -56,12 +58,23 @@ export default function ExplorerTab({ weather, weekendPlan, setWeekendPlan, stic
       else if (catFilter === 'sourced') list = list.filter(a => a.eventType === 'sourced');
       else                              list = list.filter(a => a.cat === catFilter && a.eventType !== 'sourced');
     }
-    if (locationFilter !== 'all') list = list.filter(a => a.location === locationFilter);
+    if (locationFilter === 'nearby') {
+      list = list.filter(a => {
+        if (a.area === 'south') return true;
+        const d = distanceFromHome(a);
+        return d != null && d.km <= 15;
+      });
+    } else if (locationFilter !== 'all') {
+      list = list.filter(a => a.location === locationFilter);
+    }
     if (typeFilter === 'sourced')  list = list.filter(a => a.eventType === 'sourced');
     if (typeFilter === 'venue')    list = list.filter(a => a.eventType === 'venue');
     if (typeFilter === 'seasonal') list = list.filter(a => a.eventType === 'seasonal');
+    if (depthFilter === 'quick') list = list.filter(a => a.depth === 'micro' || a.depth === 'short');
+    if (depthFilter === 'half')  list = list.filter(a => a.depth === 'half');
+    if (depthFilter === 'full')  list = list.filter(a => a.depth === 'full');
     return list;
-  }, [scored, catFilter, locationFilter, typeFilter]);
+  }, [scored, catFilter, locationFilter, typeFilter, depthFilter]);
 
   // +Sa/+So always targets the nearest upcoming Saturday/Sunday (within the 7-day window)
   const _today = new Date(); _today.setHours(0, 0, 0, 0);
@@ -168,21 +181,34 @@ export default function ExplorerTab({ weather, weekendPlan, setWeekendPlan, stic
 
       {/* Location + type filter chips */}
       <div className="flex gap-1.5 scroll-x -mx-4 px-4 pb-1">
-        {['all','munich','dayTrip'].map(id => (
-          <button key={id} onClick={() => setLocationFilter(id === 'dayTrip' ? 'day-trip' : id)}
-            className={`flex-shrink-0 text-[11px] px-2.5 py-1.5 rounded-full font-semibold border transition-colors min-h-[32px] ${
-              (id === 'dayTrip' ? locationFilter === 'day-trip' : locationFilter === id)
-                ? 'bg-sky-600 text-white border-sky-600'
-                : 'bg-white text-stone-500 border-stone-200'
-            }`}>
-            {t(`explorer.locFilters.${id}`)}
-          </button>
-        ))}
+        {['all','nearby','munich','dayTrip'].map(id => {
+          const value = id === 'dayTrip' ? 'day-trip' : id;
+          return (
+            <button key={id} onClick={() => setLocationFilter(value)}
+              className={`flex-shrink-0 text-[11px] px-2.5 py-1.5 rounded-full font-semibold border transition-colors min-h-[32px] ${
+                locationFilter === value
+                  ? 'bg-sky-600 text-white border-sky-600'
+                  : 'bg-white text-stone-500 border-stone-200'
+              }`}>
+              {t(`explorer.locFilters.${id}`)}
+            </button>
+          );
+        })}
         <div className="w-px h-6 bg-stone-200 flex-shrink-0 self-center mx-1" />
         {['all','sourced','venue','seasonal'].map(id => (
           <button key={id} onClick={() => setTypeFilter(id)}
             className={`flex-shrink-0 text-[11px] px-2.5 py-1.5 rounded-full font-semibold border transition-colors min-h-[32px] ${typeFilter === id ? 'bg-violet-600 text-white border-violet-600' : 'bg-white text-stone-500 border-stone-200'}`}>
             {t(`explorer.typeFilters.${id}`)}
+          </button>
+        ))}
+      </div>
+
+      {/* Depth filter chips */}
+      <div className="flex gap-1.5 scroll-x -mx-4 px-4 pb-1">
+        {['all','quick','half','full'].map(id => (
+          <button key={id} onClick={() => setDepthFilter(id)}
+            className={`flex-shrink-0 text-[11px] px-2.5 py-1.5 rounded-full font-semibold border transition-colors min-h-[32px] ${depthFilter === id ? 'bg-teal-600 text-white border-teal-600' : 'bg-white text-stone-500 border-stone-200'}`}>
+            {t(`explorer.depthFilters.${id}`)}
           </button>
         ))}
       </div>
@@ -320,7 +346,7 @@ export default function ExplorerTab({ weather, weekendPlan, setWeekendPlan, stic
         <div className="text-center py-12 text-stone-400">
           <div className="text-4xl mb-3">🔍</div>
           <div className="font-semibold">{t('explorer.noResults')}</div>
-          <button onClick={() => { setCatFilter('all'); setLocationFilter('all'); setTypeFilter('all'); }} className="mt-3 text-xs text-amber-600 hover:underline">
+          <button onClick={() => { setCatFilter('all'); setLocationFilter('all'); setTypeFilter('all'); setDepthFilter('all'); }} className="mt-3 text-xs text-amber-600 hover:underline">
             {t('explorer.clearFilters')}
           </button>
         </div>
