@@ -41,7 +41,12 @@ export default function ExplorerTab({ weather, weekendPlan, setWeekendPlan, stic
     [...SOURCED_EVENTS, ...allActivities]
       .filter(a => !hiddenSet.has(a.id))
       .map(a => ({ ...a, _score: scoreActivity(a, wxCat, season) }))
-      .sort((a, b) => b._score - a._score),
+      .sort((a, b) => {
+        const aTemp = (a.eventType === 'sourced' || a.cat === 'seasonal') ? 1 : 0;
+        const bTemp = (b.eventType === 'sourced' || b.cat === 'seasonal') ? 1 : 0;
+        if (bTemp !== aTemp) return bTemp - aTemp;
+        return b._score - a._score;
+      }),
     [allActivities, wxCat, season, hiddenSet]
   );
 
@@ -133,7 +138,7 @@ export default function ExplorerTab({ weather, weekendPlan, setWeekendPlan, stic
     itin.stops.length > 0 &&
     itin.stops.every(s => (weekendPlan[day] || []).some(a => a.id === s.id));
 
-  // Sourced items, filtered by selected weekend and sorted by startDate
+  // Sourced items, filtered by selected weekend — soonest-ending first so urgent events surface at top
   const sourcedItems = useMemo(() => {
     const items = filtered.filter(a => a.eventType === 'sourced');
     if (weekendFilter === 'all') return items;
@@ -141,7 +146,7 @@ export default function ExplorerTab({ weather, weekendPlan, setWeekendPlan, stic
     if (!wknd) return items;
     return items
       .filter(a => !a.startDate || (a.startDate <= wknd.sunStr && (a.endDate || a.startDate) >= wknd.satStr))
-      .sort((a, b) => (a.startDate || '').localeCompare(b.startDate || ''));
+      .sort((a, b) => (a.endDate || a.startDate || '').localeCompare(b.endDate || b.startDate || ''));
   }, [filtered, weekendFilter, upcomingWeekends]);
 
   // Grouped by weekend for the 'all upcoming' view
@@ -152,7 +157,7 @@ export default function ExplorerTab({ weather, weekendPlan, setWeekendPlan, stic
       items: filtered
         .filter(a => a.eventType === 'sourced' && (!a.startDate ||
           (a.startDate <= wknd.sunStr && (a.endDate || a.startDate) >= wknd.satStr)))
-        .sort((a, b) => (a.startDate || '').localeCompare(b.startDate || '')),
+        .sort((a, b) => (a.endDate || a.startDate || '').localeCompare(b.endDate || b.startDate || '')),
     })).filter(g => g.items.length > 0);
   }, [filtered, weekendFilter, upcomingWeekends]);
 

@@ -1,5 +1,5 @@
 // ═══════════════════════════════════════════════════════════════
-// SOURCED EVENTS  (refreshed: Apr 24 2026)
+// SOURCED EVENTS  (refreshed: Apr 30 2026)
 // All events have startDate + endDate (ISO YYYY-MM-DD).
 // Ask Claude to "refresh weekend events" each Friday to update.
 // eventType:'sourced'  location:'munich'|'day-trip'
@@ -52,51 +52,7 @@ export const SOURCED_EVENTS = [
     source: 'muenchen.de', lat: 48.1290, lng: 11.5643,
   },
 
-  // ── Apr 25–26 (KW 17, current weekend) ──────────────────────
-  {
-    id: 'src_lange_nacht_kammermusik_apr25', cat: 'indoor', location: 'munich', eventType: 'sourced',
-    emoji: '🎻', name: 'Lange Nacht der Kammermusik',
-    desc: 'A whole evening of chamber music spread across the Prinzregententheater — soloists and small ensembles perform in parallel in multiple rooms, with free movement between venues. An exceptional Munich classical tradition.',
-    dateLabel: 'Sa 25. Apr · Abends', dateShort: 'Sa 25 Apr',
-    startDate: '2026-04-25', endDate: '2026-04-25',
-    highlights: 'Prinzregententheater · Mehrere Säle · Wandelkonzert-Format · Tickets erforderlich',
-    venue: 'Prinzregententheater, Prinzregentenplatz 12', weather: ['any'], season: ['spring'], duration: '3–4h', age: 'Ages 12+',
-    url: 'https://www.muenchen.de/veranstaltungen', tags: ['classical', 'chamber', 'music', 'culture'],
-    source: 'muenchen.de', lat: 48.1379, lng: 11.6018,
-  },
-  {
-    id: 'src_brundibar_apr26', cat: 'theater', location: 'munich', eventType: 'sourced',
-    emoji: '🎭', name: 'Brundibár – Kinderoper',
-    desc: 'Hans Krása\'s famous children\'s opera about courage and solidarity — a story of kids banding together against a bullying organ-grinder, first performed by Jewish children in Theresienstadt. Free admission, for ages 6+.',
-    dateLabel: 'So 26. Apr', dateShort: 'So 26 Apr',
-    startDate: '2026-04-26', endDate: '2026-04-26',
-    highlights: 'Pasinger Fabrik · Eintritt frei · Ab 6 Jahren · Tickets über Website buchen',
-    venue: 'Pasinger Fabrik, August-Exter-Str. 1', weather: ['any'], season: ['spring'], duration: '~1h', age: 'Ages 6+',
-    url: 'https://www.pasinger-fabrik.de', tags: ['opera', 'kids', 'family', 'free', 'music'],
-    source: 'muenchen-online.de', lat: 48.1459, lng: 11.4627,
-  },
-  {
-    id: 'src_greifvogeltag_apr26', cat: 'outdoor', location: 'day-trip', eventType: 'sourced',
-    emoji: '🦅', name: 'Greifvogeltag Burg Grünwald',
-    desc: 'Birds-of-prey day at the medieval Burg Grünwald just south of Munich — live flight demonstrations with eagles, falcons and owls, plus educational talks from master falconers. Spectacular for kids.',
-    dateLabel: 'So 26. Apr', dateShort: 'So 26 Apr',
-    startDate: '2026-04-26', endDate: '2026-04-26',
-    highlights: 'Burgmuseum Grünwald · Flugvorführungen · ~20 Min per S-Bahn ab München',
-    venue: 'Burgmuseum Grünwald, Zeillerstr. 3', weather: ['sunny', 'cloudy'], season: ['spring'], duration: '2–3h', age: 'All ages',
-    url: 'https://www.burgmuseum-gruenwald.de', tags: ['nature', 'animals', 'kids', 'family', 'day-trip'],
-    source: 'muenchen-online.de', lat: 48.0409, lng: 11.5264,
-  },
-  {
-    id: 'src_froschkoenig_apr25', cat: 'theater', location: 'munich', eventType: 'sourced',
-    emoji: '🐸', name: 'Der Froschkönig',
-    desc: 'Münchner Theater für Kinder stages the classic Grimm fairytale — warm-hearted, beautifully costumed live adaptation for the whole family.',
-    dateLabel: 'Sa 25. Apr · 10:00 & 15:00', dateShort: 'Sa 25 Apr',
-    startDate: '2026-04-25', endDate: '2026-04-25',
-    highlights: 'Münchner Theater für Kinder, Dachauer Str. 46 · 10:00 & 15:00 · Ab 4 Jahren',
-    venue: 'Münchner Theater für Kinder, Dachauer Str. 46', weather: ['any'], season: ['spring'], duration: '~1h', age: 'Ages 4+',
-    url: 'https://www.muenchenticket.de/event/der-froschkoenig-33811/440686', tags: ['theater', 'fairytale', 'kids', 'family'],
-    source: 'muenchen.de', lat: 48.1618, lng: 11.5478,
-  },
+  // ── Still running from KW 17 ────────────────────────────────
   {
     id: 'src_maidult_apr25', cat: 'seasonal', location: 'munich', eventType: 'sourced',
     emoji: '🎠', name: 'Auer Dult – Maidult Eröffnung',
@@ -107,50 +63,6 @@ export const SOURCED_EVENTS = [
     venue: 'Mariahilfplatz, Au-Haidhausen', weather: ['sunny', 'cloudy'], season: ['spring'], duration: '2–4h', age: 'All ages',
     url: 'https://www.auerdult.de', tags: ['dult', 'market', 'traditional', 'family', 'antiques'],
     source: 'auerdult.de', lat: 48.1241, lng: 11.5862,
-  },
-  {
-    id: 'src_fruehlingsfest_oldtimer', cat: 'outdoor', location: 'munich', eventType: 'sourced',
-    emoji: '🚗', name: 'Frühlingsfest: Oldtimer-Treffen',
-    desc: 'Classic car parade and meet at the Frühlingsfest — dozens of historic vehicles drive through Munich and park on the Theresienwiese. A unique sight for car enthusiasts of all ages.',
-    dateLabel: 'So 26. Apr', dateShort: 'So 26 Apr',
-    startDate: '2026-04-26', endDate: '2026-04-26',
-    highlights: 'So 26. April · Theresienwiese · Free to watch · Part of Frühlingsfest',
-    venue: 'Theresienwiese, München', weather: ['sunny', 'cloudy'], season: ['spring'], duration: '~2h', age: 'All ages',
-    url: 'https://www.muenchen.de/veranstaltungen/feste-festivals/fruehlingsfest-2026-theresienwiese', tags: ['cars', 'oldtimer', 'free', 'spectator'],
-    source: 'muenchen.de', lat: 48.1329, lng: 11.5490,
-  },
-  {
-    id: 'src_night_of_jumps', cat: 'indoor', location: 'munich', eventType: 'sourced',
-    emoji: '🏍️', name: 'NIGHT of the JUMPs – FMX Show',
-    desc: 'World-class freestyle motocross show inside the Olympiahalle — world champions performing gravity-defying tricks in the dark with pyrotechnics. Spectacular for the whole family.',
-    dateLabel: 'Sa 25. Apr · 19:00', dateShort: 'Sa 25 Apr 19:00',
-    startDate: '2026-04-25', endDate: '2026-04-25',
-    highlights: 'Sa 25. April · 19:00 Uhr · Olympiahalle · Tickets required',
-    venue: 'Olympiahalle, Olympiapark', weather: ['any'], season: ['spring'], duration: '~2h', age: 'Ages 6+',
-    url: 'https://www.olympiapark.de/de/veranstaltungen/', tags: ['show', 'motocross', 'spectator', 'family'],
-    source: 'olympiapark.de', lat: 48.1753, lng: 11.5521,
-  },
-  {
-    id: 'src_e_bike_days', cat: 'outdoor', location: 'munich', eventType: 'sourced',
-    emoji: '🚴', name: 'E BIKE DAYS Olympiapark',
-    desc: 'Europe\'s leading e-bike festival at Olympiapark — test-ride hundreds of models, watch demos, and explore the park on two wheels. Family-friendly cycling fun.',
-    dateLabel: 'Fr–So 24.–26. Apr', dateShort: 'Fr–So 24–26 Apr',
-    startDate: '2026-04-24', endDate: '2026-04-26',
-    highlights: 'Fr–So · Olympiapark · Test rides free · Tickets for stadium events',
-    venue: 'Olympiapark, München', weather: ['sunny', 'cloudy'], season: ['spring'], duration: 'Ganztag', age: 'All ages',
-    url: 'https://www.olympiapark.de/de/veranstaltungen/', tags: ['cycling', 'ebike', 'sport', 'family', 'outdoor'],
-    source: 'olympiapark.de', lat: 48.1753, lng: 11.5521,
-  },
-  {
-    id: 'src_schauburg_timm_apr25', cat: 'theater', location: 'munich', eventType: 'sourced',
-    emoji: '🎩', name: 'Schauburg: Timm Thaler',
-    desc: 'Schauburg stages the classic tale of a boy who sells his laughter to a mysterious baron — a gripping story about identity and what really makes us happy. Strong ensemble performance.',
-    dateLabel: 'Sa/So 25.–26. Apr', dateShort: 'Sa–So 25/26 Apr',
-    startDate: '2026-04-25', endDate: '2026-04-26',
-    highlights: 'Schauburg, Franz-Joseph-Str. 47 · Check website for times · Ages 8+',
-    venue: 'Schauburg, Franz-Joseph-Str. 47', weather: ['any'], season: ['spring'], duration: '~1.5h', age: 'Ages 8+',
-    url: 'https://www.schauburg.net/de/timm-thaler', tags: ['theater', 'kids', 'family'],
-    source: 'schauburg.net', lat: 48.1502, lng: 11.5739,
   },
   {
     id: 'src_jurassic_w2', cat: 'indoor', location: 'munich', eventType: 'sourced',
@@ -276,6 +188,41 @@ export const SOURCED_EVENTS = [
     source: 'muenchen.de', lat: 48.1298, lng: 11.5835,
   },
 
+  {
+    id: 'src_muenchner_geigentage', cat: 'indoor', location: 'munich', eventType: 'sourced',
+    emoji: '🎻', name: 'Münchner Geigentage',
+    desc: 'Rare exhibition of historic and contemporary handcrafted violins at the Bayerisches Nationalmuseum — instruments can actually be played, with live performances and maker talks across the fortnight.',
+    dateLabel: 'Sa 2. – So 17. Mai 2026', dateShort: 'Sa 2. – So 17. Mai',
+    startDate: '2026-05-02', endDate: '2026-05-17',
+    highlights: 'Bayerisches Nationalmuseum, Prinzregentenstr. 3 · Instrumente bespielbar · Konzerte & Gespräche',
+    venue: 'Bayerisches Nationalmuseum, Prinzregentenstr. 3', weather: ['any'], season: ['spring'], duration: '1–2h', age: 'All ages',
+    url: 'https://www.bayerisches-nationalmuseum.de', tags: ['music', 'exhibition', 'culture', 'violin', 'craft'],
+    source: 'muenchen.travel', lat: 48.1444, lng: 11.5892,
+  },
+
+  {
+    id: 'src_street_food_festival_may2', cat: 'outdoor', location: 'munich', eventType: 'sourced',
+    emoji: '🌮', name: '9. Street Food Festival – German Street Food Awards',
+    desc: '~40 international street food vendors compete for the German Street Food Award while the public votes — live music, street art, and a children\'s circus with face-painting run alongside. Kids under 14 free.',
+    dateLabel: 'Fr–So 1.–3. Mai · 12–22 Uhr', dateShort: 'Fr–So 1–3 Mai',
+    startDate: '2026-05-01', endDate: '2026-05-03',
+    highlights: 'Pineapple Park, Alte Paketposthalle · Arnulfstr. 195 · Eintritt 5€ · Kinder unter 14 gratis',
+    venue: 'Pineapple Park, Arnulfstr. 195, Neuhausen', weather: ['sunny', 'cloudy'], season: ['spring'], duration: '2–4h', age: 'All ages',
+    url: 'https://muc-blog.com/9-street-food-festival-muenchen-2026-das-grosse-finale-german-street-food-awards-im-pineapple-park-vom-1-bis-3-mai/', tags: ['food', 'festival', 'street food', 'family', 'kids'],
+    source: 'muc-blog.com', lat: 48.1445, lng: 11.5398,
+  },
+  {
+    id: 'src_zeitmaschine_korbinian', cat: 'theater', location: 'munich', eventType: 'sourced',
+    emoji: '⏱️', name: 'Marionettentheater: Die Zeitmaschine des Korbinian Fox',
+    desc: 'New original marionette production at the Münchner Marionettentheater — young inventor Korbinian Fox travels through time, a visually inventive show for children. Runs across multiple May weekends.',
+    dateLabel: 'Sa/So ab 2. Mai · 15:00', dateShort: 'ab Sa 2. Mai',
+    startDate: '2026-05-02', endDate: '2026-05-24',
+    highlights: 'Münchner Marionettentheater · Blumenstr. 29a · 15:00 Uhr · Ab 6 Jahren · ~105 Min.',
+    venue: 'Münchner Marionettentheater, Blumenstr. 29a', weather: ['any'], season: ['spring'], duration: '~1.5h', age: 'Ages 6+',
+    url: 'https://www.muema-theater.de/', tags: ['theater', 'puppet', 'kids', 'family'],
+    source: 'muema-theater.de', lat: 48.1290, lng: 11.5643,
+  },
+
   // ── May 9–10 (KW 19) ────────────────────────────────────────
   {
     id: 'src_fruehlingsfest_finale', cat: 'seasonal', location: 'munich', eventType: 'sourced',
@@ -331,6 +278,18 @@ export const SOURCED_EVENTS = [
     venue: 'Olympiapark, München', weather: ['any'], season: ['spring'], duration: '2–3h', age: 'Ages 4+',
     url: 'https://www.olympiapark.de/de/veranstaltungen/', tags: ['exhibition', 'dinosaurs', 'kids', 'family'],
     source: 'olympiapark.de', lat: 48.1753, lng: 11.5521,
+  },
+
+  {
+    id: 'src_mcbw_may9', cat: 'outdoor', location: 'munich', eventType: 'sourced',
+    emoji: '🎨', name: 'Munich Creative Business Week – Closing Weekend',
+    desc: 'Germany\'s largest design festival closes this weekend — the outdoor highlight is a playable wooden labyrinth and sound chapel ("Cappella del Suono") on the Alte Pinakothek lawn. Free to explore.',
+    dateLabel: 'Sa–So 9.–10. Mai · Finales Wochenende', dateShort: 'Sa–So 9–10 Mai',
+    startDate: '2026-05-09', endDate: '2026-05-10',
+    highlights: 'Alte Pinakothek Wiese · Kostenlos · Outdoor-Installationen · Design pop-up store bis So',
+    venue: 'Alte Pinakothek (& citywide), München', weather: ['sunny', 'cloudy'], season: ['spring'], duration: '1–3h', age: 'All ages',
+    url: 'https://www.mcbw.de/en/', tags: ['design', 'art', 'festival', 'free', 'outdoor'],
+    source: 'mcbw.de', lat: 48.1487, lng: 11.5693,
   },
 
   // ── May 16–17 (KW 20) ───────────────────────────────────────
@@ -401,6 +360,29 @@ export const SOURCED_EVENTS = [
     source: 'hofflohmaerkte.de', lat: 48.1538, lng: 11.5321,
   },
 
+  {
+    id: 'src_street_food_panda_may16', cat: 'outdoor', location: 'munich', eventType: 'sourced',
+    emoji: '🐼', name: 'Street Food Panda Familien Festival',
+    desc: 'Munich\'s largest street food festival at Werksviertel-Mitte — international food, two big stages with live acts and DJs, and a full dedicated children\'s world with carousels, face painting, and animation shows. Over 100,000 visitors in 2025.',
+    dateLabel: 'Do–So 14.–17. Mai', dateShort: 'Do–So 14–17 Mai',
+    startDate: '2026-05-14', endDate: '2026-05-17',
+    highlights: 'Werksviertel-Mitte, Atelierstr. 1 · Tickets erforderlich · Early bird empfohlen',
+    venue: 'Werksviertel-Mitte, Atelierstr. 1, Haidhausen', weather: ['sunny', 'cloudy'], season: ['spring'], duration: 'Ganztag', age: 'All ages',
+    url: 'https://www.eventfabrik-muenchen.de/event/street-food-panda-familien-festival/', tags: ['food', 'festival', 'family', 'kids', 'live music', 'outdoor'],
+    source: 'eventfabrik-muenchen.de', lat: 48.1201, lng: 11.5969,
+  },
+  {
+    id: 'src_diessener_toepfermarkt_may16', cat: 'outdoor', location: 'day-trip', eventType: 'sourced',
+    emoji: '🏺', name: 'Diessener Töpfermarkt am Ammersee',
+    desc: 'One of Europe\'s most respected pottery markets in its 26th year — 160+ ceramic artists from 13 countries display work lakeside in Diessen. Includes the €5,000 Diessener Ceramic Prize and a ceramic trail through town. Beautiful Ammersee setting.',
+    dateLabel: 'Do–So 14.–17. Mai · 10–18 Uhr', dateShort: 'Do–So 14–17 Mai',
+    startDate: '2026-05-14', endDate: '2026-05-17',
+    highlights: 'Seeanlagen Diessen am Ammersee · ~45 Min ab München · Eintritt kostenlos · 160+ Aussteller',
+    venue: 'Seeanlagen, Diessen am Ammersee', weather: ['sunny', 'cloudy'], season: ['spring'], duration: 'Ganztag', age: 'All ages',
+    url: 'https://www.diessener-toepfermarkt.de/', tags: ['market', 'craft', 'pottery', 'day-trip', 'lake', 'free'],
+    source: 'diessener-toepfermarkt.de', lat: 47.9562, lng: 11.1030,
+  },
+
   // ── May 22–25 (KW 21 – Pfingsten / Whitsun) ─────────────────
   {
     id: 'src_lord_of_dance_may22', cat: 'indoor', location: 'munich', eventType: 'sourced',
@@ -436,6 +418,51 @@ export const SOURCED_EVENTS = [
     source: 'olympiapark.de', lat: 48.1753, lng: 11.5521,
   },
 
+  {
+    id: 'src_weinfest_westpark_may23', cat: 'outdoor', location: 'munich', eventType: 'sourced',
+    emoji: '🍷', name: 'Musikalisches Weinfest im Westpark',
+    desc: 'Free outdoor wine festival at the Westpark Seebühne — 21 quality wines from Germany and Austria alongside 9 live bands on the lakeside stage. Food stalls, deckchairs, and families welcome.',
+    dateLabel: 'Do 21. – Mo 25. Mai · Sa–Mo 14–23 Uhr', dateShort: 'Do–Mo 21–25 Mai',
+    startDate: '2026-05-21', endDate: '2026-05-25',
+    highlights: 'Seebühne Westpark · Westendstr. 300 · Sa–Mo 14–23 Uhr · Eintritt kostenlos',
+    venue: 'Seebühne Westpark, Westendstr. 300', weather: ['sunny', 'cloudy'], season: ['spring'], duration: '2–4h', age: 'All ages',
+    url: 'https://musikalisches-weinfest.de/', tags: ['wine', 'music', 'outdoor', 'free', 'family'],
+    source: 'musikalisches-weinfest.de', lat: 48.1220, lng: 11.5072,
+  },
+  {
+    id: 'src_kreartiv_hoehenried_may23', cat: 'outdoor', location: 'day-trip', eventType: 'sourced',
+    emoji: '🏰', name: 'KreARTiv – Kunsthandwerker-Markt Schloss Höhenried',
+    desc: 'Contemporary art and craft fair set in the arcaded corridors and park of a historic lakeside castle on the Starnberger See — ceramics, jewellery, wood, textiles, glass and sculpture by 160+ makers. Stunning setting.',
+    dateLabel: 'Sa–So 23.–24. Mai · 10–18 Uhr', dateShort: 'Sa–So 23–24 Mai',
+    startDate: '2026-05-23', endDate: '2026-05-24',
+    highlights: 'Schloss Höhenried, Bernried am Starnberger See · ~45 Min ab München · Erw. 6€ · Kinder gratis',
+    venue: 'Schloss Höhenried, Bernried am Starnberger See', weather: ['sunny', 'cloudy'], season: ['spring'], duration: '2–4h', age: 'All ages',
+    url: 'https://hoehenried.de/kunsthandwerks-messe-kreartiv/', tags: ['craft', 'market', 'art', 'day-trip', 'lake', 'castle'],
+    source: 'hoehenried.de', lat: 47.8891, lng: 11.2858,
+  },
+  {
+    id: 'src_isarbruecken_train_may24', cat: 'outdoor', location: 'munich', eventType: 'sourced',
+    emoji: '🚂', name: 'Historische Isarbrücken-Sonderfahrten',
+    desc: 'Pfingsten special: rides on a 1930 historic electric train (E69 05) from Ostbahnhof over Munich\'s most scenic Isar bridges, with live commentary and drinks on board. A wonderful Pfingsten treat for train fans.',
+    dateLabel: 'So–Mo 24.–25. Mai · 10:00, 13:00, 15:00', dateShort: 'So–Mo 24–25 Mai',
+    startDate: '2026-05-24', endDate: '2026-05-25',
+    highlights: 'Abfahrt München Ostbahnhof · 3 Abfahrten tägl. · Vorabreservierung empfohlen',
+    venue: 'Ab München Ostbahnhof', weather: ['any'], season: ['spring'], duration: '~2h', age: 'All ages',
+    url: 'https://www.blv-online.eu/blv_special_brueckenfahrt/', tags: ['train', 'history', 'family', 'kids', 'pfingsten'],
+    source: 'blv-online.eu', lat: 48.1274, lng: 11.6049,
+  },
+  {
+    id: 'src_drei_fragezeichen_may22', cat: 'theater', location: 'munich', eventType: 'sourced',
+    emoji: '🔍', name: 'Die drei ??? – Im Auge des Sturms',
+    desc: 'Live stage adaptation of the beloved Three Investigators mystery series — a new case "Im Auge des Sturms" performed at the Deutsches Theater. Brilliant for tweens and older children.',
+    dateLabel: 'Fr–Mo 22.–25. Mai', dateShort: 'Fr–Mo 22–25 Mai',
+    startDate: '2026-05-22', endDate: '2026-05-25',
+    highlights: 'Deutsches Theater München, Schwanthalerstr. 13 · Ab 10 Jahren · Tickets erforderlich',
+    venue: 'Deutsches Theater München, Schwanthalerstr. 13', weather: ['any'], season: ['spring'], duration: '~2h', age: 'Ages 10+',
+    url: 'https://www.deutsches-theater.de/en/die-drei-fragezeichen/', tags: ['theater', 'kids', 'mystery', 'tweens', 'family'],
+    source: 'deutsches-theater.de', lat: 48.1349, lng: 11.5538,
+  },
+
   // ── Multi-weekend / Day Trips ────────────────────────────────
   {
     id: 'src_starnberger_see', cat: 'outdoor', location: 'day-trip', eventType: 'sourced',
@@ -447,6 +474,17 @@ export const SOURCED_EVENTS = [
     venue: 'Starnberg, Starnberger See', weather: ['sunny'], season: ['spring'], duration: 'Ganztag', age: 'All ages',
     url: 'https://www.muenchen.de/freizeit/ausflugsziele/starnberger-see', tags: ['lake', 'outdoor', 'swimming', 'day-trip', 'family'],
     source: 'muenchen.de', lat: 47.9980, lng: 11.3398,
+  },
+  {
+    id: 'src_roseninsel_may', cat: 'outdoor', location: 'day-trip', eventType: 'sourced',
+    emoji: '🌹', name: 'Roseninsel im Starnberger See',
+    desc: 'Tiny wooded island with a royal Casino pavilion and a rose garden — reached by a short ferry from Feldafing. Season opens May 1 with guided tours of the historic Wittelsbacher summer retreat.',
+    dateLabel: 'Ab 1. Mai · tägl. 11–18 Uhr', dateShort: 'Ab Mai · Fähre ab Feldafing',
+    startDate: '2026-05-01', endDate: '2026-09-30',
+    highlights: 'Fähre ab Feldafing (S6) · ~35 Min ab München · Kein Eintritt Fähre + Insel · Keine Hunde',
+    venue: 'Roseninsel, Starnberger See (ab Feldafing)', weather: ['sunny'], season: ['spring', 'summer'], duration: '2–3h', age: 'All ages',
+    url: 'https://www.roseninsel.bayern/', tags: ['lake', 'island', 'day-trip', 'nature', 'history'],
+    source: 'roseninsel.bayern', lat: 47.9578, lng: 11.2860,
   },
   {
     id: 'src_tegernsee_daytrip', cat: 'outdoor', location: 'day-trip', eventType: 'sourced',
@@ -495,10 +533,10 @@ export const SOURCED_EVENTS = [
   {
     id: 'src_flohmarkt_olympia_apr', cat: 'outdoor', location: 'munich', eventType: 'sourced',
     emoji: '🛒', name: 'Flohmarkt im Olympiapark',
-    desc: 'Popular monthly flea market in the iconic Olympiapark — hundreds of private sellers set up early, great for vintage finds, toys, and curiosities.',
-    dateLabel: 'April/Mai · Sa oder So',
-    dateShort: 'Apr/Mai',
-    startDate: '2026-04-18', endDate: '2026-05-10',
+    desc: 'Popular weekly flea market in the iconic Olympiapark — hundreds of private sellers set up early, great for vintage finds, toys, and curiosities. Runs every Saturday through summer.',
+    dateLabel: 'Jeden Sa · 7–15:30 Uhr',
+    dateShort: 'Jeden Sa',
+    startDate: '2026-04-18', endDate: '2026-05-31',
     highlights: 'Olympiapark · 7–16 Uhr · Einlass 1€ · Gute Schnäppchen früh morgens',
     venue: 'Olympiapark, München', weather: ['sunny', 'cloudy'], season: ['spring'], duration: '2–3h', age: 'All ages',
     url: 'https://www.olympiapark.de/de/veranstaltungen/', tags: ['flohmarkt', 'market', 'vintage', 'outdoor'],
