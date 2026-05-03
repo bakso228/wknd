@@ -229,9 +229,16 @@ export default function PlanTab({ weather, wxLoading, wxError, weekendPlan, setW
         <div className="text-center py-2 text-stone-400 text-xs">🌡️ {t('wx.unavailable')}</div>
       )}
 
-      {/* Day plan cards */}
+      {/* Day plan cards — skip empty weekdays */}
       <div className="space-y-2">
-        {planDays.map(d => <DayCard key={toLocalDateStr(d)} date={d} />)}
+        {planDays
+          .filter(d => {
+            const dStr = toLocalDateStr(d);
+            const hasItems = (weekendPlan[dStr] || []).length > 0;
+            const hasCalEvs = calEventsForDay(d).length > 0;
+            return isSatOrSun(d) || dStr === todayStr || hasItems || hasCalEvs;
+          })
+          .map(d => <DayCard key={toLocalDateStr(d)} date={d} />)}
       </div>
 
       <div className="bg-amber-50 border border-amber-200 rounded-xl p-3 flex gap-2">
