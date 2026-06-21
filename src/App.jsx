@@ -7,8 +7,10 @@ import PlanTab from './components/tabs/PlanTab.jsx';
 import ExplorerTab from './components/tabs/ExplorerTab.jsx';
 import CalendarTab from './components/tabs/CalendarTab.jsx';
 import TodoTab from './components/tabs/TodoTab.jsx';
+import FitnessTab from './components/tabs/FitnessTab.jsx';
 import { useWeather } from './hooks/useWeather.js';
 import { useSupabaseStorage } from './hooks/useSupabaseStorage.js';
+import { SEED_WORKOUTS, SEED_BODY } from './data/fitness.js';
 
 function AppInner() {
   const { t, lang } = useLang();
@@ -19,6 +21,8 @@ function AppInner() {
   const [stickyActivities,  setStickyActivities]  = useSupabaseStorage('sticky_activities', []);
   const [todos,             setTodos]             = useSupabaseStorage('todos', []);
   const [hiddenActivities,  setHiddenActivities]  = useSupabaseStorage('hidden_activities', []);
+  const [workouts,          setWorkouts]          = useSupabaseStorage('workouts', SEED_WORKOUTS);
+  const [body,              setBody]              = useSupabaseStorage('body', SEED_BODY);
 
   const planCount  = Object.values(weekendPlan).reduce((s, a) => s + a.length, 0);
   const todoCount  = todos.filter(t => !t.completed).length;
@@ -76,6 +80,15 @@ function AppInner() {
         )}
         {tab === 'todos' && (
           <TodoTab todos={todos} setTodos={setTodos} />
+        )}
+        {tab === 'fitness' && (
+          <FitnessTab
+            workouts={workouts}
+            setWorkouts={setWorkouts}
+            body={body}
+            setBody={setBody}
+            showToast={showToast}
+          />
         )}
       </main>
 

@@ -6,6 +6,7 @@ const TABS = [
   { id: 'explorer', icon: 'search' },
   { id: 'calendar', icon: 'calendar' },
   { id: 'todos',    icon: 'checkCircle' },
+  { id: 'fitness',  icon: 'dumbbell' },
 ];
 
 export default function BottomNav({ tab, setTab, planCount, todoCount }) {
