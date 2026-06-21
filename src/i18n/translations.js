@@ -28,8 +28,10 @@ export const translations = {
       verdictMixed: 'Wechselhaft — plant drinnen und draußen.',
       verdictCloudy: 'Eher bewölkt — gut für Stadt & Kultur.',
       emptyTitle: 'Noch nichts geplant',
-      emptyBody: 'Wähle einen Tipp oder stöbere in Entdecken.',
+      emptyBody: 'Stöbere in Entdecken, um etwas hinzuzufügen.',
       smartPicks: 'Schnell-Tipps fürs Wochenende',
+      pickupTitle: 'Kinder-Abholung',
+      pickupHint: 'Tippen: 1× Navid, 2× Diandra, 3× leeren.',
     },
     toast: {
       already: 'Schon in eurem Plan',
@@ -183,8 +185,10 @@ export const translations = {
       verdictMixed: 'Mixed weather — plan a bit of both.',
       verdictCloudy: 'Mostly cloudy — great for city & culture.',
       emptyTitle: 'Nothing planned yet',
-      emptyBody: 'Pick a suggestion, or browse Explore.',
+      emptyBody: 'Browse Explore to add something.',
       smartPicks: 'Quick picks for the weekend',
+      pickupTitle: 'Kids pickup',
+      pickupHint: 'Tap: 1× Navid, 2× Diandra, 3× clear.',
     },
     toast: {
       already: 'Already in your plan',

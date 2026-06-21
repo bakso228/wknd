@@ -6,7 +6,7 @@
 -- state under its own key via the `useSupabaseStorage` hook:
 --
 --   weekend_plan · user_events · sticky_activities · todos ·
---   hidden_activities · workouts · body
+--   hidden_activities · workouts · body · pickups
 --
 -- Because the table is generic JSONB, adding a new feature (e.g. the
 -- v3 Fitness tab's `workouts` / `body` keys) requires NO migration —

@@ -3,16 +3,12 @@ import { useLang } from '../../contexts/LangContext.jsx';
 import { fmtShort, toLocalDateStr } from '../../utils/date.js';
 import { wxInfo } from '../../utils/weather.js';
 import { catGrad } from '../../data/styles.js';
-import { BASE_ACTIVITIES } from '../../data/activities.js';
-import { MICRO_LOCAL } from '../../data/microLocal.js';
-import { KIDS_MUNICH } from '../../data/kidsMunich.js';
+import { PEOPLE, PERSON } from '../../data/fitness.js';
 import Icon from '../ui/Icon.jsx';
 import Chip from '../ui/Chip.jsx';
 import SegmentedControl from '../ui/SegmentedControl.jsx';
 
-const PICK_POOL = [...BASE_ACTIVITIES, ...MICRO_LOCAL, ...KIDS_MUNICH];
-
-export default function PlanTab({ weather, weekendPlan, setWeekendPlan, userEvents, setUserEvents, todos, setTodos, onGoExplorer, showToast }) {
+export default function PlanTab({ weather, weekendPlan, setWeekendPlan, userEvents, setUserEvents, todos, setTodos, pickups, setPickups, onGoExplorer, showToast }) {
   const { t, lang } = useLang();
   const locale = lang === 'de' ? 'de-DE' : 'en-US';
   const de = lang === 'de';
@@ -62,15 +58,6 @@ export default function PlanTab({ weather, weekendPlan, setWeekendPlan, userEven
   const removeFromDay = (dateStr, key) =>
     setWeekendPlan(p => ({ ...p, [dateStr]: (p[dateStr] || []).filter(a => a._key !== key) }));
 
-  const addActivity = (act, dateStr, dayName) => {
-    const cur = weekendPlan[dateStr] || [];
-    if (cur.some(a => a.id === act.id)) { showToast(t('toast.already'), null); return; }
-    const key = act.id + '_' + Date.now();
-    const item = { ...act, _key: key };
-    setWeekendPlan(p => ({ ...p, [dateStr]: [...(p[dateStr] || []), item] }));
-    showToast(de ? `Zu ${dayName} hinzugefügt` : `Added to ${dayName}`, () => removeFromDay(dateStr, key));
-  };
-
   const quickAdd = () => {
     const txt = qText.trim();
     if (!txt) return;
@@ -95,17 +82,19 @@ export default function PlanTab({ weather, weekendPlan, setWeekendPlan, userEven
     return dateStr >= start && dateStr <= end;
   });
 
-  // ---- smart picks ----
-  const satCat = wxSat ? wxInfo(wxSat.code).cat : null;
-  const sunCat = wxSun ? wxInfo(wxSun.code).cat : null;
-  const inWeekend = id => (weekendPlan[selSatStr] || []).some(a => a.id === id) || (weekendPlan[selSunStr] || []).some(a => a.id === id);
-  const picks = PICK_POOL
-    .filter(a => a.weather && (a.weather.includes('any') || (satCat && a.weather.includes(satCat)) || (sunCat && a.weather.includes(sunCat))))
-    .filter(a => !inWeekend(a.id))
-    .sort((a, b) => (a.location === 'day-trip' ? 1 : 0) - (b.location === 'day-trip' ? 1 : 0))
-    .slice(0, 4);
-
-  const satName = selSat.toLocaleDateString(locale, { weekday: 'long' });
+  // ---- kids pickup: next 10 business days, tap cycles Navid → Diandra → clear ----
+  const businessDays = [];
+  for (let d = new Date(today); businessDays.length < 10; d = addDays(d, 1)) {
+    const wd = d.getDay();
+    if (wd !== 0 && wd !== 6) businessDays.push(new Date(d));
+  }
+  const cyclePickup = ds => setPickups(prev => {
+    const cur = prev[ds];
+    const next = cur === undefined ? 'Navid' : cur === 'Navid' ? 'Diandra' : null;
+    const copy = { ...prev };
+    if (next === null) delete copy[ds]; else copy[ds] = next;
+    return copy;
+  });
 
   function WeatherPill({ wx }) {
     if (!wx) return null;
@@ -209,6 +198,51 @@ export default function PlanTab({ weather, weekendPlan, setWeekendPlan, userEven
         )}
       </div>
 
+      {/* kids pickup calendar */}
+      <div style={{ marginTop: 16, background: 'var(--surface)', borderRadius: 'var(--r-lg)', boxShadow: 'var(--shadow-card)', padding: 14 }}>
+        <div className="flex items-center justify-between gap-2" style={{ marginBottom: 12 }}>
+          <div style={{ fontSize: 11.5, fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.09em', color: 'var(--text-faint)' }}>{t('plan.pickupTitle')}</div>
+          <div className="flex items-center" style={{ gap: 12 }}>
+            {PEOPLE.map(p => (
+              <div key={p} className="flex items-center gap-[5px]" style={{ fontSize: 11, fontWeight: 600, color: 'var(--text-soft)' }}>
+                <div style={{ width: 8, height: 8, borderRadius: '50%', background: PERSON[p].color }} />{p}
+              </div>
+            ))}
+          </div>
+        </div>
+        <div className="grid" style={{ gridTemplateColumns: 'repeat(5,1fr)', gap: 8 }}>
+          {businessDays.map(d => {
+            const ds = toLocalDateStr(d);
+            const who = pickups[ds];
+            const isToday = ds === todayStr;
+            const color = who ? PERSON[who].color : null;
+            return (
+              <div key={ds} className="flex flex-col items-center" style={{ gap: 4 }}>
+                <div style={{ fontSize: 9.5, fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.03em', color: 'var(--text-faint)' }}>
+                  {d.toLocaleDateString(locale, { weekday: 'short' }).replace('.', '')}
+                </div>
+                <div style={{ fontSize: 12.5, fontWeight: 700, color: isToday ? 'var(--primary)' : 'var(--text)' }}>{d.getDate()}</div>
+                <button
+                  onClick={() => cyclePickup(ds)}
+                  className="press flex items-center justify-center"
+                  aria-label={`pickup ${ds}`}
+                  style={{
+                    width: 30, height: 30, borderRadius: '50%', padding: 0, cursor: 'pointer',
+                    fontSize: 12, fontWeight: 800,
+                    border: `1.5px solid ${who ? color : 'var(--border-strong)'}`,
+                    background: who ? color : 'transparent',
+                    color: who ? '#fff' : 'var(--text-faint)',
+                  }}
+                >
+                  {who ? who[0] : ''}
+                </button>
+              </div>
+            );
+          })}
+        </div>
+        <div style={{ fontSize: 10.5, fontWeight: 500, color: 'var(--text-faint)', marginTop: 12 }}>{t('plan.pickupHint')}</div>
+      </div>
+
       {/* weekend title */}
       <div className="flex items-baseline justify-between gap-2" style={{ marginTop: 20, padding: '0 2px' }}>
         <div className="min-w-0">
@@ -257,27 +291,6 @@ export default function PlanTab({ weather, weekendPlan, setWeekendPlan, userEven
           </div>
           <div style={{ fontSize: 15, fontWeight: 800, letterSpacing: '-0.02em', color: 'var(--text)' }}>{t('plan.emptyTitle')}</div>
           <div style={{ fontSize: 12.5, fontWeight: 500, color: 'var(--text-faint)', marginTop: 3 }}>{t('plan.emptyBody')}</div>
-        </div>
-      )}
-
-      {/* smart picks */}
-      {picks.length > 0 && (
-        <div style={{ marginTop: 18 }}>
-          <div style={{ fontSize: 11.5, fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.09em', color: 'var(--text-faint)', margin: '0 2px 10px' }}>{t('plan.smartPicks')}</div>
-          <div className="flex flex-col" style={{ gap: 9 }}>
-            {picks.map(p => (
-              <div key={p.id} className="flex items-center gap-[11px]" style={{ background: 'var(--surface)', borderRadius: 'var(--r-md)', boxShadow: 'var(--shadow-card)', padding: '10px 11px' }}>
-                <div className="flex-none flex items-center justify-center" style={{ width: 42, height: 42, borderRadius: 12, fontSize: 22, background: catGrad(p.cat) }}>{p.emoji}</div>
-                <div className="flex-1 min-w-0">
-                  <div className="truncate" style={{ fontSize: 13.5, fontWeight: 700, letterSpacing: '-0.01em', lineHeight: 1.25, color: 'var(--text)' }}>{p.name}</div>
-                  <div style={{ fontSize: 11, fontWeight: 600, color: 'var(--text-faint)', marginTop: 2 }}>{p.duration || (p.location === 'day-trip' ? (de ? 'Ausflug' : 'Day trip') : (de ? 'München' : 'Munich'))}</div>
-                </div>
-                <button onClick={() => addActivity(p, selSatStr, satName)} className="press flex-none flex items-center gap-[5px]" style={{ fontSize: 12, fontWeight: 700, color: '#fff', background: 'var(--primary)', border: 'none', borderRadius: 'var(--r-pill)', padding: '8px 13px', cursor: 'pointer', boxShadow: 'var(--shadow-btn)' }}>
-                  <Icon name="plus" size={13} sw={2.6} />{de ? 'Sa' : 'Sat'}
-                </button>
-              </div>
-            ))}
-          </div>
         </div>
       )}
     </div>

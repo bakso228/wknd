@@ -23,6 +23,7 @@ function AppInner() {
   const [hiddenActivities,  setHiddenActivities]  = useSupabaseStorage('hidden_activities', []);
   const [workouts,          setWorkouts]          = useSupabaseStorage('workouts', SEED_WORKOUTS);
   const [body,              setBody]              = useSupabaseStorage('body', SEED_BODY);
+  const [pickups,           setPickups]           = useSupabaseStorage('pickups', {});
 
   const planCount  = Object.values(weekendPlan).reduce((s, a) => s + a.length, 0);
   const todoCount  = todos.filter(t => !t.completed).length;
@@ -54,6 +55,8 @@ function AppInner() {
             setUserEvents={setUserEvents}
             todos={todos}
             setTodos={setTodos}
+            pickups={pickups}
+            setPickups={setPickups}
             onGoExplorer={() => setTab('explorer')}
             showToast={showToast}
           />
