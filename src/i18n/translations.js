@@ -1,8 +1,9 @@
 export const translations = {
   de: {
-    nav: { plan: 'Plan', explorer: 'Erkunden', calendar: 'Kalender', todos: 'Todos', sources: 'Quellen' },
-    header: { subtitle: 'Familienplaner · Oberhaching / München' },
+    nav: { plan: 'Plan', explorer: 'Entdecken', calendar: 'Kalender', todos: 'Aufgaben', sources: 'Quellen' },
+    header: { subtitle: 'Familie Scheybani · München' },
     plan: {
+      heroTitle: 'Euer Wochenende',
       weekend: 'Wochenende',
       planned: 'Geplant',
       activity: 'Aktivität',
@@ -113,9 +114,10 @@ export const translations = {
   },
 
   en: {
-    nav: { plan: 'Plan', explorer: 'Explore', calendar: 'Calendar', todos: 'Todos', sources: 'Sources' },
-    header: { subtitle: 'Family Planner · Oberhaching / Munich' },
+    nav: { plan: 'Plan', explorer: 'Explore', calendar: 'Calendar', todos: 'To-dos', sources: 'Sources' },
+    header: { subtitle: 'Familie Scheybani · Munich' },
     plan: {
+      heroTitle: 'Your weekend',
       weekend: 'Weekend',
       planned: 'Planned',
       activity: 'activity',

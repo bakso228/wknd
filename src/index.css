@@ -1,32 +1,57 @@
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Manrope:wght@600;700;800&display=swap");
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
+/* ============================================================
+   Loyalocal design tokens — Munich-blue + Alpine-white.
+   Referenced via CSS variables across the app (never hardcode).
+   ============================================================ */
+:root {
+  --primary:        #0077B6;
+  --primary-deep:   #005F92;
+  --primary-soft:   #E1F0F8;
+  --pass-a:         #0091DC;
+  --pass-b:         #005F92;
+
+  --white:          #FFFFFF;
+  --surface:        #FFFFFF;
+  --soft-ice:       #F2F7FA;
+  --canvas:         #F2F7FA;
+  --border:         #E3EEF5;
+  --border-strong:  #CBD9E3;
+
+  --text:           #1F2933;
+  --text-soft:      #52606D;
+  --text-faint:     #7B8794;
+
+  --green:          #62B58F;
+  --green-deep:     #3F9270;
+  --green-soft:     #E5F4EC;
+  --coral:          #FF6B5F;
+  --coral-deep:     #C24A40;
+  --coral-soft:     #FFE9E6;
+
+  --r-sm:  12px;
+  --r-md:  16px;
+  --r-lg:  22px;
+  --r-pill: 999px;
+
+  --shadow-card: 0 1px 2px rgba(31,41,51,.05), 0 6px 18px rgba(31,41,51,.07);
+  --shadow-btn:  0 6px 16px color-mix(in srgb, var(--primary) 35%, transparent);
+  --dur-fast: .12s;
+}
+
 * {
-  font-family: 'Inter', sans-serif;
+  font-family: var(--font-ui, 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif);
   -webkit-tap-highlight-color: transparent;
   touch-action: manipulation;
 }
 
-.fade-in {
-  animation: fadeIn 0.25s ease both;
-}
-@keyframes fadeIn {
-  from { opacity: 0; transform: translateY(6px); }
-  to   { opacity: 1; transform: none; }
-}
-
-.card-hover {
-  transition: transform 0.15s ease, box-shadow 0.15s ease;
-}
-@media (hover: hover) {
-  .card-hover:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 8px 24px rgba(0,0,0,0.10);
-  }
-}
-.card-hover:active {
-  transform: scale(0.98);
+html, body {
+  background: var(--canvas);
+  color: var(--text);
 }
 
 /* Horizontal scroll strips — hide scrollbar */
@@ -35,11 +60,27 @@
   -webkit-overflow-scrolling: touch;
   scrollbar-width: none;
 }
-.scroll-x::-webkit-scrollbar {
-  display: none;
-}
+.scroll-x::-webkit-scrollbar { display: none; }
 
 /* Bottom safe-area utility */
 .pb-nav {
-  padding-bottom: calc(4rem + env(safe-area-inset-bottom, 0px));
+  padding-bottom: calc(5rem + env(safe-area-inset-bottom, 0px));
+}
+
+/* Loyalocal press feedback — scale to .97, respects reduced motion */
+.press { transition: transform var(--dur-fast) cubic-bezier(.2,.7,.2,1); }
+.press:active { transform: scale(.97); }
+@media (prefers-reduced-motion: reduce) {
+  .press { transition: none; }
+  .press:active { transform: none; }
+}
+
+/* Soft entrance for newly mounted content (not used for tab switching) */
+.rise { animation: rise .28s cubic-bezier(.2,.7,.2,1) both; }
+@keyframes rise {
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: none; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .rise { animation: none; }
 }

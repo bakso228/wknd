@@ -6,33 +6,55 @@ export default function Header({ weather }) {
   const { t, lang, toggleLang } = useLang();
 
   return (
-    <header className="bg-white border-b border-stone-200 sticky top-0 z-40 shadow-sm">
-      <div className="max-w-2xl mx-auto px-4 h-14 flex items-center justify-between gap-2">
+    <header
+      className="sticky top-0 z-40"
+      style={{ background: 'var(--surface)', borderBottom: '1px solid var(--border)' }}
+    >
+      <div className="max-w-2xl mx-auto px-[18px] py-2 pb-3 flex items-center justify-between gap-2.5">
 
-        {/* Left: photo + title */}
-        <div className="flex items-center gap-2.5 min-w-0">
-          <img
-            src={familyPhoto}
-            alt="Familie Scheybani"
-            className="w-9 h-9 rounded-full object-cover object-top border-2 border-amber-200 flex-shrink-0"
-          />
+        {/* Left: family avatar + title */}
+        <div className="flex items-center gap-[11px] min-w-0">
+          <div
+            className="w-[42px] h-[42px] rounded-full flex-none overflow-hidden"
+            style={{ background: 'linear-gradient(135deg,var(--pass-a),var(--pass-b))' }}
+          >
+            <img src={familyPhoto} alt="Familie Scheybani" className="w-full h-full object-cover object-top" />
+          </div>
           <div className="min-w-0">
-            <div className="font-extrabold text-stone-800 leading-tight text-base">Wochenende</div>
-            <div className="text-[10px] text-stone-400 font-medium truncate">{t('header.subtitle')}</div>
+            <div
+              className="font-brand leading-tight"
+              style={{ fontSize: 18, fontWeight: 800, letterSpacing: '-0.03em', color: 'var(--text)' }}
+            >
+              Wochenende
+            </div>
+            <div
+              className="truncate"
+              style={{ fontSize: 11.5, fontWeight: 500, color: 'var(--text-faint)' }}
+            >
+              {t('header.subtitle')}
+            </div>
           </div>
         </div>
 
-        {/* Right: weather + lang toggle */}
-        <div className="flex items-center gap-2 flex-shrink-0">
-          {weather && (
-            <div className="text-right text-xs text-stone-500 bg-stone-50 rounded-xl px-2.5 py-1.5 border border-stone-200">
-              {weather.sat && <div className="font-medium">{wxInfo(weather.sat.code).emoji} {t('common.sat')} {weather.sat.maxT}°</div>}
-              {weather.sun && <div className="font-medium">{wxInfo(weather.sun.code).emoji} {t('common.sun')} {weather.sun.maxT}°</div>}
+        {/* Right: weather mini-pill + lang toggle */}
+        <div className="flex items-center gap-2 flex-none">
+          {weather && (weather.sat || weather.sun) && (
+            <div
+              className="text-right leading-[1.4]"
+              style={{ background: 'var(--soft-ice)', borderRadius: 'var(--r-sm)', padding: '5px 10px', fontSize: 11, fontWeight: 600, color: 'var(--text-soft)' }}
+            >
+              {weather.sat && <div className="whitespace-nowrap">{wxInfo(weather.sat.code).emoji} {t('common.sat')} {weather.sat.maxT}°</div>}
+              {weather.sun && <div className="whitespace-nowrap">{wxInfo(weather.sun.code).emoji} {t('common.sun')} {weather.sun.maxT}°</div>}
             </div>
           )}
           <button
             onClick={toggleLang}
-            className="text-[11px] font-bold px-2 py-1.5 rounded-lg border border-stone-200 bg-stone-50 text-stone-500 hover:border-amber-300 hover:text-amber-700 transition-colors min-h-[36px] min-w-[32px]"
+            className="press"
+            style={{
+              fontSize: 12, fontWeight: 700, padding: '8px 10px', minHeight: 38,
+              borderRadius: 'var(--r-sm)', border: '1.5px solid var(--border-strong)',
+              background: 'var(--surface)', color: 'var(--text-soft)', cursor: 'pointer',
+            }}
             title={lang === 'de' ? 'Switch to English' : 'Auf Deutsch wechseln'}
           >
             {lang === 'de' ? 'EN' : 'DE'}

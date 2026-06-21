@@ -2,6 +2,8 @@ import familyPhoto from '../../assets/family.jpg';
 import { useLang } from '../../contexts/LangContext.jsx';
 import { fmtShort, toLocalDateStr } from '../../utils/date.js';
 import { wxInfo } from '../../utils/weather.js';
+import { catGrad } from '../../data/styles.js';
+import Icon from '../ui/Icon.jsx';
 
 export default function PlanTab({ weather, wxLoading, wxError, weekendPlan, setWeekendPlan, userEvents, onGoExplorer }) {
   const { t, lang } = useLang();
@@ -12,10 +14,10 @@ export default function PlanTab({ weather, wxLoading, wxError, weekendPlan, setW
   const tomorrowStr = toLocalDateStr(new Date(today.getFullYear(), today.getMonth(), today.getDate() + 1));
 
   // Always show today → 2nd upcoming Sunday (covers current + next full weekend)
-  const dow         = today.getDay();
-  const daysToSun1  = dow === 0 ? 0 : 7 - dow;  // 0 if today is Sun, else days until next Sun
-  const totalDays   = daysToSun1 + 7 + 1;        // through the Sunday one week after sun1
-  const planDays    = Array.from({ length: totalDays }, (_, i) => {
+  const dow        = today.getDay();
+  const daysToSun1 = dow === 0 ? 0 : 7 - dow;
+  const totalDays  = daysToSun1 + 7 + 1;
+  const planDays   = Array.from({ length: totalDays }, (_, i) => {
     const d = new Date(today); d.setDate(today.getDate() + i); return d;
   });
 
@@ -44,180 +46,153 @@ export default function PlanTab({ weather, wxLoading, wxError, weekendPlan, setW
 
   const isSatOrSun = d => d.getDay() === 6 || d.getDay() === 0;
 
-  // Color scheme: amber=today, violet=weekend, sky=weekday
-  const dayGradient = d => {
-    if (toLocalDateStr(d) === todayStr) return 'from-amber-400 to-orange-400';
-    if (isSatOrSun(d))                 return 'from-violet-500 to-purple-500';
-    return 'from-sky-500 to-blue-500';
-  };
+  function WeatherPill({ wx }) {
+    if (!wx) return null;
+    const m = wxInfo(wx.code);
+    return (
+      <div
+        className="flex items-center gap-[5px] flex-none"
+        style={{ fontSize: 12, fontWeight: 700, color: 'var(--text-soft)', background: 'var(--soft-ice)', padding: '5px 9px', borderRadius: 'var(--r-pill)' }}
+      >
+        <span>{m.emoji}</span><span>{wx.maxT}°</span>
+      </div>
+    );
+  }
 
   function DayCard({ date }) {
-    const dStr     = toLocalDateStr(date);
-    const items    = weekendPlan[dStr] || [];
-    const wx       = wxForDay(date);
-    const wxMeta   = wx ? wxInfo(wx.code) : null;
-    const calEvs   = calEventsForDay(date);
-    const isEmpty  = items.length === 0 && calEvs.length === 0;
+    const dStr      = toLocalDateStr(date);
+    const items     = weekendPlan[dStr] || [];
+    const wx        = wxForDay(date);
+    const calEvs    = calEventsForDay(date);
+    const isEmpty   = items.length === 0 && calEvs.length === 0;
+    const isToday   = dStr === todayStr;
     const isWeekend = isSatOrSun(date);
-    const gradient  = dayGradient(date);
-
-    // Weekday cards with no content: compact single-line header
-    if (!isWeekend && isEmpty) {
-      return (
-        <div className="bg-white rounded-xl border border-stone-100 overflow-hidden">
-          <div className={`bg-gradient-to-r ${gradient} px-4 py-2.5 flex items-center justify-between`}>
-            <div className="flex items-center gap-2">
-              <span className="font-bold text-white text-sm">{getDayLabel(date)}</span>
-              <span className="text-white/70 text-xs">{fmtShort(date, lang)}</span>
-            </div>
-            {wxMeta && (
-              <div className="text-white/90 text-xs font-semibold">{wxMeta.emoji} {wx.maxT}°</div>
-            )}
-          </div>
-        </div>
-      );
-    }
+    const dotColor  = isToday ? 'var(--primary)' : isWeekend ? 'var(--green)' : 'var(--border-strong)';
 
     return (
-      <div className="bg-white rounded-2xl border border-stone-100 overflow-hidden shadow-sm">
-        <div className={`bg-gradient-to-r ${gradient} px-4 py-3.5`}>
-          <div className="flex items-center justify-between">
-            <div>
-              <div className="font-bold text-white text-base">{getDayLabel(date)}</div>
-              <div className="text-white/80 text-xs mt-0.5">
-                {fmtShort(date, lang)}
-                {wxMeta ? ` · ${wxMeta.emoji} ${t(`wx.${wxMeta.labelKey}`)} ${wx.maxT}°` : ''}
+      <div
+        style={{
+          background: 'var(--surface)', borderRadius: 'var(--r-lg)', boxShadow: 'var(--shadow-card)',
+          overflow: 'hidden', border: isToday ? '1px solid var(--primary)' : '1px solid transparent',
+        }}
+      >
+        {/* header */}
+        <div className="flex items-center justify-between" style={{ padding: '14px 16px 10px' }}>
+          <div className="flex items-center gap-[9px] min-w-0">
+            <div className="flex-none rounded-full" style={{ width: 7, height: 7, background: dotColor }} />
+            <div className="min-w-0">
+              <div style={{ fontSize: 16, fontWeight: 800, letterSpacing: '-0.02em', color: 'var(--text)' }}>{getDayLabel(date)}</div>
+              <div style={{ fontSize: 11.5, fontWeight: 500, color: 'var(--text-faint)', marginTop: 1 }}>{fmtShort(date, lang)}</div>
+            </div>
+          </div>
+          <WeatherPill wx={wx} />
+        </div>
+
+        {/* body */}
+        <div className="flex flex-col gap-2" style={{ padding: '0 14px 14px' }}>
+          {items.map(act => {
+            const isSourced = act.eventType === 'sourced';
+            return (
+              <div key={act._key} className="flex items-center gap-[11px]" style={{ background: 'var(--soft-ice)', borderRadius: 'var(--r-md)', padding: '9px 11px' }}>
+                <div className="flex-none flex items-center justify-center" style={{ width: 38, height: 38, borderRadius: 11, fontSize: 20, background: catGrad(act.cat) }}>{act.emoji}</div>
+                <div className="flex-1 min-w-0">
+                  <div className="truncate" style={{ fontSize: 13.5, fontWeight: 700, letterSpacing: '-0.01em', lineHeight: 1.25, color: 'var(--text)' }}>{act.name}</div>
+                  <div style={{ fontSize: 11, fontWeight: 600, marginTop: 2, color: isSourced ? 'var(--coral-deep)' : 'var(--text-faint)' }}>
+                    {isSourced ? act.dateShort : (act.duration ? `⏱ ${act.duration}` : '')}
+                  </div>
+                </div>
+                <button
+                  onClick={() => removeFromDay(dStr, act._key)}
+                  className="press flex-none flex items-center justify-center rounded-full"
+                  style={{ width: 28, height: 28, border: 'none', background: 'transparent', color: 'var(--text-faint)', cursor: 'pointer' }}
+                  aria-label="remove"
+                >
+                  <Icon name="close" size={15} sw={2.2} />
+                </button>
+              </div>
+            );
+          })}
+
+          {calEvs.map((ev, i) => (
+            <div key={'cal_' + i} className="flex items-center gap-[11px]" style={{ background: 'var(--primary-soft)', borderRadius: 'var(--r-md)', padding: '9px 11px' }}>
+              <div className="flex-none flex items-center justify-center" style={{ width: 38, height: 38, borderRadius: 11, fontSize: 19, background: 'var(--surface)' }}>{ev.emoji || ev.e || '📅'}</div>
+              <div className="flex-1 min-w-0">
+                <div className="truncate" style={{ fontSize: 13.5, fontWeight: 700, lineHeight: 1.25, color: 'var(--primary-deep)' }}>{ev.name}</div>
+                <div style={{ fontSize: 11, fontWeight: 600, marginTop: 2, color: 'var(--primary)' }}>{t('calendar.title')}</div>
               </div>
             </div>
-            {items.length > 0 && (
-              <div className="text-white/80 text-[11px] font-semibold bg-white/20 px-2 py-0.5 rounded-full">
-                {items.length} {items.length === 1 ? t('plan.activity') : t('plan.activities')}
-              </div>
-            )}
-          </div>
-        </div>
-        <div className="p-3 min-h-[80px]">
+          ))}
+
           {isEmpty ? (
             <button
               onClick={onGoExplorer}
-              className="w-full h-16 border-2 border-dashed border-stone-200 rounded-xl flex items-center justify-center gap-2 active:bg-amber-50/50 transition-all group"
+              className="press w-full flex items-center justify-center gap-2"
+              style={{ border: '1.5px dashed var(--border-strong)', background: 'transparent', borderRadius: 'var(--r-md)', padding: 14, cursor: 'pointer', color: 'var(--text-faint)' }}
             >
-              <div className="text-xl group-hover:scale-110 transition-transform">🔍</div>
-              <div className="text-xs font-semibold text-stone-400 group-hover:text-amber-600">{t('plan.addFromExplorer')}</div>
+              <Icon name="search" size={17} />
+              <span style={{ fontSize: 12.5, fontWeight: 700 }}>{t('plan.addFromExplorer')}</span>
             </button>
-          ) : (
-            <div className="space-y-2">
-              {items.map(act => (
-                <div key={act._key} className="flex items-start gap-2.5 p-2.5 rounded-xl bg-stone-50 border border-stone-100">
-                  <span className="text-lg flex-shrink-0">{act.emoji}</span>
-                  <div className="flex-1 min-w-0">
-                    <div className="text-xs font-semibold text-stone-800 leading-tight">{act.name}</div>
-                    {act.dateShort  && <div className="text-[10px] text-violet-600 font-semibold mt-0.5">{act.dateShort}</div>}
-                    {act.duration && !act.dateShort && <div className="text-[10px] text-stone-400 mt-0.5">⏱ {act.duration}</div>}
-                  </div>
-                  <button
-                    onClick={() => removeFromDay(dStr, act._key)}
-                    className="text-stone-300 hover:text-red-400 text-sm leading-none flex-shrink-0 mt-0.5 transition-colors w-6 h-6 flex items-center justify-center"
-                  >✕</button>
-                </div>
-              ))}
-              {calEvs.map((ev, i) => (
-                <div key={'cal_' + i} className="flex items-start gap-2.5 p-2.5 rounded-xl bg-blue-50 border border-blue-100">
-                  <span className="text-lg flex-shrink-0">{ev.emoji || ev.e || '📅'}</span>
-                  <div className="flex-1 min-w-0">
-                    <div className="text-xs font-semibold text-blue-800 leading-tight">{ev.name}</div>
-                    <div className="text-[10px] text-blue-400 mt-0.5">📅 {t('calendar.title')}</div>
-                  </div>
-                </div>
-              ))}
-              {isWeekend && (
-                <button
-                  onClick={onGoExplorer}
-                  className="w-full py-2.5 text-xs font-semibold text-amber-600 active:bg-amber-50 rounded-lg transition-colors border border-dashed border-amber-200"
-                >
-                  {t('plan.addMore')}
-                </button>
-              )}
-            </div>
-          )}
+          ) : isWeekend ? (
+            <button
+              onClick={onGoExplorer}
+              className="press w-full"
+              style={{ border: '1.5px dashed var(--primary)', background: 'var(--primary-soft)', borderRadius: 'var(--r-md)', padding: 11, cursor: 'pointer', color: 'var(--primary-deep)', fontSize: 12.5, fontWeight: 700 }}
+            >
+              {t('plan.addMore')}
+            </button>
+          ) : null}
         </div>
       </div>
     );
   }
 
-  const compact = planDays.length > 9; // condense chips when many days
-
   return (
-    <div className="fade-in space-y-3">
-      {/* Family hero photo */}
-      <div className="relative rounded-2xl overflow-hidden h-40 shadow-md">
-        <img
-          src={familyPhoto}
-          alt="Familie Scheybani"
-          className="absolute inset-0 w-full h-full object-cover object-[center_20%]"
-        />
-        <div className="absolute inset-0 bg-gradient-to-t from-black/65 via-black/15 to-transparent" />
-        <div className="absolute bottom-0 left-0 right-0 px-4 pb-3.5">
-          <div className="text-white font-bold text-base drop-shadow">Familie Scheybani 🏡</div>
-          <div className="text-white/75 text-xs mt-0.5 drop-shadow">
+    <div className="flex flex-col" style={{ gap: 16 }}>
+      {/* Hero */}
+      <div className="relative overflow-hidden" style={{ borderRadius: 'var(--r-lg)', height: 150, boxShadow: 'var(--shadow-card)' }}>
+        <img src={familyPhoto} alt="Familie Scheybani" className="absolute inset-0 w-full h-full object-cover" style={{ objectPosition: 'center 22%' }} />
+        <div className="absolute inset-0" style={{ background: 'linear-gradient(135deg, rgba(0,145,220,.86), rgba(0,95,146,.92))' }} />
+        <div className="absolute inset-0" style={{ background: 'radial-gradient(120% 90% at 85% 15%, rgba(255,255,255,.22), transparent 60%)' }} />
+        <svg width="150" height="150" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="0.6" strokeLinecap="round" strokeLinejoin="round" style={{ position: 'absolute', right: -20, bottom: -26, opacity: 0.16 }}>
+          <path d="M3 11.5 12 4l9 7.5M5 10v9h14v-9M10 19v-5h4v5" />
+        </svg>
+        <div className="absolute left-0 right-0 bottom-0" style={{ padding: '16px 18px' }}>
+          <div className="font-brand" style={{ color: '#fff', fontSize: 21, fontWeight: 800, letterSpacing: '-0.03em' }}>{t('plan.heroTitle')}</div>
+          <div style={{ color: 'rgba(255,255,255,.82)', fontSize: 12.5, fontWeight: 500, marginTop: 2 }}>
             {fmtShort(today, lang)} – {fmtShort(planDays[planDays.length - 1], lang)}
           </div>
         </div>
         {totalPlanned > 0 && (
-          <div className="absolute top-3 right-3 bg-amber-400 text-white text-xs font-bold px-2.5 py-1 rounded-full shadow">
+          <div className="absolute" style={{ top: 14, right: 14, background: 'rgba(255,255,255,.18)', backdropFilter: 'blur(6px)', WebkitBackdropFilter: 'blur(6px)', color: '#fff', fontSize: 11.5, fontWeight: 700, padding: '5px 11px', borderRadius: 'var(--r-pill)' }}>
             {totalPlanned} {totalPlanned === 1 ? t('plan.activity') : t('plan.activities')}
           </div>
         )}
       </div>
 
-      {/* Full-width weather strip — fills entire width via CSS grid */}
+      {/* Weather strip */}
       {(weather?.days || wxLoading) && (
-        <div
-          className="grid gap-1.5 w-full"
-          style={{ gridTemplateColumns: `repeat(${planDays.length}, 1fr)` }}
-        >
+        <div className="flex" style={{ gap: 5 }}>
           {wxLoading
-            ? planDays.map((_, i) => (
-                <div key={i} className="bg-white rounded-xl border border-stone-200 animate-pulse h-16" />
+            ? planDays.slice(0, 9).map((_, i) => (
+                <div key={i} className="flex-1 animate-pulse" style={{ height: 60, borderRadius: 'var(--r-sm)', background: 'var(--soft-ice)' }} />
               ))
             : planDays.map(d => {
                 const wx        = wxForDay(d);
                 const dStr      = toLocalDateStr(d);
                 const isToday   = dStr === todayStr;
                 const isWeekend = isSatOrSun(d);
-                const wxMeta    = wx ? wxInfo(wx.code) : null;
+                const m         = wx ? wxInfo(wx.code) : null;
+                const bg = isToday ? 'var(--primary-soft)' : isWeekend ? '#EAF6F0' : 'var(--soft-ice)';
+                const bd = isToday ? 'var(--primary)' : 'transparent';
+                const fg = isToday ? 'var(--primary-deep)' : isWeekend ? 'var(--green-deep)' : 'var(--text-faint)';
+                const tc = isToday ? 'var(--primary-deep)' : 'var(--text)';
                 return (
-                  <div key={dStr}
-                    className={`text-center rounded-xl py-1.5 px-0.5 border flex flex-col items-center justify-center ${
-                      isToday   ? 'bg-amber-50 border-amber-300' :
-                      isWeekend ? 'bg-violet-50 border-violet-200' :
-                                  'bg-white border-stone-200'
-                    }`}>
-                    <div className={`text-[9px] font-bold uppercase leading-tight ${
-                      isToday ? 'text-amber-600' : isWeekend ? 'text-violet-600' : 'text-stone-500'
-                    }`}>
-                      {isToday
-                        ? (lang === 'de' ? 'Heute' : 'Today')
-                        : d.toLocaleDateString(locale, { weekday: 'short' }).replace('.', '')}
+                  <div key={dStr} className="flex-1 flex flex-col items-center" style={{ borderRadius: 'var(--r-sm)', padding: '7px 2px 8px', gap: 1, background: bg, border: `1px solid ${bd}` }}>
+                    <div style={{ fontSize: 8.5, fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.04em', color: fg }}>
+                      {isToday ? (lang === 'de' ? 'Heu' : 'Tdy') : d.toLocaleDateString(locale, { weekday: 'short' }).replace('.', '').slice(0, 3)}
                     </div>
-                    {!compact && (
-                      <div className="text-[8px] text-stone-400 leading-tight">
-                        {d.toLocaleDateString(locale, { day: 'numeric', month: 'numeric' })}
-                      </div>
-                    )}
-                    {wx ? (
-                      <>
-                        <div className="text-base leading-tight my-0.5">{wxMeta.emoji}</div>
-                        <div className={`text-xs font-bold leading-tight ${isToday ? 'text-amber-700' : isWeekend ? 'text-violet-700' : 'text-stone-700'}`}>
-                          {wx.maxT}°
-                        </div>
-                        {!compact && (
-                          <div className="text-[8px] text-stone-400 leading-tight">{wx.minT}°</div>
-                        )}
-                      </>
-                    ) : (
-                      <div className="text-[9px] text-stone-300 mt-1">–</div>
-                    )}
+                    <div style={{ fontSize: 15, lineHeight: 1.2, margin: '1px 0' }}>{m ? m.emoji : '·'}</div>
+                    <div style={{ fontSize: 11.5, fontWeight: 700, color: tc }}>{wx ? `${wx.maxT}°` : '–'}</div>
                   </div>
                 );
               })
@@ -226,11 +201,11 @@ export default function PlanTab({ weather, wxLoading, wxError, weekendPlan, setW
       )}
 
       {wxError && (
-        <div className="text-center py-2 text-stone-400 text-xs">🌡️ {t('wx.unavailable')}</div>
+        <div className="text-center" style={{ padding: '8px 0', color: 'var(--text-faint)', fontSize: 12 }}>🌡️ {t('wx.unavailable')}</div>
       )}
 
-      {/* Day plan cards — skip empty weekdays */}
-      <div className="space-y-2">
+      {/* Day cards — weekend days, today, or any day with items */}
+      <div className="flex flex-col" style={{ gap: 12 }}>
         {planDays
           .filter(d => {
             const dStr = toLocalDateStr(d);
@@ -241,9 +216,10 @@ export default function PlanTab({ weather, wxLoading, wxError, weekendPlan, setW
           .map(d => <DayCard key={toLocalDateStr(d)} date={d} />)}
       </div>
 
-      <div className="bg-amber-50 border border-amber-200 rounded-xl p-3 flex gap-2">
-        <span>💡</span>
-        <div className="text-xs text-amber-700">{t('plan.explorerHint')}</div>
+      {/* Tip */}
+      <div className="flex items-start gap-[10px]" style={{ background: 'var(--coral-soft)', borderRadius: 'var(--r-md)', padding: '13px 14px' }}>
+        <Icon name="spark" size={18} sw={2} style={{ color: 'var(--coral-deep)', flex: 'none', marginTop: 1 }} />
+        <div style={{ fontSize: 12, fontWeight: 500, color: 'var(--coral-deep)', lineHeight: 1.45 }}>{t('plan.explorerHint')}</div>
       </div>
     </div>
   );

@@ -22,10 +22,10 @@ function AppInner() {
   const todoCount  = todos.filter(t => !t.completed).length;
 
   return (
-    <div className="min-h-screen bg-stone-50">
+    <div className="min-h-screen" style={{ background: 'var(--canvas)' }}>
       <Header weather={weather} />
 
-      <main className="max-w-2xl mx-auto px-4 py-4 pb-nav">
+      <main className="max-w-2xl mx-auto px-[18px] py-[18px] pb-nav">
         {tab === 'plan' && (
           <PlanTab
             weather={weather}

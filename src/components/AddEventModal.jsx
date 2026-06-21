@@ -1,7 +1,8 @@
 import { useState } from 'react';
 import { useLang } from '../contexts/LangContext.jsx';
-import { TYPE_PILL } from '../data/styles.js';
+import { dotColor } from '../data/styles.js';
 import { fmtLong } from '../utils/date.js';
+import Icon from './ui/Icon.jsx';
 
 const EMOJIS = ['📌','🎉','🎂','🏖️','🎭','🚗','✈️','🏠','⚽','🎸','🍕','👨‍👩‍👧‍👦','❤️','🌟','🎈','🌳','🎄','🏃','🎓'];
 const TYPE_KEYS = ['personal','festival','outdoors','food','culture','holiday'];
@@ -27,75 +28,74 @@ export default function AddEventModal({ date, onSave, onClose, initialEvent }) {
     onSave({ id, startDate: startStr, date: startStr, endDate: endDate || startStr, name: name.trim(), emoji, type, notes });
   };
 
+  const inputStyle = {
+    width: '100%', border: '1.5px solid var(--border-strong)', borderRadius: 'var(--r-md)',
+    padding: '13px 14px', fontSize: 16, background: 'var(--surface)', color: 'var(--text)', outline: 'none',
+  };
+  const eyebrow = { fontSize: 10, fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.08em', color: 'var(--text-faint)', marginBottom: 4 };
+
   return (
     <div
-      className="fixed inset-0 bg-black/40 flex items-end sm:items-center justify-center z-50"
+      className="fixed inset-0 flex items-end sm:items-center justify-center z-50"
+      style={{ background: 'rgba(15,30,45,.45)' }}
       onClick={e => { if (e.target === e.currentTarget) onClose(); }}
     >
       <div
-        className="bg-white rounded-t-3xl sm:rounded-2xl w-full sm:max-w-md p-6 space-y-4 relative max-h-[90vh] overflow-y-auto"
-        style={{ paddingBottom: 'max(1.5rem, calc(env(safe-area-inset-bottom) + 1rem))' }}
+        className="w-full sm:max-w-md relative max-h-[90vh] overflow-y-auto flex flex-col"
+        style={{ background: 'var(--surface)', borderTopLeftRadius: 'var(--r-lg)', borderTopRightRadius: 'var(--r-lg)', boxShadow: '0 -12px 48px rgba(15,30,45,.25)', padding: 22, gap: 14, paddingBottom: 'max(22px, calc(env(safe-area-inset-bottom) + 16px))' }}
       >
-        <div className="sm:hidden absolute top-3 left-1/2 -translate-x-1/2 w-10 h-1 bg-stone-200 rounded-full" />
-        <div className="flex justify-between items-center">
-          <h3 className="font-bold text-stone-800 text-lg">{isEditing ? t('modal.editTitle') : t('modal.title')}</h3>
-          <button onClick={onClose} className="text-stone-400 text-2xl leading-none w-8 h-8 flex items-center justify-center">×</button>
+        <div className="sm:hidden absolute left-1/2 -translate-x-1/2" style={{ top: 8, width: 40, height: 4, background: 'var(--border-strong)', borderRadius: 999 }} />
+
+        <div className="flex justify-between items-center" style={{ marginTop: 4 }}>
+          <h3 className="font-brand" style={{ fontSize: 19, fontWeight: 800, letterSpacing: '-0.02em', color: 'var(--text)' }}>{isEditing ? t('modal.editTitle') : t('modal.title')}</h3>
+          <button onClick={onClose} className="press flex items-center justify-center" style={{ width: 32, height: 32, border: 'none', background: 'var(--soft-ice)', color: 'var(--text-soft)', borderRadius: '50%', cursor: 'pointer' }}>
+            <Icon name="close" size={16} sw={2.2} />
+          </button>
         </div>
 
-        <div className="flex gap-2 items-center">
+        <div className="flex gap-2 items-end">
           <div className="flex-1">
-            <div className="text-[10px] font-bold text-stone-400 uppercase tracking-wide mb-1">{t('modal.from')}</div>
-            <div className="bg-amber-50 border border-amber-200 rounded-xl px-3 py-2 text-sm font-semibold text-amber-700">{fmtLong(date, lang)}</div>
+            <div style={eyebrow}>{t('modal.from')}</div>
+            <div style={{ background: 'var(--primary-soft)', borderRadius: 'var(--r-md)', padding: '11px 12px', fontSize: 13, fontWeight: 700, color: 'var(--primary-deep)' }}>{fmtLong(date, lang)}</div>
           </div>
           <div className="flex-1">
-            <div className="text-[10px] font-bold text-stone-400 uppercase tracking-wide mb-1">
-              {t('modal.until')} {isMultiDay && <span className="text-violet-500 normal-case font-normal">{t('modal.multiDay')}</span>}
+            <div style={eyebrow}>
+              {t('modal.until')} {isMultiDay && <span style={{ color: 'var(--primary)', textTransform: 'none', fontWeight: 600 }}>{t('modal.multiDay')}</span>}
             </div>
-            <input
-              type="date"
-              value={endDate}
-              min={startStr}
-              onChange={e => setEndDate(e.target.value)}
-              className="w-full bg-white border border-stone-200 rounded-xl px-3 py-2 text-sm focus:outline-none focus:border-amber-400"
-            />
+            <input type="date" value={endDate} min={startStr} onChange={e => setEndDate(e.target.value)} style={{ ...inputStyle, padding: '10px 12px', fontSize: 14 }} />
           </div>
         </div>
 
-        <input
-          value={name}
-          onChange={e => setName(e.target.value)}
-          placeholder={t('modal.placeholder')}
-          className="w-full border border-stone-200 rounded-xl px-3 py-3 text-sm focus:outline-none focus:border-amber-400"
-        />
+        <input value={name} onChange={e => setName(e.target.value)} placeholder={t('modal.placeholder')} style={inputStyle} />
 
-        <div className="flex flex-wrap gap-1.5">
+        <div className="flex flex-wrap" style={{ gap: 6 }}>
           {EMOJIS.map(em => (
-            <button key={em} onClick={() => setEmoji(em)}
-              className={`text-lg w-10 h-10 rounded-xl ${emoji === em ? 'bg-amber-100 ring-2 ring-amber-400' : 'bg-stone-50 hover:bg-stone-100'}`}>
+            <button key={em} onClick={() => setEmoji(em)} className="press flex items-center justify-center"
+              style={{ width: 42, height: 42, borderRadius: 'var(--r-md)', fontSize: 20, cursor: 'pointer', background: emoji === em ? 'var(--primary-soft)' : 'var(--soft-ice)', border: emoji === em ? '2px solid var(--primary)' : '2px solid transparent' }}>
               {em}
             </button>
           ))}
         </div>
 
-        <div className="flex flex-wrap gap-2">
-          {TYPE_KEYS.map(tk => (
-            <button key={tk} onClick={() => setType(tk)}
-              className={`text-xs px-3 py-1.5 rounded-full border font-medium ${type === tk ? (TYPE_PILL[tk] + ' ring-2 ring-offset-1 ring-amber-400') : 'bg-stone-50 border-stone-200 text-stone-600'}`}>
-              {t(`modal.types.${tk}`)}
-            </button>
-          ))}
+        <div className="flex flex-wrap" style={{ gap: 6 }}>
+          {TYPE_KEYS.map(tk => {
+            const active = type === tk;
+            const c = dotColor(tk);
+            return (
+              <button key={tk} onClick={() => setType(tk)} className="press inline-flex items-center gap-[6px]"
+                style={{ fontSize: 12, fontWeight: 700, padding: '0 14px', height: 36, borderRadius: 'var(--r-pill)', cursor: 'pointer', background: active ? 'var(--soft-ice)' : 'var(--surface)', color: 'var(--text-soft)', border: `1.5px solid ${active ? c : 'var(--border-strong)'}` }}>
+                <span style={{ width: 8, height: 8, borderRadius: '50%', background: c }} />
+                {t(`modal.types.${tk}`)}
+              </button>
+            );
+          })}
         </div>
 
-        <input
-          value={notes}
-          onChange={e => setNotes(e.target.value)}
-          placeholder={t('modal.notePlaceholder')}
-          className="w-full border border-stone-200 rounded-xl px-3 py-3 text-sm focus:outline-none focus:border-amber-400"
-        />
+        <input value={notes} onChange={e => setNotes(e.target.value)} placeholder={t('modal.notePlaceholder')} style={inputStyle} />
 
-        <div className="flex gap-3 pt-1">
-          <button onClick={onClose} className="flex-1 bg-stone-100 text-stone-600 rounded-xl py-3 text-sm font-semibold min-h-[48px]">{t('modal.cancel')}</button>
-          <button onClick={save} disabled={!name.trim()} className="flex-1 bg-amber-400 disabled:bg-stone-200 disabled:text-stone-400 text-white rounded-xl py-3 text-sm font-bold min-h-[48px]">{t('modal.save')}</button>
+        <div className="flex gap-3" style={{ paddingTop: 2 }}>
+          <button onClick={onClose} className="press flex-1" style={{ background: 'var(--surface)', color: 'var(--text-soft)', border: '1.5px solid var(--border-strong)', borderRadius: 'var(--r-md)', padding: '13px 0', fontSize: 14, fontWeight: 700, minHeight: 48 }}>{t('modal.cancel')}</button>
+          <button onClick={save} disabled={!name.trim()} className="press flex-1" style={{ background: name.trim() ? 'var(--primary)' : 'var(--border)', color: '#fff', border: 'none', borderRadius: 'var(--r-md)', padding: '13px 0', fontSize: 14, fontWeight: 700, minHeight: 48, boxShadow: name.trim() ? 'var(--shadow-btn)' : 'none' }}>{t('modal.save')}</button>
         </div>
       </div>
     </div>

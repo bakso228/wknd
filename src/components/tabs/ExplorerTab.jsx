@@ -2,6 +2,9 @@ import { useState, useMemo } from 'react';
 import ActivityCard from '../ActivityCard.jsx';
 import ItineraryCard from '../ItineraryCard.jsx';
 import MapView from '../MapView.jsx';
+import Chip from '../ui/Chip.jsx';
+import SegmentedControl from '../ui/SegmentedControl.jsx';
+import Icon from '../ui/Icon.jsx';
 import { useLang } from '../../contexts/LangContext.jsx';
 import { BASE_ACTIVITIES, STICKY_DEFAULTS } from '../../data/activities.js';
 import { MICRO_LOCAL } from '../../data/microLocal.js';
@@ -11,6 +14,14 @@ import { SOURCED_EVENTS } from '../../data/events.js';
 import { getSeason, wxInfo, scoreActivity } from '../../utils/weather.js';
 import { distanceFromHome } from '../../utils/distance.js';
 import { getUpcomingWeekends, fmtShort, toLocalDateStr } from '../../utils/date.js';
+
+function Eyebrow({ children, style }) {
+  return (
+    <div style={{ fontSize: 11.5, fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.09em', color: 'var(--text-faint)', ...style }}>
+      {children}
+    </div>
+  );
+}
 
 export default function ExplorerTab({ weather, weekendPlan, setWeekendPlan, stickyActivities, setStickyActivities, hiddenActivities, setHiddenActivities }) {
   const { t, lang } = useLang();
@@ -25,7 +36,6 @@ export default function ExplorerTab({ weather, weekendPlan, setWeekendPlan, stic
   const [showHidden,     setShowHidden]     = useState(false);
 
   const season = getSeason(new Date().getMonth() + 1);
-  // Use today's weather (days[0]) for activity ranking
   const wxCat  = weather?.days?.[0] ? wxInfo(weather.days[0].code).cat : 'sunny';
 
   const upcomingWeekends = useMemo(() => getUpcomingWeekends(5), []);
@@ -83,7 +93,6 @@ export default function ExplorerTab({ weather, weekendPlan, setWeekendPlan, stic
     return list;
   }, [scored, catFilter, locationFilter, typeFilter, depthFilter]);
 
-  // +Sa/+So always targets the nearest upcoming Saturday/Sunday (within the 7-day window)
   const _today = new Date(); _today.setHours(0, 0, 0, 0);
   const _dow   = _today.getDay();
   const _sat   = new Date(_today); _sat.setDate(_today.getDate() + (_dow === 6 ? 0 : _dow === 0 ? -1 : 6 - _dow));
@@ -94,7 +103,6 @@ export default function ExplorerTab({ weather, weekendPlan, setWeekendPlan, stic
   const isAdded  = (id, day) => (weekendPlan[day] || []).some(a => a.id === id);
   const addToDay = (act, day) => setWeekendPlan(p => ({ ...p, [day]: [...(p[day] || []), { ...act, _key: act.id + Date.now() }] }));
 
-  // Resolve itinerary stops to full activities + apply active filters.
   const allById = useMemo(() => {
     const map = new Map();
     [...allActivities, ...SOURCED_EVENTS].forEach(a => map.set(a.id, a));
@@ -138,7 +146,6 @@ export default function ExplorerTab({ weather, weekendPlan, setWeekendPlan, stic
     itin.stops.length > 0 &&
     itin.stops.every(s => (weekendPlan[day] || []).some(a => a.id === s.id));
 
-  // Sourced items, filtered by selected weekend — soonest-ending first so urgent events surface at top
   const sourcedItems = useMemo(() => {
     const items = filtered.filter(a => a.eventType === 'sourced');
     if (weekendFilter === 'all') return items;
@@ -149,7 +156,6 @@ export default function ExplorerTab({ weather, weekendPlan, setWeekendPlan, stic
       .sort((a, b) => (a.endDate || a.startDate || '').localeCompare(b.endDate || b.startDate || ''));
   }, [filtered, weekendFilter, upcomingWeekends]);
 
-  // Grouped by weekend for the 'all upcoming' view
   const sourcedByWeekend = useMemo(() => {
     if (weekendFilter !== 'all') return null;
     return upcomingWeekends.map(wknd => ({
@@ -186,112 +192,102 @@ export default function ExplorerTab({ weather, weekendPlan, setWeekendPlan, stic
     { id: 'seasonal', e: '🎡' }, { id: 'sticky',   e: '⭐' },
   ];
 
+  const inputStyle = {
+    border: '1.5px solid var(--border-strong)', borderRadius: 'var(--r-md)', padding: '11px 12px',
+    fontSize: 16, background: 'var(--surface)', color: 'var(--text)', outline: 'none', width: '100%',
+  };
+
+  const cardGridCls = 'grid grid-cols-1 sm:grid-cols-2 gap-3';
+
   return (
-    <div className="fade-in space-y-4">
+    <div className="flex flex-col" style={{ gap: 16 }}>
       {/* header */}
-      <div className="flex items-start justify-between gap-2">
-        <div>
-          <h2 className="text-lg font-bold text-stone-800">{t('explorer.title')}</h2>
-          <p className="text-xs text-stone-400 mt-0.5">
-            {filtered.length} {filtered.length === 1 ? t('explorer.activity') : t('explorer.activities')} · {t('explorer.rankedFor')} {wxCat === 'rainy' ? '🌧️' : '☀️'} {season}
-          </p>
-        </div>
-        <div className="flex items-center gap-2 flex-shrink-0">
-          {/* Card / Map toggle */}
-          <div className="flex bg-stone-100 rounded-lg p-0.5 gap-0.5">
-            <button
-              onClick={() => setViewMode('cards')}
-              className={`px-2.5 py-1.5 rounded-md text-xs font-semibold transition-colors ${viewMode === 'cards' ? 'bg-white text-stone-800 shadow-sm' : 'text-stone-400'}`}
-            >📋</button>
-            <button
-              onClick={() => setViewMode('map')}
-              className={`px-2.5 py-1.5 rounded-md text-xs font-semibold transition-colors ${viewMode === 'map' ? 'bg-white text-stone-800 shadow-sm' : 'text-stone-400'}`}
-            >🗺️</button>
+      <div className="flex items-end justify-between gap-2.5" style={{ padding: '2px 2px 0' }}>
+        <div className="min-w-0">
+          <div className="font-brand" style={{ fontSize: 22, fontWeight: 800, letterSpacing: '-0.03em', color: 'var(--text)' }}>{t('explorer.title')}</div>
+          <div style={{ fontSize: 11.5, fontWeight: 500, color: 'var(--text-faint)', marginTop: 2 }}>
+            {filtered.length} {filtered.length === 1 ? t('explorer.activity') : t('explorer.activities')} · {t('explorer.rankedFor')} {wxCat === 'rainy' ? '🌧️' : '☀️'}
           </div>
-          {weather?.days?.[0] && (
-            <div className="text-right text-xs text-stone-500 bg-white rounded-xl px-3 py-2 border border-stone-200">
-              <div className="text-[10px] text-stone-400 font-bold uppercase tracking-wide mb-0.5">{t('explorer.weekend')}</div>
-              <div>
-                {weather.sat && <>{wxInfo(weather.sat.code).emoji} Sa {weather.sat.maxT}° · </>}
-                {weather.sun && <>{wxInfo(weather.sun.code).emoji} So {weather.sun.maxT}°</>}
-              </div>
-            </div>
-          )}
         </div>
+        {weather?.days?.[0] && (
+          <div className="text-right flex-none whitespace-nowrap" style={{ background: 'var(--soft-ice)', borderRadius: 'var(--r-sm)', padding: '6px 10px', fontSize: 11, fontWeight: 600, color: 'var(--text-soft)' }}>
+            <div style={{ fontSize: 9, fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.06em', color: 'var(--text-faint)' }}>{t('explorer.weekend')}</div>
+            <div>
+              {weather.sat && <>{wxInfo(weather.sat.code).emoji} {t('common.sat')} {weather.sat.maxT}° · </>}
+              {weather.sun && <>{wxInfo(weather.sun.code).emoji} {weather.sun.maxT}°</>}
+            </div>
+          </div>
+        )}
       </div>
 
-      {/* Category filter chips */}
-      <div className="flex gap-1.5 scroll-x -mx-4 px-4 pb-1">
+      {/* view toggle */}
+      <div className="flex justify-end">
+        <SegmentedControl
+          options={[{ value: 'cards', label: '📋' }, { value: 'map', label: '🗺️' }]}
+          value={viewMode}
+          onChange={setViewMode}
+          style={{ width: 110 }}
+        />
+      </div>
+
+      {/* category chips */}
+      <div className="flex scroll-x -mx-[18px] px-[18px]" style={{ gap: 7, paddingBottom: 2 }}>
         {CAT_FILTERS.map(f => (
-          <button key={f.id} onClick={() => setCatFilter(f.id)}
-            className={`flex-shrink-0 text-xs px-3 py-2 rounded-full font-semibold border transition-colors min-h-[36px] ${catFilter === f.id ? 'bg-stone-800 text-white border-stone-800' : 'bg-white text-stone-600 border-stone-200'}`}>
+          <Chip key={f.id} active={catFilter === f.id} onClick={() => setCatFilter(f.id)}>
             {f.e} {t(`explorer.catFilters.${f.id}`)}
-          </button>
+          </Chip>
         ))}
       </div>
 
-      {/* Location + type filter chips */}
-      <div className="flex gap-1.5 scroll-x -mx-4 px-4 pb-1">
+      {/* location + type chips */}
+      <div className="flex items-center scroll-x -mx-[18px] px-[18px]" style={{ gap: 7, paddingBottom: 2 }}>
         {['all','nearby','munich','dayTrip'].map(id => {
           const value = id === 'dayTrip' ? 'day-trip' : id;
           return (
-            <button key={id} onClick={() => setLocationFilter(value)}
-              className={`flex-shrink-0 text-[11px] px-2.5 py-1.5 rounded-full font-semibold border transition-colors min-h-[32px] ${
-                locationFilter === value
-                  ? 'bg-sky-600 text-white border-sky-600'
-                  : 'bg-white text-stone-500 border-stone-200'
-              }`}>
+            <Chip key={id} size="sm" active={locationFilter === value} onClick={() => setLocationFilter(value)}>
               {t(`explorer.locFilters.${id}`)}
-            </button>
+            </Chip>
           );
         })}
-        <div className="w-px h-6 bg-stone-200 flex-shrink-0 self-center mx-1" />
+        <div className="flex-none self-center" style={{ width: 1, height: 22, background: 'var(--border-strong)', margin: '0 2px' }} />
         {['all','sourced','venue','seasonal'].map(id => (
-          <button key={id} onClick={() => setTypeFilter(id)}
-            className={`flex-shrink-0 text-[11px] px-2.5 py-1.5 rounded-full font-semibold border transition-colors min-h-[32px] ${typeFilter === id ? 'bg-violet-600 text-white border-violet-600' : 'bg-white text-stone-500 border-stone-200'}`}>
+          <Chip key={id} size="sm" active={typeFilter === id} onClick={() => setTypeFilter(id)}>
             {t(`explorer.typeFilters.${id}`)}
-          </button>
+          </Chip>
         ))}
       </div>
 
-      {/* Depth filter chips */}
-      <div className="flex gap-1.5 scroll-x -mx-4 px-4 pb-1">
+      {/* depth chips */}
+      <div className="flex scroll-x -mx-[18px] px-[18px]" style={{ gap: 7, paddingBottom: 2 }}>
         {['all','quick','half','full'].map(id => (
-          <button key={id} onClick={() => setDepthFilter(id)}
-            className={`flex-shrink-0 text-[11px] px-2.5 py-1.5 rounded-full font-semibold border transition-colors min-h-[32px] ${depthFilter === id ? 'bg-teal-600 text-white border-teal-600' : 'bg-white text-stone-500 border-stone-200'}`}>
+          <Chip key={id} size="sm" active={depthFilter === id} onClick={() => setDepthFilter(id)}>
             {t(`explorer.depthFilters.${id}`)}
-          </button>
+          </Chip>
         ))}
       </div>
 
-      {/* Weekend filter chips — shown only when sourced events are in scope */}
+      {/* weekend chips */}
       {hasSourced && (
-        <div className="flex gap-1.5 scroll-x -mx-4 px-4 pb-1">
+        <div className="flex scroll-x -mx-[18px] px-[18px]" style={{ gap: 7, paddingBottom: 2 }}>
           {upcomingWeekends.map((w, i) => (
-            <button key={w.key} onClick={() => setWeekendFilter(w.key)}
-              className={`flex-shrink-0 text-[11px] px-2.5 py-1.5 rounded-full font-semibold border transition-colors min-h-[32px] ${weekendFilter === w.key ? 'bg-violet-600 text-white border-violet-600' : 'bg-white text-stone-500 border-stone-200'}`}>
+            <Chip key={w.key} size="sm" active={weekendFilter === w.key} onClick={() => setWeekendFilter(w.key)}>
               {t(`explorer.wkndFilters.${WKND_LABELS[i]}`)}
-            </button>
+            </Chip>
           ))}
-          <button onClick={() => setWeekendFilter('all')}
-            className={`flex-shrink-0 text-[11px] px-2.5 py-1.5 rounded-full font-semibold border transition-colors min-h-[32px] ${weekendFilter === 'all' ? 'bg-violet-600 text-white border-violet-600' : 'bg-white text-stone-500 border-stone-200'}`}>
+          <Chip size="sm" active={weekendFilter === 'all'} onClick={() => setWeekendFilter('all')}>
             {t('explorer.wkndFilters.allUpcoming')}
-          </button>
+          </Chip>
         </div>
       )}
 
-      {/* Map view */}
-      {viewMode === 'map' && (
-        <MapView events={filtered} />
-      )}
+      {/* map view */}
+      {viewMode === 'map' && <MapView events={filtered} />}
 
-      {/* Itineraries */}
+      {/* itineraries */}
       {viewMode === 'cards' && visibleItineraries.length > 0 && (
         <section>
-          <div className="text-xs font-bold text-amber-700 uppercase tracking-wide mb-2">
-            🗺️ Routen &amp; Halbtage
-          </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <Eyebrow style={{ marginBottom: 10 }}>🗺️ Routen &amp; Halbtage</Eyebrow>
+          <div className={cardGridCls}>
             {visibleItineraries.map(itin => (
               <ItineraryCard
                 key={itin.id}
@@ -304,33 +300,29 @@ export default function ExplorerTab({ weather, weekendPlan, setWeekendPlan, stic
               />
             ))}
           </div>
-          <div className="border-t border-stone-100 mt-4" />
         </section>
       )}
 
-      {/* Sourced events */}
+      {/* sourced events */}
       {viewMode === 'cards' && showSourced && (
         <section>
-          <div className="flex items-center gap-2 mb-2">
-            <div className="text-xs font-bold text-violet-700 uppercase tracking-wide">
-              {weekendFilter === 'all' ? t('explorer.upcomingEvents') : t('explorer.thisWeekend')}
-            </div>
+          <div className="flex items-center gap-2" style={{ marginBottom: 10 }}>
+            <Eyebrow>{weekendFilter === 'all' ? t('explorer.upcomingEvents') : t('explorer.thisWeekend')}</Eyebrow>
             {selectedWknd && (
-              <div className="text-[10px] text-stone-400 bg-stone-100 px-2 py-0.5 rounded-full">
+              <span style={{ fontSize: 10.5, fontWeight: 700, color: 'var(--coral-deep)', background: 'var(--coral-soft)', padding: '2px 8px', borderRadius: 'var(--r-pill)' }}>
                 {fmtShort(selectedWknd.sat, lang)} – {fmtShort(selectedWknd.sun, lang)}
-              </div>
+              </span>
             )}
-            <div className="text-[9px] text-stone-300 ml-auto hidden sm:block">{t('explorer.sourcedNote')}</div>
           </div>
 
           {weekendFilter === 'all' && sourcedByWeekend ? (
-            <div className="space-y-6">
+            <div className="flex flex-col" style={{ gap: 24 }}>
               {sourcedByWeekend.map(({ wknd, items }) => (
                 <div key={wknd.key}>
-                  <div className="text-[10px] text-violet-500 font-bold uppercase tracking-wide mb-2 bg-violet-50 inline-block px-2 py-0.5 rounded-full">
+                  <span className="inline-block" style={{ fontSize: 10.5, fontWeight: 700, color: 'var(--coral-deep)', background: 'var(--coral-soft)', padding: '2px 8px', borderRadius: 'var(--r-pill)', marginBottom: 10 }}>
                     {fmtShort(wknd.sat, lang)} – {fmtShort(wknd.sun, lang)}
-                  </div>
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  </span>
+                  <div className={cardGridCls}>
                     {items.map(act => (
                       <ActivityCard key={act.id} act={act} wxCat={wxCat}
                         onAddSat={() => addToDay(act, planSatStr)} onAddSun={() => addToDay(act, planSunStr)}
@@ -342,7 +334,7 @@ export default function ExplorerTab({ weather, weekendPlan, setWeekendPlan, stic
               ))}
             </div>
           ) : (
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <div className={cardGridCls}>
               {sourcedItems.map(act => (
                 <ActivityCard key={act.id} act={act} wxCat={wxCat}
                   onAddSat={() => addToDay(act, planSatStr)} onAddSun={() => addToDay(act, planSunStr)}
@@ -351,19 +343,17 @@ export default function ExplorerTab({ weather, weekendPlan, setWeekendPlan, stic
               ))}
             </div>
           )}
-
-          {(stickyItems.length > 0 || regularItems.length > 0) && typeFilter === 'all' && catFilter === 'all' && <div className="border-t border-stone-100 mt-4" />}
         </section>
       )}
 
-      {/* Sticky favourites */}
+      {/* sticky favourites */}
       {viewMode === 'cards' && stickyItems.length > 0 && (typeFilter === 'all' || typeFilter === 'venue') && (
         <section>
-          <div className="flex items-center justify-between mb-2">
-            <div className="text-xs font-bold text-stone-400 uppercase tracking-wide">{t('explorer.stickyFavs')}</div>
-            <button onClick={() => setShowAddSticky(true)} className="text-xs text-amber-600 font-semibold min-h-[36px] px-2">{t('explorer.addYours')}</button>
+          <div className="flex items-center justify-between" style={{ marginBottom: 10 }}>
+            <Eyebrow>{t('explorer.stickyFavs')}</Eyebrow>
+            <button onClick={() => setShowAddSticky(true)} className="press" style={{ fontSize: 12, fontWeight: 700, color: 'var(--primary)', background: 'transparent', border: 'none', cursor: 'pointer' }}>{t('explorer.addYours')}</button>
           </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div className={cardGridCls}>
             {stickyItems.map(act => (
               <div key={act.id} className="relative">
                 <ActivityCard act={act} wxCat={wxCat}
@@ -371,41 +361,40 @@ export default function ExplorerTab({ weather, weekendPlan, setWeekendPlan, stic
                   addedSat={isAdded(act.id, planSatStr)} addedSun={isAdded(act.id, planSunStr)}
                   onHide={() => hideActivity(act.id)} />
                 {stickyActivities.find(s => s.id === act.id) && (
-                  <button onClick={() => removeSticky(act.id)} className="absolute top-2 left-2 text-[9px] text-red-400 bg-white rounded px-1 border border-red-100 min-h-[24px]">remove</button>
+                  <button onClick={() => removeSticky(act.id)} className="absolute" style={{ top: 8, left: 8, fontSize: 9, fontWeight: 700, color: 'var(--coral-deep)', background: 'var(--surface)', borderRadius: 8, padding: '2px 6px', border: '1px solid var(--coral-soft)' }}>remove</button>
                 )}
               </div>
             ))}
           </div>
 
           {showAddSticky && (
-            <div className="mt-3 bg-rose-50 border border-rose-200 rounded-xl p-4 space-y-3">
-              <div className="font-semibold text-rose-700 text-sm">{t('explorer.addStickyTitle')}</div>
+            <div className="flex flex-col" style={{ gap: 10, marginTop: 12, background: 'var(--surface)', border: '1px solid var(--border)', borderRadius: 'var(--r-lg)', boxShadow: 'var(--shadow-card)', padding: 16 }}>
+              <div style={{ fontWeight: 700, fontSize: 14, color: 'var(--text)' }}>{t('explorer.addStickyTitle')}</div>
               <div className="flex gap-2">
-                <input value={newSticky.emoji} onChange={e => setNewSticky(p => ({ ...p, emoji: e.target.value }))} className="w-12 border border-stone-200 rounded-lg px-2 py-2 text-center text-lg" />
-                <input value={newSticky.name}  onChange={e => setNewSticky(p => ({ ...p, name: e.target.value }))}  className="flex-1 border border-stone-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-amber-400" placeholder={t('explorer.activityName')} />
+                <input value={newSticky.emoji} onChange={e => setNewSticky(p => ({ ...p, emoji: e.target.value }))} style={{ ...inputStyle, width: 52, textAlign: 'center', fontSize: 20 }} />
+                <input value={newSticky.name} onChange={e => setNewSticky(p => ({ ...p, name: e.target.value }))} style={inputStyle} placeholder={t('explorer.activityName')} />
               </div>
-              <input value={newSticky.desc} onChange={e => setNewSticky(p => ({ ...p, desc: e.target.value }))} className="w-full border border-stone-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-amber-400" placeholder={t('explorer.descPlaceholder')} />
+              <input value={newSticky.desc} onChange={e => setNewSticky(p => ({ ...p, desc: e.target.value }))} style={inputStyle} placeholder={t('explorer.descPlaceholder')} />
               <div className="flex gap-2">
-                <button onClick={() => setShowAddSticky(false)} className="flex-1 bg-white text-stone-600 border border-stone-200 rounded-lg py-2.5 text-sm font-semibold">{t('modal.cancel')}</button>
-                <button onClick={saveSticky} disabled={!newSticky.name.trim()} className="flex-1 bg-rose-500 disabled:bg-stone-200 text-white rounded-lg py-2.5 text-sm font-bold">{t('modal.save')}</button>
+                <button onClick={() => setShowAddSticky(false)} className="press flex-1" style={{ background: 'var(--surface)', color: 'var(--text-soft)', border: '1.5px solid var(--border-strong)', borderRadius: 'var(--r-md)', padding: '11px 0', fontSize: 14, fontWeight: 700 }}>{t('modal.cancel')}</button>
+                <button onClick={saveSticky} disabled={!newSticky.name.trim()} className="press flex-1" style={{ background: newSticky.name.trim() ? 'var(--primary)' : 'var(--border)', color: '#fff', border: 'none', borderRadius: 'var(--r-md)', padding: '11px 0', fontSize: 14, fontWeight: 700, boxShadow: newSticky.name.trim() ? 'var(--shadow-btn)' : 'none' }}>{t('modal.save')}</button>
               </div>
             </div>
           )}
-          {regularItems.length > 0 && <div className="border-t border-stone-100 mt-4" />}
         </section>
       )}
 
       {viewMode === 'cards' && stickyItems.length === 0 && catFilter !== 'sticky' && typeFilter === 'all' && locationFilter === 'all' && (
-        <button onClick={() => setShowAddSticky(true)} className="text-xs text-amber-600 font-semibold">⭐ {t('explorer.addYours')}</button>
+        <button onClick={() => setShowAddSticky(true)} className="press self-start" style={{ fontSize: 12, fontWeight: 700, color: 'var(--primary)', background: 'transparent', border: 'none', cursor: 'pointer' }}>⭐ {t('explorer.addYours')}</button>
       )}
 
-      {/* All other activities */}
+      {/* all other activities */}
       {viewMode === 'cards' && regularItems.length > 0 && (
         <section>
           {(showSourced || stickyItems.length > 0) && typeFilter === 'all' && catFilter === 'all' && (
-            <div className="text-xs font-bold text-stone-400 uppercase tracking-wide mb-3">{t('explorer.allYear')}</div>
+            <Eyebrow style={{ marginBottom: 10 }}>{t('explorer.allYear')}</Eyebrow>
           )}
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div className={cardGridCls}>
             {regularItems.map(act => (
               <ActivityCard key={act.id} act={act} wxCat={wxCat}
                 onAddSat={() => addToDay(act, planSatStr)} onAddSun={() => addToDay(act, planSunStr)}
@@ -416,41 +405,36 @@ export default function ExplorerTab({ weather, weekendPlan, setWeekendPlan, stic
         </section>
       )}
 
+      {/* empty state */}
       {viewMode === 'cards' && filtered.length === 0 && (
-        <div className="text-center py-12 text-stone-400">
-          <div className="text-4xl mb-3">🔍</div>
-          <div className="font-semibold">{t('explorer.noResults')}</div>
-          <button onClick={() => { setCatFilter('all'); setLocationFilter('all'); setTypeFilter('all'); setDepthFilter('all'); }} className="mt-3 text-xs text-amber-600 hover:underline">
+        <div className="text-center" style={{ padding: '48px 12px', color: 'var(--text-faint)' }}>
+          <Icon name="search" size={40} sw={1.7} style={{ margin: '0 auto 10px' }} />
+          <div style={{ fontSize: 14, fontWeight: 700, color: 'var(--text-soft)' }}>{t('explorer.noResults')}</div>
+          <button onClick={() => { setCatFilter('all'); setLocationFilter('all'); setTypeFilter('all'); setDepthFilter('all'); }} className="press" style={{ marginTop: 12, fontSize: 12.5, fontWeight: 700, color: 'var(--primary)', background: 'var(--primary-soft)', border: 'none', borderRadius: 'var(--r-pill)', padding: '9px 16px', cursor: 'pointer' }}>
             {t('explorer.clearFilters')}
           </button>
         </div>
       )}
 
-      {/* Hidden activities */}
+      {/* hidden activities */}
       {hiddenItems.length > 0 && (
-        <section className="pt-2 border-t border-stone-100">
-          <button
-            onClick={() => setShowHidden(v => !v)}
-            className="flex items-center gap-2 text-xs text-stone-400 hover:text-stone-600 transition-colors w-full py-1"
-          >
+        <section style={{ paddingTop: 8, borderTop: '1px solid var(--border)' }}>
+          <button onClick={() => setShowHidden(v => !v)} className="flex items-center gap-2 w-full" style={{ fontSize: 12, color: 'var(--text-faint)', background: 'transparent', border: 'none', cursor: 'pointer', padding: '4px 0' }}>
             <span>👁 {hiddenItems.length} hidden {hiddenItems.length === 1 ? 'activity' : 'activities'}</span>
             <span className="ml-auto">{showHidden ? '▲' : '▼'}</span>
           </button>
           {showHidden && (
-            <div className="mt-2 space-y-2">
+            <div className="flex flex-col" style={{ gap: 8, marginTop: 8 }}>
               {hiddenItems.map(act => (
-                <div key={act.id} className="flex items-center justify-between gap-3 bg-stone-50 rounded-lg px-3 py-2.5 border border-stone-100">
+                <div key={act.id} className="flex items-center justify-between gap-3" style={{ background: 'var(--soft-ice)', borderRadius: 'var(--r-md)', padding: '10px 12px' }}>
                   <div className="flex items-center gap-2 min-w-0">
-                    <span className="text-base flex-shrink-0">{act.emoji}</span>
+                    <span className="flex-none" style={{ fontSize: 16 }}>{act.emoji}</span>
                     <div className="min-w-0">
-                      <div className="text-xs font-semibold text-stone-500 truncate">{act.name}</div>
-                      {act.dateShort && <div className="text-[10px] text-stone-400">{act.dateShort}</div>}
+                      <div className="truncate" style={{ fontSize: 12, fontWeight: 600, color: 'var(--text-soft)' }}>{act.name}</div>
+                      {act.dateShort && <div style={{ fontSize: 10, color: 'var(--text-faint)' }}>{act.dateShort}</div>}
                     </div>
                   </div>
-                  <button
-                    onClick={() => unhideActivity(act.id)}
-                    className="flex-shrink-0 text-[10px] font-semibold text-amber-600 border border-amber-200 bg-amber-50 rounded-lg px-2.5 py-1.5 min-h-[32px] hover:bg-amber-100 transition-colors"
-                  >
+                  <button onClick={() => unhideActivity(act.id)} className="press flex-none" style={{ fontSize: 10.5, fontWeight: 700, color: 'var(--primary)', border: '1.5px solid var(--border-strong)', background: 'var(--surface)', borderRadius: 'var(--r-pill)', padding: '6px 12px' }}>
                     unhide
                   </button>
                 </div>

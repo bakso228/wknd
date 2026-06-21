@@ -1,46 +1,68 @@
+import { useLang } from '../contexts/LangContext.jsx';
+import { catGrad } from '../data/styles.js';
+import Icon from './ui/Icon.jsx';
+
 export default function ItineraryCard({ itin, stops, onAddSat, onAddSun, addedSat, addedSun }) {
+  const { lang } = useLang();
+  const satWord = lang === 'de' ? 'Sa' : 'Sat';
+  const sunWord = lang === 'de' ? 'So' : 'Sun';
+
+  const addBtn = (added, label, onClick) => (
+    <button
+      onClick={onClick}
+      className="press"
+      style={{
+        fontSize: 12, fontWeight: 700, padding: '6px 13px', borderRadius: 'var(--r-pill)', cursor: 'pointer',
+        background: added ? 'var(--green-deep)' : 'var(--surface)',
+        color: added ? '#fff' : 'var(--text-soft)',
+        border: `1.5px solid ${added ? 'var(--green-deep)' : 'var(--border-strong)'}`,
+      }}
+    >
+      {added ? `✓ ${label}` : label}
+    </button>
+  );
+
   return (
-    <div className="bg-white rounded-xl border border-amber-200 ring-1 ring-amber-100 p-3 card-hover">
-      <div className="flex items-start justify-between gap-2 mb-2">
-        <div className="flex items-center gap-2">
-          <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-amber-100 text-amber-700 uppercase tracking-wide">
-            Route · {itin.duration}
+    <div style={{ background: 'var(--surface)', borderRadius: 'var(--r-lg)', boxShadow: 'var(--shadow-card)', overflow: 'hidden' }}>
+      {/* route strip */}
+      <div className="flex items-center justify-between gap-2" style={{ background: 'var(--primary-soft)', padding: '7px 14px' }}>
+        <span style={{ fontSize: 10, fontWeight: 800, letterSpacing: '0.05em', textTransform: 'uppercase', color: 'var(--primary-deep)' }}>
+          Route · {itin.duration}
+        </span>
+        {itin.area === 'south' && (
+          <span className="flex items-center gap-1 flex-none" style={{ fontSize: 10.5, fontWeight: 700, color: 'var(--primary-deep)' }}>
+            <Icon name="pin" size={12} /> Nah
           </span>
-          {itin.area === 'south' && (
-            <span className="text-[10px] font-semibold px-1.5 py-0.5 rounded bg-teal-50 text-teal-700 border border-teal-100">📍 Nah</span>
-          )}
-        </div>
-        <div className="flex gap-1 flex-shrink-0">
-          <button onClick={onAddSat}
-            className={`min-h-[36px] text-[10px] font-bold px-2.5 py-1 rounded-lg border transition-all ${addedSat ? 'bg-amber-500 text-white border-amber-500' : 'bg-stone-50 text-stone-600 border-stone-200 hover:bg-amber-50 hover:border-amber-300 hover:text-amber-700'}`}>
-            {addedSat ? '✓ Sa' : '+Sa'}
-          </button>
-          <button onClick={onAddSun}
-            className={`min-h-[36px] text-[10px] font-bold px-2.5 py-1 rounded-lg border transition-all ${addedSun ? 'bg-amber-500 text-white border-amber-500' : 'bg-stone-50 text-stone-600 border-stone-200 hover:bg-amber-50 hover:border-amber-300 hover:text-amber-700'}`}>
-            {addedSun ? '✓ So' : '+So'}
-          </button>
-        </div>
+        )}
       </div>
 
-      <div className="flex items-start gap-2 mb-2">
-        <span className="text-2xl flex-shrink-0 mt-0.5">{itin.emoji}</span>
-        <div>
-          <div className="font-bold text-stone-800 text-sm leading-tight">{itin.name}</div>
-          <div className="text-xs text-stone-500 mt-1 leading-relaxed">{itin.desc}</div>
+      <div style={{ padding: '13px 14px 14px' }}>
+        <div className="flex gap-3 items-start">
+          <div className="flex-none flex items-center justify-center" style={{ width: 46, height: 46, borderRadius: 14, fontSize: 24, background: catGrad(itin.cat || 'outdoor') }}>{itin.emoji}</div>
+          <div className="flex-1 min-w-0">
+            <div style={{ fontSize: 14.5, fontWeight: 700, letterSpacing: '-0.01em', lineHeight: 1.25, color: 'var(--text)' }}>{itin.name}</div>
+            {itin.desc && <div style={{ fontSize: 12, color: 'var(--text-soft)', lineHeight: 1.45, marginTop: 3 }}>{itin.desc}</div>}
+          </div>
         </div>
-      </div>
 
-      <div className="mt-2 flex flex-wrap items-center gap-1">
-        {stops.map((s, i) => (
-          <span key={s?.id || i} className="inline-flex items-center gap-1">
-            {i > 0 && <span className="text-stone-300 text-[10px]">→</span>}
-            <span className="inline-flex items-center gap-1 text-[10px] bg-stone-50 border border-stone-200 rounded-full px-2 py-0.5 text-stone-600">
-              <span>{s?.emoji || '📍'}</span>
-              <span className="font-semibold">{s?.name || 'Stop'}</span>
-              {s?._stay && <span className="text-stone-400">· {s._stay}</span>}
+        {/* stop chips */}
+        <div className="flex flex-wrap items-center" style={{ gap: 4, marginTop: 11 }}>
+          {stops.map((s, i) => (
+            <span key={s?.id || i} className="inline-flex items-center" style={{ gap: 4 }}>
+              {i > 0 && <span style={{ color: 'var(--border-strong)', fontSize: 10 }}>→</span>}
+              <span className="inline-flex items-center gap-1" style={{ fontSize: 10.5, fontWeight: 600, background: 'var(--soft-ice)', borderRadius: 'var(--r-pill)', padding: '4px 9px', color: 'var(--text-soft)' }}>
+                <span>{s?.emoji || '📍'}</span>
+                <span>{s?.name || 'Stop'}</span>
+                {s?._stay && <span style={{ color: 'var(--text-faint)' }}>· {s._stay}</span>}
+              </span>
             </span>
-          </span>
-        ))}
+          ))}
+        </div>
+
+        <div className="flex justify-end" style={{ gap: 7, marginTop: 13 }}>
+          {addBtn(addedSat, satWord, onAddSat)}
+          {addBtn(addedSun, sunWord, onAddSun)}
+        </div>
       </div>
     </div>
   );

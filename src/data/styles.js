@@ -1,31 +1,31 @@
-export const TYPE_DOT = {
-  holiday:  'bg-red-400',
-  festival: 'bg-orange-400',
-  food:     'bg-yellow-400',
-  culture:  'bg-purple-400',
-  outdoors: 'bg-green-400',
-  seasonal: 'bg-sky-400',
-  personal: 'bg-blue-500',
-  plan:     'bg-amber-400',
+// ============================================================
+// Loyalocal style helpers — category emoji-tile gradients and
+// calendar dot colors. Returns CSS values (used in inline styles).
+// ============================================================
+
+// Category tile gradients (keep the friendly emoji on top).
+export const CAT_GRAD = {
+  outdoor:  'linear-gradient(135deg,#62B58F,#3F9270)',
+  indoor:   'linear-gradient(135deg,#0091DC,#005F92)',
+  theater:  'linear-gradient(135deg,#6E5AA6,#4E3F86)',
+  food:     'linear-gradient(135deg,#8C6A4F,#5E4633)',
+  seasonal: 'linear-gradient(135deg,#FF8A5F,#E8633F)',
+  sticky:   'linear-gradient(135deg,#0091DC,#005F92)',
 };
 
-export const TYPE_PILL = {
-  holiday:  'bg-red-50 border-red-200 text-red-700',
-  festival: 'bg-orange-50 border-orange-200 text-orange-700',
-  food:     'bg-yellow-50 border-yellow-200 text-yellow-700',
-  culture:  'bg-purple-50 border-purple-200 text-purple-700',
-  outdoors: 'bg-green-50 border-green-200 text-green-700',
-  seasonal: 'bg-sky-50 border-sky-200 text-sky-700',
-  personal: 'bg-blue-50 border-blue-200 text-blue-700',
-  plan:     'bg-amber-50 border-amber-200 text-amber-800',
+export const catGrad = cat => CAT_GRAD[cat] || CAT_GRAD.sticky;
+
+// Calendar / upcoming dot colors by event type.
+export const TYPE_DOT_COLOR = {
+  plan:     '#0077B6',
+  personal: '#0077B6',
+  festival: '#FF6B5F',
+  holiday:  '#3F9270',
+  seasonal: '#62B58F',
+  outdoors: '#62B58F',
+  food:     '#E8A23F',
+  culture:  '#6E5AA6',
+  todo:     '#0077B6',
 };
 
-export const CAT_BADGE = {
-  outdoor:  'bg-emerald-100 text-emerald-700',
-  indoor:   'bg-blue-100 text-blue-700',
-  theater:  'bg-purple-100 text-purple-700',
-  food:     'bg-amber-100 text-amber-700',
-  seasonal: 'bg-orange-100 text-orange-700',
-  sticky:   'bg-rose-100 text-rose-700',
-  sourced:  'bg-violet-100 text-violet-700',
-};
+export const dotColor = type => TYPE_DOT_COLOR[type] || '#CBD9E3';
