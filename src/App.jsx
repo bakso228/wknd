@@ -1,7 +1,8 @@
-import { useState } from 'react';
-import { LangProvider } from './contexts/LangContext.jsx';
+import { useState, useRef, useCallback } from 'react';
+import { LangProvider, useLang } from './contexts/LangContext.jsx';
 import Header from './components/Header.jsx';
 import BottomNav from './components/BottomNav.jsx';
+import Toast from './components/ui/Toast.jsx';
 import PlanTab from './components/tabs/PlanTab.jsx';
 import ExplorerTab from './components/tabs/ExplorerTab.jsx';
 import CalendarTab from './components/tabs/CalendarTab.jsx';
@@ -10,6 +11,7 @@ import { useWeather } from './hooks/useWeather.js';
 import { useSupabaseStorage } from './hooks/useSupabaseStorage.js';
 
 function AppInner() {
+  const { t, lang } = useLang();
   const [tab, setTab] = useState('plan');
   const { weather, loading: wxLoading, error: wxError } = useWeather();
   const [weekendPlan,       setWeekendPlan]       = useSupabaseStorage('weekend_plan', {});
@@ -21,6 +23,19 @@ function AppInner() {
   const planCount  = Object.values(weekendPlan).reduce((s, a) => s + a.length, 0);
   const todoCount  = todos.filter(t => !t.completed).length;
 
+  // App-level toast (with Undo) — fired by Plan quick-capture / smart picks and Explore adds.
+  const [toast, setToast] = useState(null);
+  const toastTimer = useRef(null);
+  const showToast = useCallback((msg, onUndo) => {
+    if (toastTimer.current) clearTimeout(toastTimer.current);
+    setToast({ msg, onUndo, undoLabel: lang === 'de' ? 'Rückgängig' : 'Undo' });
+    toastTimer.current = setTimeout(() => setToast(null), 3800);
+  }, [lang]);
+  const dismissToast = useCallback(() => {
+    if (toastTimer.current) clearTimeout(toastTimer.current);
+    setToast(null);
+  }, []);
+
   return (
     <div className="min-h-screen" style={{ background: 'var(--canvas)' }}>
       <Header weather={weather} />
@@ -29,12 +44,14 @@ function AppInner() {
         {tab === 'plan' && (
           <PlanTab
             weather={weather}
-            wxLoading={wxLoading}
-            wxError={wxError}
             weekendPlan={weekendPlan}
             setWeekendPlan={setWeekendPlan}
             userEvents={userEvents}
+            setUserEvents={setUserEvents}
+            todos={todos}
+            setTodos={setTodos}
             onGoExplorer={() => setTab('explorer')}
+            showToast={showToast}
           />
         )}
         {tab === 'explorer' && (
@@ -46,6 +63,7 @@ function AppInner() {
             setStickyActivities={setStickyActivities}
             hiddenActivities={hiddenActivities}
             setHiddenActivities={setHiddenActivities}
+            showToast={showToast}
           />
         )}
         {tab === 'calendar' && (
@@ -61,6 +79,7 @@ function AppInner() {
         )}
       </main>
 
+      <Toast toast={toast} onUndo={() => { if (toast?.onUndo) toast.onUndo(); dismissToast(); }} />
       <BottomNav tab={tab} setTab={setTab} planCount={planCount} todoCount={todoCount} />
     </div>
   );

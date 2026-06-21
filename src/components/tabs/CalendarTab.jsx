@@ -15,6 +15,7 @@ export default function CalendarTab({ userEvents, setUserEvents, weekendPlan, to
   const [showAdd,         setShowAdd]         = useState(false);
   const [editEvent,       setEditEvent]       = useState(null);
   const [showAllUpcoming, setShowAllUpcoming] = useState(false);
+  const [gridOpen,        setGridOpen]        = useState(false);
 
   const dim  = daysInMonth(year, month);
   const fdow = firstDow(year, month);
@@ -58,6 +59,8 @@ export default function CalendarTab({ userEvents, setUserEvents, weekendPlan, to
   };
   const delEvent = id => setUserEvents(userEvents.filter(e => e.id !== id));
 
+  const toggleGrid = () => setGridOpen(o => { if (o) setSel(null); return !o; });
+
   const upcoming = useMemo(() => {
     const list = [];
     for (let i = 0; i < 180; i++) {
@@ -92,7 +95,6 @@ export default function CalendarTab({ userEvents, setUserEvents, weekendPlan, to
       .filter(({ evs }) => evs.length > 0);
   }, [upcomingDeduped, showAllUpcoming]);
 
-  // legend types present
   const LEGEND = [
     { type: 'plan',     label: t('calendar.typeLabels.plan') },
     { type: 'personal', label: t('calendar.typeLabels.personal') },
@@ -110,93 +112,9 @@ export default function CalendarTab({ userEvents, setUserEvents, weekendPlan, to
         <div style={{ fontSize: 11.5, fontWeight: 500, color: 'var(--text-faint)', marginTop: 2 }}>{t('calendar.subtitle')}</div>
       </div>
 
-      {/* month card */}
-      <div style={{ background: 'var(--surface)', borderRadius: 'var(--r-lg)', boxShadow: 'var(--shadow-card)', overflow: 'hidden' }}>
-        <div className="flex items-center justify-between" style={{ padding: '13px 14px 10px' }}>
-          <button onClick={prevMo} className="press flex items-center justify-center flex-none" style={{ width: 34, height: 34, borderRadius: '50%', border: 'none', background: 'var(--soft-ice)', color: 'var(--text-soft)', cursor: 'pointer' }}>
-            <Icon name="chevronLeft" size={17} sw={2.2} />
-          </button>
-          <div style={{ fontSize: 15, fontWeight: 800, letterSpacing: '-0.02em', color: 'var(--text)' }}>{MO_LABELS[month]} {year}</div>
-          <button onClick={nextMo} className="press flex items-center justify-center flex-none" style={{ width: 34, height: 34, borderRadius: '50%', border: 'none', background: 'var(--soft-ice)', color: 'var(--text-soft)', cursor: 'pointer' }}>
-            <Icon name="chevronRight" size={17} sw={2.2} />
-          </button>
-        </div>
-
-        <div className="grid" style={{ gridTemplateColumns: 'repeat(7,1fr)', padding: '0 6px' }}>
-          {DOW_LABELS.map(d => (
-            <div key={d} className="text-center" style={{ fontSize: 10, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.04em', color: 'var(--text-faint)', padding: '4px 0 6px' }}>{d}</div>
-          ))}
-        </div>
-
-        <div className="grid" style={{ gridTemplateColumns: 'repeat(7,1fr)', padding: '0 6px 10px' }}>
-          {Array.from({ length: fdow }).map((_, i) => <div key={'e' + i} style={{ height: 44 }} />)}
-          {Array.from({ length: dim }).map((_, i) => {
-            const day     = i + 1;
-            const isToday = today.getFullYear() === year && today.getMonth() === month && today.getDate() === day;
-            const isSel   = sel === day;
-            const evs     = getAllDayEvents(year, month, day);
-            const col     = (fdow + i) % 7;
-            const isWknd  = col >= 5;
-            const numBg   = isToday ? 'var(--primary)' : isSel ? 'var(--primary-soft)' : 'transparent';
-            const numColor = isToday ? '#fff' : isSel ? 'var(--primary-deep)' : isWknd ? 'var(--coral-deep)' : 'var(--text)';
-            return (
-              <div key={day} onClick={() => setSel(day === sel ? null : day)} className="flex flex-col items-center justify-center select-none" style={{ height: 44, gap: 2, cursor: 'pointer' }}>
-                <div className="flex items-center justify-center" style={{ width: 28, height: 28, borderRadius: '50%', fontSize: 13, fontWeight: 700, background: numBg, color: numColor }}>{day}</div>
-                <div className="flex" style={{ gap: 2, height: 5 }}>
-                  {evs.slice(0, 3).map((ev, j) => (
-                    <div key={j} style={{ width: 5, height: 5, borderRadius: '50%', background: dotColor(ev.type) }} />
-                  ))}
-                </div>
-              </div>
-            );
-          })}
-        </div>
-      </div>
-
-      {/* selected day */}
-      {selDate && (
-        <div style={{ background: 'var(--primary-soft)', borderRadius: 'var(--r-lg)', padding: 14 }}>
-          <div className="flex items-center justify-between gap-2">
-            <div style={{ fontSize: 13.5, fontWeight: 800, color: 'var(--primary-deep)' }}>{fmtLong(selDate, lang)}</div>
-            <button onClick={() => setShowAdd(true)} className="press inline-flex items-center gap-[5px]" style={{ fontSize: 11.5, fontWeight: 700, color: '#fff', background: 'var(--primary)', border: 'none', borderRadius: 'var(--r-pill)', padding: '7px 13px', cursor: 'pointer' }}>
-              <Icon name="plus" size={13} sw={2.4} /> {t('calendar.addShort')}
-            </button>
-          </div>
-          {selEvs.length > 0 && (
-            <div className="flex flex-col" style={{ gap: 7, marginTop: 11 }}>
-              {selEvs.map((ev, i) => (
-                <div key={i} className="flex items-center gap-[10px]" style={{ background: 'var(--surface)', borderRadius: 'var(--r-md)', padding: '9px 11px' }}>
-                  <span className="flex-none" style={{ fontSize: 18 }}>{ev.e || ev.emoji}</span>
-                  <div className="flex-1 min-w-0">
-                    <div style={{ fontSize: 13, fontWeight: 700, lineHeight: 1.25, color: 'var(--text)', textDecoration: ev.source === 'todo' && ev.completed ? 'line-through' : 'none' }}>{ev.name}</div>
-                    {ev.source === 'plan' && <div style={{ fontSize: 10.5, color: 'var(--text-faint)', marginTop: 1 }}>{t('calendar.planItem')}</div>}
-                    {ev.source === 'todo' && ev.owner && <div style={{ fontSize: 10.5, color: 'var(--text-faint)', marginTop: 1 }}>{ev.owner}</div>}
-                    {ev.notes && <div style={{ fontSize: 10.5, color: 'var(--text-faint)', marginTop: 1 }}>{ev.notes}</div>}
-                  </div>
-                  {ev.source === 'user' && (
-                    <div className="flex items-center gap-1 flex-none">
-                      <button onClick={() => { setEditEvent(ev); setShowAdd(true); }} className="press flex items-center justify-center" style={{ width: 28, height: 28, border: 'none', background: 'transparent', color: 'var(--text-faint)', cursor: 'pointer' }}>
-                        <Icon name="edit" size={15} />
-                      </button>
-                      <button onClick={() => delEvent(ev.id)} className="press flex items-center justify-center" style={{ width: 28, height: 28, border: 'none', background: 'transparent', color: 'var(--text-faint)', cursor: 'pointer' }}>
-                        <Icon name="close" size={15} sw={2.2} />
-                      </button>
-                    </div>
-                  )}
-                </div>
-              ))}
-            </div>
-          )}
-        </div>
-      )}
-
-      {showAdd && selDate && (
-        <AddEventModal date={selDate} onSave={addEvent} onClose={() => { setShowAdd(false); setEditEvent(null); }} initialEvent={editEvent} />
-      )}
-
-      {/* upcoming */}
+      {/* upcoming agenda (primary surface) */}
       <div>
-        <div className="flex items-center justify-between gap-2.5" style={{ margin: '2px 2px 10px' }}>
+        <div className="flex items-center justify-between gap-2.5" style={{ margin: '0 2px 10px' }}>
           <div style={{ fontSize: 11.5, fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.09em', color: 'var(--text-faint)' }}>{t('calendar.upcoming')}</div>
           <SegmentedControl
             options={[{ value: false, label: t('calendar.myEvents') }, { value: true, label: t('calendar.all') }]}
@@ -220,7 +138,7 @@ export default function CalendarTab({ userEvents, setUserEvents, weekendPlan, to
                 date.toLocaleDateString(locale, { weekday: 'short', day: 'numeric', month: 'short' });
               return (
                 <div key={date.toISOString()} className="press flex gap-[11px]" style={{ padding: '11px 14px', borderBottom: '1px solid var(--border)', cursor: 'pointer' }}
-                  onClick={() => { setYear(date.getFullYear()); setMonth(date.getMonth()); setSel(date.getDate()); }}>
+                  onClick={() => { setGridOpen(true); setYear(date.getFullYear()); setMonth(date.getMonth()); setSel(date.getDate()); }}>
                   <div className="flex-none" style={{ width: 62, fontSize: 11.5, fontWeight: 700, paddingTop: 1, color: isToday ? 'var(--primary)' : 'var(--text-faint)' }}>{label}</div>
                   <div className="flex-1 min-w-0 flex flex-col" style={{ gap: 6 }}>
                     {evs.map((ev, i) => {
@@ -247,6 +165,99 @@ export default function CalendarTab({ userEvents, setUserEvents, weekendPlan, to
           </div>
         )}
       </div>
+
+      {/* month view toggle */}
+      <button onClick={toggleGrid} className="press w-full flex items-center justify-center gap-[7px]" style={{ background: 'var(--surface)', border: '1px solid var(--border)', borderRadius: 'var(--r-md)', padding: 12, cursor: 'pointer', color: 'var(--text-soft)', fontSize: 12.5, fontWeight: 700, boxShadow: 'var(--shadow-card)' }}>
+        <Icon name="calendar" size={16} />
+        {gridOpen ? t('calendar.hideMonth') : t('calendar.showMonth')}
+      </button>
+
+      {/* collapsible month grid + selected day */}
+      {gridOpen && (
+        <div className="flex flex-col" style={{ gap: 12 }}>
+          <div style={{ background: 'var(--surface)', borderRadius: 'var(--r-lg)', boxShadow: 'var(--shadow-card)', overflow: 'hidden' }}>
+            <div className="flex items-center justify-between" style={{ padding: '13px 14px 10px' }}>
+              <button onClick={prevMo} className="press flex items-center justify-center flex-none" style={{ width: 34, height: 34, borderRadius: '50%', border: 'none', background: 'var(--soft-ice)', color: 'var(--text-soft)', cursor: 'pointer' }}>
+                <Icon name="chevronLeft" size={17} sw={2.2} />
+              </button>
+              <div style={{ fontSize: 15, fontWeight: 800, letterSpacing: '-0.02em', color: 'var(--text)' }}>{MO_LABELS[month]} {year}</div>
+              <button onClick={nextMo} className="press flex items-center justify-center flex-none" style={{ width: 34, height: 34, borderRadius: '50%', border: 'none', background: 'var(--soft-ice)', color: 'var(--text-soft)', cursor: 'pointer' }}>
+                <Icon name="chevronRight" size={17} sw={2.2} />
+              </button>
+            </div>
+
+            <div className="grid" style={{ gridTemplateColumns: 'repeat(7,1fr)', padding: '0 6px' }}>
+              {DOW_LABELS.map(d => (
+                <div key={d} className="text-center" style={{ fontSize: 10, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.04em', color: 'var(--text-faint)', padding: '4px 0 6px' }}>{d}</div>
+              ))}
+            </div>
+
+            <div className="grid" style={{ gridTemplateColumns: 'repeat(7,1fr)', padding: '0 6px 10px' }}>
+              {Array.from({ length: fdow }).map((_, i) => <div key={'e' + i} style={{ height: 44 }} />)}
+              {Array.from({ length: dim }).map((_, i) => {
+                const day     = i + 1;
+                const isToday = today.getFullYear() === year && today.getMonth() === month && today.getDate() === day;
+                const isSel   = sel === day;
+                const evs     = getAllDayEvents(year, month, day);
+                const col     = (fdow + i) % 7;
+                const isWknd  = col >= 5;
+                const numBg   = isToday ? 'var(--primary)' : isSel ? 'var(--primary-soft)' : 'transparent';
+                const numColor = isToday ? '#fff' : isSel ? 'var(--primary-deep)' : isWknd ? 'var(--coral-deep)' : 'var(--text)';
+                return (
+                  <div key={day} onClick={() => setSel(day === sel ? null : day)} className="flex flex-col items-center justify-center select-none" style={{ height: 44, gap: 2, cursor: 'pointer' }}>
+                    <div className="flex items-center justify-center" style={{ width: 28, height: 28, borderRadius: '50%', fontSize: 13, fontWeight: 700, background: numBg, color: numColor }}>{day}</div>
+                    <div className="flex" style={{ gap: 2, height: 5 }}>
+                      {evs.slice(0, 3).map((ev, j) => (
+                        <div key={j} style={{ width: 5, height: 5, borderRadius: '50%', background: dotColor(ev.type) }} />
+                      ))}
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+
+          {selDate && (
+            <div style={{ background: 'var(--primary-soft)', borderRadius: 'var(--r-lg)', padding: 14 }}>
+              <div className="flex items-center justify-between gap-2">
+                <div style={{ fontSize: 13.5, fontWeight: 800, color: 'var(--primary-deep)' }}>{fmtLong(selDate, lang)}</div>
+                <button onClick={() => setShowAdd(true)} className="press inline-flex items-center gap-[5px]" style={{ fontSize: 11.5, fontWeight: 700, color: '#fff', background: 'var(--primary)', border: 'none', borderRadius: 'var(--r-pill)', padding: '7px 13px', cursor: 'pointer' }}>
+                  <Icon name="plus" size={13} sw={2.4} /> {t('calendar.addShort')}
+                </button>
+              </div>
+              {selEvs.length > 0 && (
+                <div className="flex flex-col" style={{ gap: 7, marginTop: 11 }}>
+                  {selEvs.map((ev, i) => (
+                    <div key={i} className="flex items-center gap-[10px]" style={{ background: 'var(--surface)', borderRadius: 'var(--r-md)', padding: '9px 11px' }}>
+                      <span className="flex-none" style={{ fontSize: 18 }}>{ev.e || ev.emoji}</span>
+                      <div className="flex-1 min-w-0">
+                        <div style={{ fontSize: 13, fontWeight: 700, lineHeight: 1.25, color: 'var(--text)', textDecoration: ev.source === 'todo' && ev.completed ? 'line-through' : 'none' }}>{ev.name}</div>
+                        {ev.source === 'plan' && <div style={{ fontSize: 10.5, color: 'var(--text-faint)', marginTop: 1 }}>{t('calendar.planItem')}</div>}
+                        {ev.source === 'todo' && ev.owner && <div style={{ fontSize: 10.5, color: 'var(--text-faint)', marginTop: 1 }}>{ev.owner}</div>}
+                        {ev.notes && <div style={{ fontSize: 10.5, color: 'var(--text-faint)', marginTop: 1 }}>{ev.notes}</div>}
+                      </div>
+                      {ev.source === 'user' && (
+                        <div className="flex items-center gap-1 flex-none">
+                          <button onClick={() => { setEditEvent(ev); setShowAdd(true); }} className="press flex items-center justify-center" style={{ width: 28, height: 28, border: 'none', background: 'transparent', color: 'var(--text-faint)', cursor: 'pointer' }}>
+                            <Icon name="edit" size={15} />
+                          </button>
+                          <button onClick={() => delEvent(ev.id)} className="press flex items-center justify-center" style={{ width: 28, height: 28, border: 'none', background: 'transparent', color: 'var(--text-faint)', cursor: 'pointer' }}>
+                            <Icon name="close" size={15} sw={2.2} />
+                          </button>
+                        </div>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          )}
+        </div>
+      )}
+
+      {showAdd && selDate && (
+        <AddEventModal date={selDate} onSave={addEvent} onClose={() => { setShowAdd(false); setEditEvent(null); }} initialEvent={editEvent} />
+      )}
 
       {/* legend */}
       <div style={{ background: 'var(--surface)', borderRadius: 'var(--r-lg)', boxShadow: 'var(--shadow-card)', padding: 14 }}>

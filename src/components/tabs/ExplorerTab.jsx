@@ -23,8 +23,10 @@ function Eyebrow({ children, style }) {
   );
 }
 
-export default function ExplorerTab({ weather, weekendPlan, setWeekendPlan, stickyActivities, setStickyActivities, hiddenActivities, setHiddenActivities }) {
+export default function ExplorerTab({ weather, weekendPlan, setWeekendPlan, stickyActivities, setStickyActivities, hiddenActivities, setHiddenActivities, showToast }) {
   const { t, lang } = useLang();
+  const locale = lang === 'de' ? 'de-DE' : 'en-US';
+  const de = lang === 'de';
   const [catFilter,      setCatFilter]      = useState('all');
   const [locationFilter, setLocationFilter] = useState('all');
   const [typeFilter,     setTypeFilter]     = useState('all');
@@ -101,7 +103,14 @@ export default function ExplorerTab({ weather, weekendPlan, setWeekendPlan, stic
   const planSunStr = toLocalDateStr(_sun);
 
   const isAdded  = (id, day) => (weekendPlan[day] || []).some(a => a.id === id);
-  const addToDay = (act, day) => setWeekendPlan(p => ({ ...p, [day]: [...(p[day] || []), { ...act, _key: act.id + Date.now() }] }));
+  const addToDay = (act, day) => {
+    const dayName = (day === planSunStr ? _sun : _sat).toLocaleDateString(locale, { weekday: 'long' });
+    if ((weekendPlan[day] || []).some(a => a.id === act.id)) { showToast?.(t('toast.already'), null); return; }
+    const key = act.id + Date.now();
+    setWeekendPlan(p => ({ ...p, [day]: [...(p[day] || []), { ...act, _key: key }] }));
+    showToast?.(de ? `Zu ${dayName} hinzugefügt` : `Added to ${dayName}`, () =>
+      setWeekendPlan(p => ({ ...p, [day]: (p[day] || []).filter(a => a._key !== key) })));
+  };
 
   const allById = useMemo(() => {
     const map = new Map();
