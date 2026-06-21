@@ -4,7 +4,7 @@ import { translations } from '../i18n/translations.js';
 const LangContext = createContext();
 
 export function LangProvider({ children }) {
-  const [lang, setLang] = useState(() => localStorage.getItem('wknd_lang') || 'de');
+  const [lang, setLang] = useState(() => localStorage.getItem('wknd_lang') || 'en');
 
   const toggleLang = () => {
     const next = lang === 'de' ? 'en' : 'de';
