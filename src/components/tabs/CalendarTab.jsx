@@ -157,9 +157,14 @@ export default function CalendarTab({ userEvents, setUserEvents, weekendPlan, to
                           {ev.source === 'annual' && <span className="flex-none" style={{ fontSize: 10, color: 'var(--text-faint)' }}>{t('calendar.annually')}</span>}
                           {ev.source === 'todo' && ev.owner && <span className="flex-none" style={{ fontSize: 10, color: 'var(--text-faint)' }}>{ev.owner}</span>}
                           {ev.source === 'user' && (
-                            <button onClick={e => { e.stopPropagation(); delEvent(ev.id); }} className="press flex-none flex items-center justify-center" style={{ width: 24, height: 24, border: 'none', background: 'transparent', color: 'var(--text-faint)', cursor: 'pointer' }}>
-                              <Icon name="close" size={13} sw={2.2} />
-                            </button>
+                            <>
+                              <button onClick={e => { e.stopPropagation(); setEditEvent(ev); setShowAdd(true); }} className="press flex-none flex items-center justify-center" style={{ width: 24, height: 24, border: 'none', background: 'transparent', color: 'var(--primary)', cursor: 'pointer' }}>
+                                <Icon name="edit" size={13} />
+                              </button>
+                              <button onClick={e => { e.stopPropagation(); delEvent(ev.id); }} className="press flex-none flex items-center justify-center" style={{ width: 24, height: 24, border: 'none', background: 'transparent', color: 'var(--text-faint)', cursor: 'pointer' }}>
+                                <Icon name="close" size={13} sw={2.2} />
+                              </button>
+                            </>
                           )}
                         </div>
                       );

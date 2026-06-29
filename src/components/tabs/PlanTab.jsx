@@ -6,14 +6,15 @@ import { catGrad } from '../../data/styles.js';
 import { PEOPLE, PERSON } from '../../data/fitness.js';
 import Icon from '../ui/Icon.jsx';
 import SegmentedControl from '../ui/SegmentedControl.jsx';
+import AddEventModal from '../AddEventModal.jsx';
 
 export default function PlanTab({ weather, weekendPlan, setWeekendPlan, userEvents, setUserEvents, todos, setTodos, pickups, setPickups, onGoExplorer, showToast }) {
   const { t, lang } = useLang();
   const locale = lang === 'de' ? 'de-DE' : 'en-US';
-  const de = lang === 'de';
 
   const [qMode,      setQMode]      = useState('todo');   // 'todo' | 'event'
   const [qText,      setQText]      = useState('');
+  const [editEvent,  setEditEvent]  = useState(null);     // user event being edited
 
   const today = new Date(); today.setHours(0, 0, 0, 0);
   const todayStr = toLocalDateStr(today);
@@ -53,6 +54,8 @@ export default function PlanTab({ weather, weekendPlan, setWeekendPlan, userEven
   // ---- mutations ----
   const removeFromDay = (dateStr, key) =>
     setWeekendPlan(p => ({ ...p, [dateStr]: (p[dateStr] || []).filter(a => a._key !== key) }));
+
+  const saveEvent = ev => { setUserEvents(prev => prev.map(e => e.id === ev.id ? ev : e)); setEditEvent(null); };
 
   const quickAdd = () => {
     const txt = qText.trim();
@@ -101,55 +104,48 @@ export default function PlanTab({ weather, weekendPlan, setWeekendPlan, userEven
     );
   }
 
-  function DayCard({ date, dateStr, wx }) {
+  function DayRow({ date, dateStr, wx, first }) {
     const items  = weekendPlan[dateStr] || [];
     const calEvs = calEventsForDay(dateStr);
     const isToday = dateStr === todayStr;
     return (
-      <div style={{ background: 'var(--surface)', borderRadius: 'var(--r-lg)', boxShadow: 'var(--shadow-card)', overflow: 'hidden', border: isToday ? '1px solid var(--primary)' : '1px solid transparent' }}>
-        <div className="flex items-center justify-between" style={{ padding: '14px 16px 10px' }}>
-          <div className="flex items-center gap-[9px] min-w-0">
-            <div className="flex-none rounded-full" style={{ width: 7, height: 7, background: 'var(--primary)' }} />
-            <div className="min-w-0">
-              <div className="flex items-center gap-[7px]">
-                <span style={{ fontSize: 16, fontWeight: 800, letterSpacing: '-0.02em', color: 'var(--text)' }}>{date.toLocaleDateString(locale, { weekday: 'long' })}</span>
-                {isToday && <span style={{ fontSize: 10, fontWeight: 700, color: 'var(--primary-deep)', background: 'var(--primary-soft)', padding: '2px 8px', borderRadius: 'var(--r-pill)' }}>{t('plan.today')}</span>}
-              </div>
-              <div style={{ fontSize: 11.5, fontWeight: 500, color: 'var(--text-faint)', marginTop: 1 }}>{date.toLocaleDateString(locale, { day: 'numeric', month: 'long' })}</div>
-            </div>
+      <div style={{ borderTop: first ? 'none' : '1px solid var(--border)' }}>
+        <div className="flex items-center justify-between" style={{ padding: '9px 14px 4px' }}>
+          <div className="flex items-center gap-[8px] min-w-0">
+            <div className="flex-none rounded-full" style={{ width: 6, height: 6, background: isToday ? 'var(--primary)' : 'var(--text-faint)' }} />
+            <span style={{ fontSize: 13.5, fontWeight: 800, letterSpacing: '-0.01em', color: isToday ? 'var(--primary-deep)' : 'var(--text)' }}>{date.toLocaleDateString(locale, { weekday: 'short' }).replace('.', '')}</span>
+            <span style={{ fontSize: 11.5, fontWeight: 500, color: 'var(--text-faint)' }}>{date.toLocaleDateString(locale, { day: 'numeric', month: 'short' })}</span>
+            {isToday && <span style={{ fontSize: 9.5, fontWeight: 700, color: 'var(--primary-deep)', background: 'var(--primary-soft)', padding: '1px 7px', borderRadius: 'var(--r-pill)' }}>{t('plan.today')}</span>}
           </div>
           <WeatherPill wx={wx} />
         </div>
-        <div className="flex flex-col gap-2" style={{ padding: '0 14px 14px' }}>
+        <div className="flex flex-col" style={{ gap: 5, padding: '0 14px 9px' }}>
           {items.map(act => {
             const isSourced = act.eventType === 'sourced';
             return (
-              <div key={act._key} className="flex items-center gap-[11px]" style={{ background: 'var(--soft-ice)', borderRadius: 'var(--r-md)', padding: '9px 11px' }}>
-                <div className="flex-none flex items-center justify-center" style={{ width: 38, height: 38, borderRadius: 11, fontSize: 20, background: catGrad(act.cat) }}>{act.emoji}</div>
+              <div key={act._key} className="flex items-center gap-[9px]" style={{ background: 'var(--soft-ice)', borderRadius: 'var(--r-md)', padding: '6px 9px' }}>
+                <div className="flex-none flex items-center justify-center" style={{ width: 28, height: 28, borderRadius: 8, fontSize: 15, background: catGrad(act.cat) }}>{act.emoji}</div>
                 <div className="flex-1 min-w-0">
-                  <div className="truncate" style={{ fontSize: 13.5, fontWeight: 700, letterSpacing: '-0.01em', lineHeight: 1.25, color: 'var(--text)' }}>{act.name}</div>
-                  <div style={{ fontSize: 11, fontWeight: 600, marginTop: 2, color: isSourced ? 'var(--coral-deep)' : 'var(--text-faint)' }}>
-                    {isSourced ? act.dateShort : (act.duration ? `⏱ ${act.duration}` : '')}
-                  </div>
+                  <div className="truncate" style={{ fontSize: 13, fontWeight: 700, letterSpacing: '-0.01em', lineHeight: 1.25, color: 'var(--text)' }}>{act.name}</div>
+                  {isSourced && <div style={{ fontSize: 10.5, fontWeight: 600, color: 'var(--coral-deep)' }}>{act.dateShort}</div>}
                 </div>
-                <button onClick={() => removeFromDay(dateStr, act._key)} className="press flex-none flex items-center justify-center rounded-full" style={{ width: 28, height: 28, border: 'none', background: 'transparent', color: 'var(--text-faint)', cursor: 'pointer' }} aria-label="remove">
-                  <Icon name="close" size={15} sw={2.2} />
+                <button onClick={() => removeFromDay(dateStr, act._key)} className="press flex-none flex items-center justify-center rounded-full" style={{ width: 26, height: 26, border: 'none', background: 'transparent', color: 'var(--text-faint)', cursor: 'pointer' }} aria-label="remove">
+                  <Icon name="close" size={14} sw={2.2} />
                 </button>
               </div>
             );
           })}
-          {calEvs.map((ev, i) => (
-            <div key={'cal_' + i} className="flex items-center gap-[11px]" style={{ background: 'var(--primary-soft)', borderRadius: 'var(--r-md)', padding: '9px 11px' }}>
-              <div className="flex-none flex items-center justify-center" style={{ width: 38, height: 38, borderRadius: 11, fontSize: 19, background: 'var(--surface)' }}>{ev.emoji || '📅'}</div>
+          {calEvs.map(ev => (
+            <div key={'cal_' + ev.id} className="flex items-center gap-[9px]" style={{ background: 'var(--primary-soft)', borderRadius: 'var(--r-md)', padding: '6px 9px' }}>
+              <div className="flex-none flex items-center justify-center" style={{ width: 28, height: 28, borderRadius: 8, fontSize: 15, background: 'var(--surface)' }}>{ev.emoji || '📅'}</div>
               <div className="flex-1 min-w-0">
-                <div className="truncate" style={{ fontSize: 13.5, fontWeight: 700, lineHeight: 1.25, color: 'var(--primary-deep)' }}>{ev.name}</div>
-                <div style={{ fontSize: 11, fontWeight: 600, marginTop: 2, color: 'var(--primary)' }}>{de ? 'Termin' : 'Event'}</div>
+                <div className="truncate" style={{ fontSize: 13, fontWeight: 700, lineHeight: 1.25, color: 'var(--primary-deep)' }}>{ev.name}</div>
               </div>
+              <button onClick={() => setEditEvent(ev)} className="press flex-none flex items-center justify-center rounded-full" style={{ width: 26, height: 26, border: 'none', background: 'transparent', color: 'var(--primary)', cursor: 'pointer' }} aria-label="edit">
+                <Icon name="edit" size={14} />
+              </button>
             </div>
           ))}
-          <button onClick={onGoExplorer} className="press w-full" style={{ border: '1.5px dashed var(--primary)', background: 'var(--primary-soft)', borderRadius: 'var(--r-md)', padding: 11, cursor: 'pointer', color: 'var(--primary-deep)', fontSize: 12.5, fontWeight: 700 }}>
-            {t('plan.addMore')}
-          </button>
         </div>
       </div>
     );
@@ -268,10 +264,10 @@ export default function PlanTab({ weather, weekendPlan, setWeekendPlan, userEven
         </div>
       )}
 
-      {/* day cards */}
+      {/* day list (condensed, light day separators) */}
       {days.length > 0 && (
-        <div className="flex flex-col" style={{ gap: 12, marginTop: 16 }}>
-          {days.map(d => <DayCard key={d.dateStr} {...d} />)}
+        <div style={{ marginTop: 16, background: 'var(--surface)', borderRadius: 'var(--r-lg)', boxShadow: 'var(--shadow-card)', overflow: 'hidden' }}>
+          {days.map((d, i) => <DayRow key={d.dateStr} {...d} first={i === 0} />)}
         </div>
       )}
 
@@ -284,6 +280,15 @@ export default function PlanTab({ weather, weekendPlan, setWeekendPlan, userEven
           <div style={{ fontSize: 15, fontWeight: 800, letterSpacing: '-0.02em', color: 'var(--text)' }}>{t('plan.emptyTitle')}</div>
           <div style={{ fontSize: 12.5, fontWeight: 500, color: 'var(--text-faint)', marginTop: 3 }}>{t('plan.emptyBody')}</div>
         </div>
+      )}
+
+      {editEvent && (
+        <AddEventModal
+          date={new Date((editEvent.startDate || editEvent.date) + 'T00:00:00')}
+          onSave={saveEvent}
+          onClose={() => setEditEvent(null)}
+          initialEvent={editEvent}
+        />
       )}
     </div>
   );
