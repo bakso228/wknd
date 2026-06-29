@@ -1,23 +1,23 @@
 import { useState } from 'react';
 import { useLang } from '../contexts/LangContext.jsx';
 import { dotColor } from '../data/styles.js';
-import { fmtLong } from '../utils/date.js';
 import Icon from './ui/Icon.jsx';
 
 const EMOJIS = ['📌','🎉','🎂','🏖️','🎭','🚗','✈️','🏠','⚽','🎸','🍕','👨‍👩‍👧‍👦','❤️','🌟','🎈','🌳','🎄','🏃','🎓'];
 const TYPE_KEYS = ['personal','festival','outdoors','food','culture','holiday'];
 
 export default function AddEventModal({ date, onSave, onClose, initialEvent }) {
-  const { t, lang } = useLang();
+  const { t } = useLang();
 
   const pad = n => String(n).padStart(2, '0');
-  const startStr = `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}`;
+  const dateStr = `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}`;
 
   const [name,    setName]    = useState(initialEvent?.name  ?? '');
   const [emoji,   setEmoji]   = useState(initialEvent?.emoji ?? '📌');
   const [type,    setType]    = useState(initialEvent?.type  ?? 'personal');
   const [notes,   setNotes]   = useState(initialEvent?.notes ?? '');
-  const [endDate, setEndDate] = useState(initialEvent?.endDate ?? startStr);
+  const [startStr, setStartStr] = useState(initialEvent?.startDate ?? initialEvent?.date ?? dateStr);
+  const [endDate, setEndDate] = useState(initialEvent?.endDate ?? dateStr);
 
   const isMultiDay = endDate && endDate > startStr;
   const isEditing  = !!initialEvent;
@@ -25,7 +25,8 @@ export default function AddEventModal({ date, onSave, onClose, initialEvent }) {
   const save = () => {
     if (!name.trim()) return;
     const id = initialEvent?.id ?? Date.now().toString();
-    onSave({ id, startDate: startStr, date: startStr, endDate: endDate || startStr, name: name.trim(), emoji, type, notes });
+    const end = endDate && endDate >= startStr ? endDate : startStr;
+    onSave({ id, startDate: startStr, date: startStr, endDate: end, name: name.trim(), emoji, type, notes });
   };
 
   const inputStyle = {
@@ -56,7 +57,7 @@ export default function AddEventModal({ date, onSave, onClose, initialEvent }) {
         <div className="flex gap-2 items-end">
           <div className="flex-1">
             <div style={eyebrow}>{t('modal.from')}</div>
-            <div style={{ background: 'var(--primary-soft)', borderRadius: 'var(--r-md)', padding: '11px 12px', fontSize: 13, fontWeight: 700, color: 'var(--primary-deep)' }}>{fmtLong(date, lang)}</div>
+            <input type="date" value={startStr} onChange={e => { const v = e.target.value; if (v) { setStartStr(v); if (endDate < v) setEndDate(v); } }} style={{ ...inputStyle, padding: '10px 12px', fontSize: 14 }} />
           </div>
           <div className="flex-1">
             <div style={eyebrow}>

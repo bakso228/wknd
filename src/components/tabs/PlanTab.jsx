@@ -5,7 +5,6 @@ import { wxInfo } from '../../utils/weather.js';
 import { catGrad } from '../../data/styles.js';
 import { PEOPLE, PERSON } from '../../data/fitness.js';
 import Icon from '../ui/Icon.jsx';
-import Chip from '../ui/Chip.jsx';
 import SegmentedControl from '../ui/SegmentedControl.jsx';
 
 export default function PlanTab({ weather, weekendPlan, setWeekendPlan, userEvents, setUserEvents, todos, setTodos, pickups, setPickups, onGoExplorer, showToast }) {
@@ -13,33 +12,30 @@ export default function PlanTab({ weather, weekendPlan, setWeekendPlan, userEven
   const locale = lang === 'de' ? 'de-DE' : 'en-US';
   const de = lang === 'de';
 
-  const [weekendSel, setWeekendSel] = useState('this');
   const [qMode,      setQMode]      = useState('todo');   // 'todo' | 'event'
   const [qText,      setQText]      = useState('');
-  const [qDay,       setQDay]       = useState('sat');     // 'sat' | 'sun'
 
   const today = new Date(); today.setHours(0, 0, 0, 0);
   const todayStr = toLocalDateStr(today);
   const dow = today.getDay();
   const addDays = (d, n) => { const x = new Date(d); x.setDate(d.getDate() + n); return x; };
 
-  const sat0 = addDays(today, dow === 6 ? 0 : dow === 0 ? -1 : 6 - dow);
-  const sun0 = addDays(today, dow === 0 ? 0 : (7 - dow) % 7);
-  const base = weekendSel === 'next' ? 7 : 0;
-  const selSat = addDays(sat0, base);
-  const selSun = addDays(sun0, base);
-  const selSatStr = toLocalDateStr(selSat);
-  const selSunStr = toLocalDateStr(selSun);
+  const [qDate, setQDate] = useState(todayStr);   // event quick-add date (any day)
 
   const wxForStr = str => weather?.days?.find(w => w.dateStr === str) ?? null;
-  const wxSat = wxForStr(selSatStr);
-  const wxSun = wxForStr(selSunStr);
 
-  const weekendName = de
-    ? (weekendSel === 'next' ? 'Nächstes Wochenende' : 'Dieses Wochenende')
-    : (weekendSel === 'next' ? 'Next weekend' : 'This weekend');
-  const heroSub = `${fmtShort(selSat, lang)} – ${fmtShort(selSun, lang)}`;
-  const weekendPlanned = (weekendPlan[selSatStr] || []).length + (weekendPlan[selSunStr] || []).length;
+  // ---- this week's Monday → next week's Sunday (14-day window) ----
+  const monday0 = addDays(today, -((dow + 6) % 7));
+  const rangeDays = Array.from({ length: 14 }, (_, i) => addDays(monday0, i));
+  const rangeEnd = rangeDays[rangeDays.length - 1];
+
+  // nearest upcoming weekend, used only for the weather verdict line
+  const sat0 = addDays(today, dow === 6 ? 0 : dow === 0 ? -1 : 6 - dow);
+  const sun0 = addDays(today, dow === 0 ? 0 : (7 - dow) % 7);
+  const wxSat = wxForStr(toLocalDateStr(sat0));
+  const wxSun = wxForStr(toLocalDateStr(sun0));
+
+  const heroSub = `${fmtShort(monday0, lang)} – ${fmtShort(rangeEnd, lang)}`;
 
   // ---- weather verdict ----
   const verdict = (() => {
@@ -67,7 +63,7 @@ export default function PlanTab({ weather, weekendPlan, setWeekendPlan, userEven
       setQText('');
       showToast(t('toast.taskAdded'), () => setTodos(prev => prev.filter(td => td.id !== id)));
     } else {
-      const ds = qDay === 'sun' ? selSunStr : selSatStr;
+      const ds = qDate;
       const id = Date.now().toString();
       const ev = { id, startDate: ds, date: ds, endDate: ds, name: txt, emoji: '📌', type: 'personal', notes: '' };
       setUserEvents(prev => [...prev, ev]);
@@ -82,9 +78,9 @@ export default function PlanTab({ weather, weekendPlan, setWeekendPlan, userEven
     return dateStr >= start && dateStr <= end;
   });
 
-  // ---- kids pickup: next 10 business days, tap cycles Navid → Diandra → clear ----
+  // ---- kids pickup: this week Mon–Fri + next week Mon–Fri (fixed, not rolling) ----
   const businessDays = [];
-  for (let d = new Date(today); businessDays.length < 10; d = addDays(d, 1)) {
+  for (let d = new Date(monday0); businessDays.length < 10; d = addDays(d, 1)) {
     const wd = d.getDay();
     if (wd !== 0 && wd !== 6) businessDays.push(new Date(d));
   }
@@ -159,10 +155,11 @@ export default function PlanTab({ weather, weekendPlan, setWeekendPlan, userEven
     );
   }
 
-  const days = [
-    { date: selSat, dateStr: selSatStr, wx: wxSat },
-    { date: selSun, dateStr: selSunStr, wx: wxSun },
-  ].filter(d => (weekendPlan[d.dateStr] || []).length > 0 || calEventsForDay(d.dateStr).length > 0);
+  const days = rangeDays
+    .map(date => { const dateStr = toLocalDateStr(date); return { date, dateStr, wx: wxForStr(dateStr) }; })
+    .filter(d => (weekendPlan[d.dateStr] || []).length > 0 || calEventsForDay(d.dateStr).length > 0);
+
+  const weekendPlanned = days.reduce((n, d) => n + (weekendPlan[d.dateStr] || []).length, 0);
 
   return (
     <div className="flex flex-col" style={{ gap: 0 }}>
@@ -190,10 +187,14 @@ export default function PlanTab({ weather, weekendPlan, setWeekendPlan, userEven
           </button>
         </div>
         {qMode === 'event' && (
-          <div className="flex items-center gap-[7px]" style={{ marginTop: 10 }}>
-            <span style={{ fontSize: 10, fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.08em', color: 'var(--text-faint)', marginRight: 2 }}>{t('plan.day')}</span>
-            <Chip size="sm" active={qDay === 'sat'} onClick={() => setQDay('sat')}>{(de ? 'Sa ' : 'Sat ') + selSat.getDate() + '.'}</Chip>
-            <Chip size="sm" active={qDay === 'sun'} onClick={() => setQDay('sun')}>{(de ? 'So ' : 'Sun ') + selSun.getDate() + '.'}</Chip>
+          <div className="flex items-center gap-[9px]" style={{ marginTop: 10 }}>
+            <span style={{ fontSize: 10, fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.08em', color: 'var(--text-faint)', marginRight: 2 }}>{t('plan.eventDate')}</span>
+            <input
+              type="date"
+              value={qDate}
+              onChange={e => setQDate(e.target.value || todayStr)}
+              style={{ border: '1.5px solid var(--border-strong)', borderRadius: 'var(--r-md)', padding: '8px 11px', fontSize: 14, background: 'var(--surface)', color: 'var(--text)', outline: 'none' }}
+            />
           </div>
         )}
       </div>
@@ -243,10 +244,10 @@ export default function PlanTab({ weather, weekendPlan, setWeekendPlan, userEven
         <div style={{ fontSize: 10.5, fontWeight: 500, color: 'var(--text-faint)', marginTop: 12 }}>{t('plan.pickupHint')}</div>
       </div>
 
-      {/* weekend title */}
+      {/* upcoming title */}
       <div className="flex items-baseline justify-between gap-2" style={{ marginTop: 20, padding: '0 2px' }}>
         <div className="min-w-0">
-          <div className="font-brand" style={{ fontSize: 20, fontWeight: 800, letterSpacing: '-0.03em', color: 'var(--text)' }}>{weekendName}</div>
+          <div className="font-brand" style={{ fontSize: 20, fontWeight: 800, letterSpacing: '-0.03em', color: 'var(--text)' }}>{t('plan.upcomingTitle')}</div>
           <div style={{ fontSize: 11.5, fontWeight: 500, color: 'var(--text-faint)', marginTop: 1 }}>{heroSub}</div>
         </div>
         {weekendPlanned > 0 && (
@@ -254,15 +255,6 @@ export default function PlanTab({ weather, weekendPlan, setWeekendPlan, userEven
             {weekendPlanned} {weekendPlanned === 1 ? t('plan.activity') : t('plan.activities')}
           </span>
         )}
-      </div>
-
-      {/* weekend toggle */}
-      <div style={{ marginTop: 14 }}>
-        <SegmentedControl
-          options={[{ value: 'this', label: t('plan.thisWE') }, { value: 'next', label: t('plan.nextWE') }]}
-          value={weekendSel}
-          onChange={setWeekendSel}
-        />
       </div>
 
       {/* weather verdict */}

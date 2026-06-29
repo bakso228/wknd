@@ -16,6 +16,7 @@ export default function CalendarTab({ userEvents, setUserEvents, weekendPlan, to
   const [editEvent,       setEditEvent]       = useState(null);
   const [showAllUpcoming, setShowAllUpcoming] = useState(false);
   const [gridOpen,        setGridOpen]        = useState(false);
+  const [addDate,         setAddDate]         = useState(null);
 
   const dim  = daysInMonth(year, month);
   const fdow = firstDow(year, month);
@@ -111,6 +112,11 @@ export default function CalendarTab({ userEvents, setUserEvents, weekendPlan, to
         <div className="font-brand" style={{ fontSize: 22, fontWeight: 800, letterSpacing: '-0.03em', color: 'var(--text)' }}>{t('calendar.title')}</div>
         <div style={{ fontSize: 11.5, fontWeight: 500, color: 'var(--text-faint)', marginTop: 2 }}>{t('calendar.subtitle')}</div>
       </div>
+
+      {/* quick add event (any day) */}
+      <button onClick={() => { setEditEvent(null); setSel(null); setAddDate(today); setShowAdd(true); }} className="press w-full flex items-center justify-center gap-[7px]" style={{ background: 'var(--primary)', border: 'none', borderRadius: 'var(--r-md)', padding: 13, cursor: 'pointer', color: '#fff', fontSize: 13, fontWeight: 700, boxShadow: 'var(--shadow-btn)' }}>
+        <Icon name="plus" size={16} sw={2.4} />{t('calendar.addEvent')}
+      </button>
 
       {/* upcoming agenda (primary surface) */}
       <div>
@@ -255,8 +261,13 @@ export default function CalendarTab({ userEvents, setUserEvents, weekendPlan, to
         </div>
       )}
 
-      {showAdd && selDate && (
-        <AddEventModal date={selDate} onSave={addEvent} onClose={() => { setShowAdd(false); setEditEvent(null); }} initialEvent={editEvent} />
+      {showAdd && (
+        <AddEventModal
+          date={editEvent ? new Date((editEvent.startDate || editEvent.date) + 'T00:00:00') : (selDate || addDate || today)}
+          onSave={addEvent}
+          onClose={() => { setShowAdd(false); setEditEvent(null); setAddDate(null); }}
+          initialEvent={editEvent}
+        />
       )}
 
       {/* legend */}

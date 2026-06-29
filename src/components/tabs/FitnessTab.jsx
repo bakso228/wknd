@@ -8,6 +8,9 @@ import SegmentedControl from '../ui/SegmentedControl.jsx';
 const parseD = s => { const [y, m, d] = s.split('-').map(Number); return new Date(y, m - 1, d); };
 const addDays = (d, n) => { const x = new Date(d); x.setDate(d.getDate() + n); return x; };
 
+// The workout challenge began on this date — earlier days are inactive/greyed out.
+const CHALLENGE_START = '2026-06-15';
+
 export default function FitnessTab({ workouts, setWorkouts, body, setBody, showToast }) {
   const { t, lang } = useLang();
   const locale = lang === 'de' ? 'de-DE' : 'en-US';
@@ -36,12 +39,13 @@ export default function FitnessTab({ workouts, setWorkouts, body, setBody, showT
     setMonthM(m); setMonthY(y);
   };
 
-  // ---- scoreboard counts ----
-  const inMonth = arr => (arr || []).filter(ds => { const [y, m] = ds.split('-').map(Number); return y === monthY && m === monthM + 1; }).length;
+  // ---- scoreboard counts (only days from the challenge start onward) ----
+  const since = arr => (arr || []).filter(ds => ds >= CHALLENGE_START);
+  const inMonth = arr => since(arr).filter(ds => { const [y, m] = ds.split('-').map(Number); return y === monthY && m === monthM + 1; }).length;
   const weekStart = addDays(today, ((today.getDay() + 6) % 7) * -1);
-  const inWeek = arr => (arr || []).filter(ds => { const d = parseD(ds); return d >= weekStart && d <= addDays(weekStart, 6); }).length;
+  const inWeek = arr => since(arr).filter(ds => { const d = parseD(ds); return d >= weekStart && d <= addDays(weekStart, 6); }).length;
   const streakOf = arr => {
-    const set = new Set(arr || []);
+    const set = new Set(since(arr));
     let n = 0, d = new Date(today);
     if (!set.has(toLocalDateStr(d))) d = addDays(d, -1);
     while (set.has(toLocalDateStr(d))) { n++; d = addDays(d, -1); }
@@ -61,14 +65,15 @@ export default function FitnessTab({ workouts, setWorkouts, body, setBody, showT
   const DOW = [...Array(7)].map((_, i) => new Date(2000, 0, 3 + i).toLocaleDateString(locale, { weekday: 'short' }).replace('.', ''));
   const monthLabel = monthFirst.toLocaleDateString(locale, { month: 'long', year: 'numeric' });
 
-  function WorkoutToggle({ on, color, label, onClick }) {
+  function WorkoutToggle({ on, color, label, onClick, disabled }) {
     return (
-      <button onClick={onClick} className="press flex items-center justify-center" style={{
-        width: 19, height: 19, borderRadius: '50%', padding: 0, cursor: 'pointer',
+      <button onClick={disabled ? undefined : onClick} disabled={disabled} className={disabled ? 'flex items-center justify-center' : 'press flex items-center justify-center'} style={{
+        width: 19, height: 19, borderRadius: '50%', padding: 0, cursor: disabled ? 'default' : 'pointer',
         fontSize: 9, fontWeight: 800,
         border: `1.5px solid ${on ? color : 'var(--border-strong)'}`,
         background: on ? color : 'transparent',
         color: on ? '#fff' : 'var(--text-faint)',
+        opacity: disabled ? 0.3 : 1,
       }}>{label}</button>
     );
   }
@@ -195,14 +200,15 @@ export default function FitnessTab({ workouts, setWorkouts, body, setBody, showT
                 const dnum = i + 1;
                 const ds = toLocalDateStr(new Date(monthY, monthM, dnum));
                 const isToday = ds === todayStr;
-                const navOn = (workouts.Navid || []).includes(ds);
-                const diaOn = (workouts.Diandra || []).includes(ds);
+                const locked = ds < CHALLENGE_START;
+                const navOn = !locked && (workouts.Navid || []).includes(ds);
+                const diaOn = !locked && (workouts.Diandra || []).includes(ds);
                 return (
-                  <div key={dnum} className="flex flex-col items-center justify-center" style={{ height: 52, gap: 4 }}>
-                    <div style={{ fontSize: 11.5, fontWeight: 700, color: isToday ? 'var(--primary)' : 'var(--text)' }}>{dnum}</div>
+                  <div key={dnum} className="flex flex-col items-center justify-center" style={{ height: 52, gap: 4, opacity: locked ? 0.4 : 1 }}>
+                    <div style={{ fontSize: 11.5, fontWeight: 700, color: isToday ? 'var(--primary)' : locked ? 'var(--text-faint)' : 'var(--text)' }}>{dnum}</div>
                     <div className="flex" style={{ gap: 3 }}>
-                      <WorkoutToggle on={navOn} color={PERSON.Navid.color} label="N" onClick={() => toggleWorkout('Navid', ds)} />
-                      <WorkoutToggle on={diaOn} color={PERSON.Diandra.color} label="D" onClick={() => toggleWorkout('Diandra', ds)} />
+                      <WorkoutToggle on={navOn} color={PERSON.Navid.color} label="N" disabled={locked} onClick={() => toggleWorkout('Navid', ds)} />
+                      <WorkoutToggle on={diaOn} color={PERSON.Diandra.color} label="D" disabled={locked} onClick={() => toggleWorkout('Diandra', ds)} />
                     </div>
                   </div>
                 );
